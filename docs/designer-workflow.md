@@ -78,6 +78,8 @@ Canonical skill sources live only in `.agents/skills/`; `.claude/skills` is a si
 
 The optional Astro detector evaluation uses `pnpm detect:design-system`; see the [package guide](../packages/design-system/README.md) for its candidate baseline, focused/JSON scans and limitations. Impeccable is pinned and opt-in, outside the required checks. No hooks, upstream installer, automatic context generation or automatic fixes are enabled. Findings are review inputs, not design approval.
 
+Liquid evaluation is separate: `pnpm detect:liquid` scans explicitly selected authored theme sources with `.liquid` text routing and `--no-design-system`. See the [Liquid evaluation guide](../apps/liquid/README.md#optional-design-detector-evaluation). It does not impose Astro's palette on merchant settings, scan generated CSS/state/secrets, render Liquid or start a Shopify preview. Actual native storefront/editor, keyboard and axe evidence remain distinct requirements.
+
 ```text
 Help me work on [user task/view] with the existing Liquid implementation.
 First identify relevant native Liquid primitives, consumers and source files.

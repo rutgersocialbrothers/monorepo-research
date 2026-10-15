@@ -109,6 +109,8 @@ For AI-assisted adaptation, use the project [Astro-to-Liquid skill](.agents/skil
 
 Optional Impeccable evaluation: `pnpm detect:design-system` scans canonical authored source against a labelled candidate snapshot. It is not part of `pnpm check` and does not automatically fix findings. Read the [Astro evaluation guide](packages/design-system/README.md) before interpreting results; use [impeccable-review](.agents/skills/impeccable-review/SKILL.md) only when UX critique is requested.
 
+`pnpm detect:liquid` separately scans authored native-theme sources without a fixed palette baseline; see the [Liquid evaluation guide](apps/liquid/README.md#optional-design-detector-evaluation). Neither command starts a Shopify preview, uploads a theme or establishes storefront/editor correctness.
+
 ## Deployment and project identity
 
 GitHub Actions validates pushes/PRs without deployment secrets. Automated Liquid delivery uses the native Shopify CLI after validation and explicit activation, from exact protected branches:

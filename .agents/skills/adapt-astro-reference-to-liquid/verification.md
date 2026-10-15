@@ -20,6 +20,8 @@ These are Astro checks, not native storefront/editor evidence. Reuse established
 
 Extend persistent tests only for meaningful behavior, boundaries or regressions under the repository's testing rules. Do not add screenshot/source-text/wiring tests merely to prove files exist. Real browser exercise is still required.
 
+If optional Impeccable evaluation is requested, use [the Liquid evaluation guide](../../../apps/liquid/README.md#optional-design-detector-evaluation) and `pnpm detect:liquid`. It scans only explicit authored sources, registers `.liquid` as generic text and disables design-system membership checks; do not impose the Astro candidate snapshot on merchant values. Detector findings are review leads, not axe, browser, contract-parity or editor-lifecycle proof. Rendered scans require an already authorized exact preview URL and preserve consent/overlay visibility; they do not authorize starting or uploading a theme. Keep canonical findings in the contract layer and adaptation defects in the Liquid layer.
+
 ## Required checks
 
 Choose relevant scenarios in the approved plan; explain non-applicable checks rather than creating artificial states.

@@ -11,6 +11,7 @@
     "check:scripts": "pnpm run typecheck:scripts",
     "check:tests": "pnpm run test",
     "detect:design-system": "pnpm --dir packages/design-system exec impeccable detect src",
+    "detect:liquid": "pnpm --dir apps/liquid exec impeccable detect --no-design-system blocks layout sections snippets styles assets/critical.css",
     "dev": "turbo watch @2digits/liquid#dev @tupak/design-system#dev:server --ui=tui --continue=always",
     "dev:design-system": "pnpm --filter @tupak/design-system dev:server",
     "dev:liquid": "turbo watch dev --filter=@2digits/liquid --ui=tui",

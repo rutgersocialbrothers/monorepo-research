@@ -1,0 +1,13 @@
+{
+  "hook": {
+    "enabled": false
+  },
+  "detector": {
+    "extensions": [
+      {
+        "ext": ".liquid",
+        "engine": "text"
+      }
+    ]
+  }
+}
