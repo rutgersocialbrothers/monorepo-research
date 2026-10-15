@@ -202,6 +202,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.0
+      impeccable:
+        specifier: 4.5.2
+        version: 4.5.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.69.0
@@ -998,6 +1001,36 @@ packages:
     engines: {node: '>=20.9.0'}
     cpu: [x64]
     os: [win32]
+
+  '@impeccable/cli-darwin-arm64@0.1.14':
+    resolution: {integrity: sha512-GXT7Av5yaBcmj88xVtkABV9ftwkG8oWszAcIbb+s2C0mQiniskdZrTcqElAZ29iT3FcLMfQtkWlhwd9V41Qvcg==}
+    cpu: [arm64]
+    os: [darwin]
+    hasBin: true
+
+  '@impeccable/cli-darwin-x64@0.1.14':
+    resolution: {integrity: sha512-9YKJ6m331oF22EmJGvvatFezFj8Jec4OmL9QPg1emg6D6RpQ5hF2E0xou3tVRjDZoQ3tR9qazDBkyzJoR+wPbw==}
+    cpu: [x64]
+    os: [darwin]
+    hasBin: true
+
+  '@impeccable/cli-linux-arm64@0.1.14':
+    resolution: {integrity: sha512-vjd6MelytaV15RK5hUWZ0aZFqiuBmqNO6silgb5g9G3ivplvQLL2pBvjXOayUchH9//1xRu9LxpFiS5ApZboZA==}
+    cpu: [arm64]
+    os: [linux]
+    hasBin: true
+
+  '@impeccable/cli-linux-x64@0.1.14':
+    resolution: {integrity: sha512-f23x5t+pYPDkbt17oMAAcjmTSxexFfNYLZZ4ik/UeGLq1jiPCP6F17IWzBxOzj0C1lAHzOzSlrc7V8+57jMAtA==}
+    cpu: [x64]
+    os: [linux]
+    hasBin: true
+
+  '@impeccable/cli-windows-x64@0.1.14':
+    resolution: {integrity: sha512-dTM/MSNNf+lBL9ILxuT2fICAD6mfeSdKtCg7ubIDvK5Sapr3n3snkJQkBN8PUjwzyCZAQPZPcV7deXatStYTCA==}
+    cpu: [x64]
+    os: [win32]
+    hasBin: true
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -2540,6 +2573,11 @@ packages:
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
+
+  impeccable@4.5.2:
+    resolution: {integrity: sha512-eTePiNIf0OgAXl2XHUcq+Dkd6DmCawj3UQdYKdNvoP4pdk0/0NBx1FqdG+7rDZUnrSNU3E9TodGAJWIST1X70A==}
+    engines: {node: '>=22.18.0'}
+    hasBin: true
 
   imurmurhash@0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
@@ -4255,6 +4293,21 @@ snapshots:
   '@img/sharp-win32-x64@0.35.5':
     optional: true
 
+  '@impeccable/cli-darwin-arm64@0.1.14':
+    optional: true
+
+  '@impeccable/cli-darwin-x64@0.1.14':
+    optional: true
+
+  '@impeccable/cli-linux-arm64@0.1.14':
+    optional: true
+
+  '@impeccable/cli-linux-x64@0.1.14':
+    optional: true
+
+  '@impeccable/cli-windows-x64@0.1.14':
+    optional: true
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
@@ -5641,6 +5694,14 @@ snapshots:
   human-signals@5.0.0: {}
 
   ignore@5.3.2: {}
+
+  impeccable@4.5.2:
+    optionalDependencies:
+      '@impeccable/cli-darwin-arm64': 0.1.14
+      '@impeccable/cli-darwin-x64': 0.1.14
+      '@impeccable/cli-linux-arm64': 0.1.14
+      '@impeccable/cli-linux-x64': 0.1.14
+      '@impeccable/cli-windows-x64': 0.1.14
 
   imurmurhash@0.1.4: {}
 

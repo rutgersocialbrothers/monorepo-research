@@ -59,29 +59,29 @@ Turbo's standard package watcher reruns the finite Liquid CSS build after nonign
 
 ## Sources and commands
 
-| Path | Owner |
-| --- | --- |
-| `apps/liquid` | Native Shopify theme root: layouts, config, templates, merchant state, snippets, blocks, sections and locales |
-| `apps/liquid/styles/tokens.css` | Current authored CSS token authority and merchant-variable mappings |
-| `packages/design-system` | Private `@tupak/design-system`: candidate Tupak foundations, reusable public Tailwind configuration, framework-free contracts and canonical Astro references |
-| `scripts`, `deployments` | Local configuration pull and native CI branch-to-Environment mappings |
+| Path                            | Owner                                                                                                                                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/liquid`                   | Native Shopify theme root: layouts, config, templates, merchant state, snippets, blocks, sections and locales                                                |
+| `apps/liquid/styles/tokens.css` | Current authored CSS token authority and merchant-variable mappings                                                                                          |
+| `packages/design-system`        | Private `@tupak/design-system`: candidate Tupak foundations, reusable public Tailwind configuration, framework-free contracts and canonical Astro references |
+| `scripts`, `deployments`        | Local configuration pull and native CI branch-to-Environment mappings                                                                                        |
 
 Commit authored source only. `apps/liquid/assets/tailwind.css` is compiled and Git-ignored, but must be built before previews or uploads. All other theme files are authored directly in `apps/liquid`; Shopify CLI filters its supported theme folders, so app metadata and `styles/` are not uploaded. The repository root is not a theme root. Do not enable repository-root Shopify GitHub synchronization.
 
 Turbo build inputs/outputs describe the finite CSS task; standard watch mode operates at package level. Generated CSS, environment files and Shopify state are Git-ignored so they do not create rebuild feedback. Some non-theme app-file changes also compile CSS. Shopify CLI owns native theme synchronization, including source edits and deletions; there is no second theme copy or custom validation framework. Environment files, Turbo output and private pull snapshots stay ignored.
 
-| Command | Result |
-| --- | --- |
-| `pnpm build:liquid` | Compile app styles to `apps/liquid/assets/tailwind.css` |
-| `pnpm --filter @2digits/liquid check` | Native Theme Check against `apps/liquid` |
-| `pnpm check` | Root script types/tests, Liquid CSS build/check and the canonical package's five ordered check leaves |
-| `pnpm typecheck:scripts` | Root script/test TypeScript checking |
-| `pnpm test` / `test:watch` | Run / watch root Vitest tests |
-| `pnpm dev:design-system` | Upload-free canonical Astro workbench |
-| `pnpm build:design-system` | Static workbench in `packages/design-system/dist`; no generated library |
-| `pnpm check:design-system` | All five ordered canonical check leaves; requires Chromium |
-| `pnpm test:design-system` | Canonical Playwright tests; owned Astro server on port 4322 |
-| `pnpm preview:design-system` | Preview the built static workbench |
+| Command                               | Result                                                                                                |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `pnpm build:liquid`                   | Compile app styles to `apps/liquid/assets/tailwind.css`                                               |
+| `pnpm --filter @2digits/liquid check` | Native Theme Check against `apps/liquid`                                                              |
+| `pnpm check`                          | Root script types/tests, Liquid CSS build/check and the canonical package's five ordered check leaves |
+| `pnpm typecheck:scripts`              | Root script/test TypeScript checking                                                                  |
+| `pnpm test` / `test:watch`            | Run / watch root Vitest tests                                                                         |
+| `pnpm dev:design-system`              | Upload-free canonical Astro workbench                                                                 |
+| `pnpm build:design-system`            | Static workbench in `packages/design-system/dist`; no generated library                               |
+| `pnpm check:design-system`            | All five ordered canonical check leaves; requires Chromium                                            |
+| `pnpm test:design-system`             | Canonical Playwright tests; owned Astro server on port 4322                                           |
+| `pnpm preview:design-system`          | Preview the built static workbench                                                                    |
 
 Turbo sequences prerequisites and checks without concurrent CSS writers. Liquid CSS builds are uncached; `mise.toml` pins affect hashes. Shopify delivery stays outside Turbo and uses the native pinned CLI against `apps/liquid`. Node 24 runs `.ts` scripts directly and loads local preview configuration natively. Root uses TypeScript 7.0.2 (`typescript-native`); root Vitest covers local configuration preservation.
 
@@ -107,16 +107,18 @@ Use the [designer workflow](docs/designer-workflow.md), [component contract temp
 
 For AI-assisted adaptation, use the project [Astro-to-Liquid skill](.agents/skills/adapt-astro-reference-to-liquid/SKILL.md): agree the plan and editor controls before implementation, separate contract corrections from the stacked Liquid implementation PR, and verify actual storefront/editor behavior. Supporting Tailwind, interface-detail, accessibility and browser-operation skills are loaded only for relevant work; see the [loading rules](.agents/skills/adapt-astro-reference-to-liquid/SKILL.md#supporting-skills-load-at-the-relevant-stage).
 
+Optional Impeccable evaluation: `pnpm detect:design-system` scans canonical authored source against a labelled candidate snapshot. It is not part of `pnpm check` and does not automatically fix findings. Read the [Astro evaluation guide](packages/design-system/README.md) before interpreting results; use [impeccable-review](.agents/skills/impeccable-review/SKILL.md) only when UX critique is requested.
+
 ## Deployment and project identity
 
 GitHub Actions validates pushes/PRs without deployment secrets. Automated Liquid delivery uses the native Shopify CLI after validation and explicit activation, from exact protected branches:
 
-| Branch | GitHub Environment | Intended target | May update an already-live theme? |
-| --- | --- | --- | --- |
-| `main` | `production` | Production | Yes |
-| `acceptance` | `acceptance` | Non-active preview | No |
-| `test` | `test` | Separate non-active preview | No |
-| `develop` | `development` | Development/client-transfer target | No |
+| Branch       | GitHub Environment | Intended target                    | May update an already-live theme? |
+| ------------ | ------------------ | ---------------------------------- | --------------------------------- |
+| `main`       | `production`       | Production                         | Yes                               |
+| `acceptance` | `acceptance`       | Non-active preview                 | No                                |
+| `test`       | `test`             | Separate non-active preview        | No                                |
+| `develop`    | `development`      | Development/client-transfer target | No                                |
 
 Environment variables hold store domains and explicit existing theme IDs; targets may share stores, but must not share the same store/theme pair across Environments. CI does not provision or publish themes; the production mapping alone adds `--allow-live`. Pushes exclude `config/settings_data.json`. Manual mapped-branch runs pull private review artifacts, never overwrite source or commit. Shopify CLI validates target formats and permissions; developers are responsible for correct configuration. Raw local CLI push/pull remains technically available, but this repository does not authorize it.
 

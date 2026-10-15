@@ -17,6 +17,7 @@
     "check:04-demo-build": "pnpm demo:build",
     "check:05-browser": "pnpm test",
     "demo:build": "astro build",
+    "design:detect": "impeccable detect src",
     "dev": "turbo run dev:server --filter=@tupak/design-system --continue=always",
     "dev:server": "astro dev --host 0.0.0.0 --ignore-lock",
     "format": "oxfmt --config ../../oxfmt.config.ts --ignore-path ../../.gitignore --check .",

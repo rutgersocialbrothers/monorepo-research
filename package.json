@@ -2,34 +2,31 @@
   "name": "@tupak/shopify-theme",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@12.1.0",
-  "engines": {
-    "node": "24.x",
-    "pnpm": "12.x"
-  },
   "scripts": {
     "build": "turbo run build demo:build",
+    "build:design-system": "turbo run demo:build --filter=@tupak/design-system",
+    "build:liquid": "turbo run build --filter=@2digits/liquid",
     "check": "turbo run //#check:scripts //#check:tests @2digits/liquid#check @tupak/design-system#check:01-format @tupak/design-system#check:02-types @tupak/design-system#check:03-lint @tupak/design-system#check:04-demo-build @tupak/design-system#check:05-browser --continue=always --concurrency=1 --env-mode=loose",
+    "check:design-system": "pnpm --filter @tupak/design-system check",
     "check:scripts": "pnpm run typecheck:scripts",
     "check:tests": "pnpm run test",
-    "check:design-system": "pnpm --filter @tupak/design-system check",
-    "test:design-system": "pnpm --filter @tupak/design-system test",
-    "preview:design-system": "pnpm --filter @tupak/design-system preview",
-    "typecheck:scripts": "tsc -p tsconfig.scripts.json",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "build:liquid": "turbo run build --filter=@2digits/liquid",
-    "build:design-system": "turbo run demo:build --filter=@tupak/design-system",
+    "detect:design-system": "pnpm --dir packages/design-system exec impeccable detect src",
     "dev": "turbo watch @2digits/liquid#dev @tupak/design-system#dev:server --ui=tui --continue=always",
     "dev:design-system": "pnpm --filter @tupak/design-system dev:server",
     "dev:liquid": "turbo watch dev --filter=@2digits/liquid --ui=tui",
     "dev:liquid:local": "turbo watch build --filter=@2digits/liquid --ui=tui",
-    "github:env-pull": "node scripts/github-env-pull.ts"
+    "github:env-pull": "node scripts/github-env-pull.ts",
+    "preview:design-system": "pnpm --filter @tupak/design-system preview",
+    "test": "vitest run",
+    "test:design-system": "pnpm --filter @tupak/design-system test",
+    "test:watch": "vitest",
+    "typecheck:scripts": "tsc -p tsconfig.scripts.json"
   },
   "devDependencies": {
     "@2digits/oxfmt-config": "catalog:",
     "@2digits/oxlint-config": "catalog:",
     "@types/node": "catalog:",
+    "impeccable": "4.5.2",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
@@ -37,5 +34,10 @@
     "typescript-native": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
-  }
+  },
+  "engines": {
+    "node": "24.x",
+    "pnpm": "12.x"
+  },
+  "packageManager": "pnpm@12.1.0"
 }

@@ -22,15 +22,15 @@ Inspect the app's native snippets, blocks, sections and their actual consumers. 
 
 The button currently supports primary/secondary variants and small/medium/large sizes, with primary/medium defaults. Enabled demo buttons are explicitly no-action previews. A demo is not proof of checkout or another business flow.
 
-| Location | Ownership and safe scope |
-| --- | --- |
-| `packages/design-system` | `@tupak/design-system`: candidate foundations, reusable public Tailwind configuration, framework-free contracts, canonical Astro references and composed preview; not merchant CSS |
-| `apps/liquid/styles/tokens.css` | Current authored semantic tokens and merchant mappings; preserve existing visual behavior unless an agreed brief changes it |
-| `apps/liquid/styles/tailwind.css` | App-owned Tailwind compilation inputs/source discovery; no Preflight |
-| `apps/liquid/snippets/design-button-classes.liquid` | Authored complete button class selection, not generator output |
-| `apps/liquid/snippets`, `blocks`, `sections`, `locales` | Native Liquid UI; preserve locale keys, filenames, setting IDs and editor attributes |
-| `apps/liquid` | Native Shopify theme root, merchant configuration, templates and integration |
-| `apps/liquid/assets/tailwind.css` | Generated CSS; Git-ignored, rebuilt for preview/upload, never edited as source |
+| Location                                                | Ownership and safe scope                                                                                                                                                           |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/design-system`                                | `@tupak/design-system`: candidate foundations, reusable public Tailwind configuration, framework-free contracts, canonical Astro references and composed preview; not merchant CSS |
+| `apps/liquid/styles/tokens.css`                         | Current authored semantic tokens and merchant mappings; preserve existing visual behavior unless an agreed brief changes it                                                        |
+| `apps/liquid/styles/tailwind.css`                       | App-owned Tailwind compilation inputs/source discovery; no Preflight                                                                                                               |
+| `apps/liquid/snippets/design-button-classes.liquid`     | Authored complete button class selection, not generator output                                                                                                                     |
+| `apps/liquid/snippets`, `blocks`, `sections`, `locales` | Native Liquid UI; preserve locale keys, filenames, setting IDs and editor attributes                                                                                               |
+| `apps/liquid`                                           | Native Shopify theme root, merchant configuration, templates and integration                                                                                                       |
+| `apps/liquid/assets/tailwind.css`                       | Generated CSS; Git-ignored, rebuilt for preview/upload, never edited as source                                                                                                     |
 
 The `liquid_components` locale namespace and Shopify schema contracts retain their existing names. Component CSS and small plain-JavaScript enhancements use Shopify's native `{% stylesheet %}` and `{% javascript %}` delivery. Native CLI filters supported theme folders, excluding app metadata and authored styles from uploads.
 
@@ -66,14 +66,17 @@ Use [adapt-astro-reference-to-liquid](../.agents/skills/adapt-astro-reference-to
 
 Skill bodies and topic references load on demand, not into the global agent guide:
 
-| Skill | Load when |
-| --- | --- |
-| [tailwind-design-system](../.agents/skills/tailwind-design-system/SKILL.md) | Mapping tokens, responsive utilities, variants or shared styles; framework-neutral guidance only, preserving native Liquid/no-Preflight/merchant boundaries. |
-| [make-interfaces-feel-better](../.agents/skills/make-interfaces-feel-better/SKILL.md) | Evaluating reference quality or checking visual details; proposed design changes return to contract/designer review, not silent implementation polish. |
-| [fixing-accessibility](../.agents/skills/fixing-accessibility/SKILL.md) | Planning semantics and interaction, implementing controls/forms/focus, or reviewing accessibility. Automated scans do not establish conformance. |
-| [agent-browser](../.agents/skills/agent-browser/SKILL.md) | Operating that CLI for authorized real-browser checks, after checking availability/version; otherwise use environment-provided browser tooling. |
+| Skill                                                                                 | Load when                                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [tailwind-design-system](../.agents/skills/tailwind-design-system/SKILL.md)           | Mapping tokens, responsive utilities, variants or shared styles; framework-neutral guidance only, preserving native Liquid/no-Preflight/merchant boundaries.                                                  |
+| [make-interfaces-feel-better](../.agents/skills/make-interfaces-feel-better/SKILL.md) | Evaluating reference quality or checking visual details; proposed design changes return to contract/designer review, not silent implementation polish.                                                        |
+| [fixing-accessibility](../.agents/skills/fixing-accessibility/SKILL.md)               | Planning semantics and interaction, implementing controls/forms/focus, or reviewing accessibility. Automated scans do not establish conformance.                                                              |
+| [agent-browser](../.agents/skills/agent-browser/SKILL.md)                             | Operating that CLI for authorized real-browser checks, after checking availability/version; otherwise use environment-provided browser tooling.                                                               |
+| [impeccable-review](../.agents/skills/impeccable-review/SKILL.md)                     | Explicitly requested, report-only UX critique of canonical references or composed journeys; optional detector interpretation, not automatic redesign or a replacement for browser/accessibility verification. |
 
 Canonical skill sources live only in `.agents/skills/`; `.claude/skills` is a single relative directory symlink to `../.agents/skills`, not a second skill tree. OpenCode discovers `.agents/skills/` directly. Loading a skill is not permission to install tools, add dependencies, change merchant state, or approve a design.
+
+The optional Astro detector evaluation uses `pnpm detect:design-system`; see the [package guide](../packages/design-system/README.md) for its candidate baseline, focused/JSON scans and limitations. Impeccable is pinned and opt-in, outside the required checks. No hooks, upstream installer, automatic context generation or automatic fixes are enabled. Findings are review inputs, not design approval.
 
 ```text
 Help me work on [user task/view] with the existing Liquid implementation.
@@ -107,17 +110,17 @@ Use its design intent, selected assets and state specifications as reference. Ke
 
 ### What to retain, translate or discard
 
-| External material | Local treatment |
-| --- | --- |
-| `tokens.css`: structural blue, red commit actions, supporting-action colors, surfaces, typography, spacing and shape | Translate selected values and meanings into `packages/design-system/src/styles/tokens.css`. Do not introduce a second authority or blindly equate source “primary blue” with the local primary action. |
-| Token descriptions and rationale | Update `src/tokens/reference.ts` metadata and relevant foundation panels; values stay in CSS. Adjust `src/styleguide/data.ts` if accepted ramp names or groups change. |
-| `components.css`: visual recipes and states | Adapt existing family markup and complete Tailwind class maps. Do not import the global reset or roughly 5,000-line stylesheet wholesale. |
-| Source dark selectors `[data-theme="dark"]` | Do not copy. Retain fixed `data-theme="tupak"`, mode classes, `color-scheme`, `light-dark()`, pre-paint restoration and scoped controls. |
-| `fonts.css`: embedded Raleway and Instrument Sans | The candidate selects variable Instrument Sans through private Astro Fontsource delivery, including the used weights. Public tokens expose font stacks only; no base64 font CSS or mandatory font assets are exported. Preserve font licenses. |
-| Product/category/editorial imagery, logo and icons | Selected files are local under `public/tupak-reference/`, with exact source paths and provenance caveats in `src/sections/reference-assets.ts`. Candidate copying is not production rights clearance. Payment marks, placeholder gallery views and prototype runtime are not part of the port. Reuse the existing Icon family. |
-| Reusable section layouts | Compose typed Astro sections at build/render time, with supplied content, optional media and real optional links. Keep prototype business content out of canonical defaults. |
-| Browser fragment fetching, ID rewriting, prototype toolbar and story/CSV runtime | Discard; Astro composition and renderer-owned IDs replace them. Keep useful design rationale, not another workbench. |
-| Fixture search/cart/filter/pricing code, rejected alternatives and invented commercial claims | Do not port as working features. Any retained demonstration must identify simulated behavior; no fake cart success, policy claims or FAQ structured data. |
+| External material                                                                                                    | Local treatment                                                                                                                                                                                                                                                                                                                |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `tokens.css`: structural blue, red commit actions, supporting-action colors, surfaces, typography, spacing and shape | Translate selected values and meanings into `packages/design-system/src/styles/tokens.css`. Do not introduce a second authority or blindly equate source “primary blue” with the local primary action.                                                                                                                         |
+| Token descriptions and rationale                                                                                     | Update `src/tokens/reference.ts` metadata and relevant foundation panels; values stay in CSS. Adjust `src/styleguide/data.ts` if accepted ramp names or groups change.                                                                                                                                                         |
+| `components.css`: visual recipes and states                                                                          | Adapt existing family markup and complete Tailwind class maps. Do not import the global reset or roughly 5,000-line stylesheet wholesale.                                                                                                                                                                                      |
+| Source dark selectors `[data-theme="dark"]`                                                                          | Do not copy. Retain fixed `data-theme="tupak"`, mode classes, `color-scheme`, `light-dark()`, pre-paint restoration and scoped controls.                                                                                                                                                                                       |
+| `fonts.css`: embedded Raleway and Instrument Sans                                                                    | The candidate selects variable Instrument Sans through private Astro Fontsource delivery, including the used weights. Public tokens expose font stacks only; no base64 font CSS or mandatory font assets are exported. Preserve font licenses.                                                                                 |
+| Product/category/editorial imagery, logo and icons                                                                   | Selected files are local under `public/tupak-reference/`, with exact source paths and provenance caveats in `src/sections/reference-assets.ts`. Candidate copying is not production rights clearance. Payment marks, placeholder gallery views and prototype runtime are not part of the port. Reuse the existing Icon family. |
+| Reusable section layouts                                                                                             | Compose typed Astro sections at build/render time, with supplied content, optional media and real optional links. Keep prototype business content out of canonical defaults.                                                                                                                                                   |
+| Browser fragment fetching, ID rewriting, prototype toolbar and story/CSV runtime                                     | Discard; Astro composition and renderer-owned IDs replace them. Keep useful design rationale, not another workbench.                                                                                                                                                                                                           |
+| Fixture search/cart/filter/pricing code, rejected alternatives and invented commercial claims                        | Do not port as working features. Any retained demonstration must identify simulated behavior; no fake cart success, policy claims or FAQ structured data.                                                                                                                                                                      |
 
 ### Design decisions still unresolved
 

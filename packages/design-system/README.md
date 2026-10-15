@@ -53,6 +53,33 @@ Astro checking uses package-scoped TypeScript 6, composed from `@2digits/tsconfi
 
 Inside this package, `pnpm dev` selects `dev:server` through Turbo's TUI; `pnpm dev:server` starts native Astro. For streamed package-check logs use `pnpm --filter @tupak/design-system check --ui=stream`. TUI dev requires a real terminal; flags cannot create one. Root `dev:design-system` is the simpler designer/automation entrypoint.
 
+### Optional Impeccable evaluation
+
+The opt-in detector uses the root-pinned `impeccable` 4.5.2 CLI (engine 0.1.14), not a global install:
+
+```sh
+# Repository root; detector runs with the package-local DESIGN.md.
+pnpm detect:design-system
+# Equivalent authored-source scan, preserving native detector status:
+pnpm --dir packages/design-system exec impeccable detect src
+# Narrow to one authored family and retain structured output:
+pnpm --dir packages/design-system exec impeccable detect src/components/button --json
+```
+
+`design:detect` scans authored `src`, not ignored `dist/`, `.astro/`, browser reports, dependencies or copied `public/tupak-reference/` assets. Source detection is heuristic; it does not execute Astro, resolve CSS custom properties or prove rendered behavior. Findings in workbench documentation/examples need interpretation, not blanket cleanup.
+
+Exit status **0** means scan completed without primary findings (advisories may remain); **2** means completed with primary findings; **1** means an operational failure or at least one unscannable target, taking precedence over partial findings. Keep the nonzero status visible; findings are advisory to the team, not an automatic fix request or a new mandatory gate.
+
+The root alias uses package-directory `exec`, not filtered recursive script execution: the latter can remap detector exit `2` to `1`. From inside the package, `pnpm design:detect` is the direct package command.
+
+[DESIGN.md](DESIGN.md) is a manually maintained, **non-authoritative candidate snapshot** of `src/styles/tokens.css` for four literal allowlists: colors, font families, radii and font sizes. CSS remains the value authority. Refresh the snapshot manually with relevant token changes; do not change tokens to appease the detector. A combined light/dark allowlist cannot enforce mode, semantic role, contrast or approval. Matching tolerances and `var()` blind spots are documented there.
+
+Keep the four membership checks separate from Impeccable's aesthetic heuristics. During evaluation, literal `font-family: "Instrument Sans"` passed this baseline but still triggered the independent `overused-font` warning. That is not permission to replace the candidate font or widen the allowlist; inspect and discuss the finding instead of suppressing it.
+
+For rendered inspection, use the upload-free Astro URL. An ordinary `impeccable detect http://localhost:4321/preview` URL scan does **not** load this local baseline; source and URL results are different evidence. Neither proves design-system compliance, accessibility, branding acceptance, Shopify parity or production readiness.
+
+The project-local [impeccable-review skill](../../.agents/skills/impeccable-review/SKILL.md) loads only when a canonical/reference UX critique is explicitly requested. It is a bounded, report-only adaptation, not upstream's full `/impeccable` workflow. No installer, automatic hooks, live variant mode, context launcher, persisted critiques or automatic edits are configured. Existing format/types/lint/build/browser gates remain unchanged and are not replaced by detection or an AI verdict. Designer approval, developer acceptance and exact-store authorization remain separate human decisions.
+
 ### Native Tailwind validation and no-shadcn policy
 
 Oxlint owns general source lint, including Astro scripts. Package-local ESLint uses `astro-eslint-parser`, TypeScript frontmatter parsing and `jiti` for native class diagnostics. Better Tailwind resolves the runtime import graph rooted at `src/styles/global.css`, including authored tokens. Exactly two rules run at error severity:
