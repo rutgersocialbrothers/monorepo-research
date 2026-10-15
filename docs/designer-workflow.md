@@ -60,6 +60,21 @@ Use the [component contract](templates/component-contract.md) and [handoff](temp
 4. **Review both scopes:** inspect canonical Astro states and authorized Liquid rendering at relevant widths, with content extremes, focus, activation and disabled behavior. Record renderer differences explicitly; review merchant-editor integration separately.
 5. **Handoff:** record the exact source, URLs, environment, evidence, simulated behavior and unverified gaps. Separate designer approval from developer acceptance.
 
+### Project skills and review boundaries
+
+Use [adapt-astro-reference-to-liquid](../.agents/skills/adapt-astro-reference-to-liquid/SKILL.md) for the detailed planning/execution workflow. Its contract is not a one-to-one editor-control list: discuss merchant visibility and functional composition with the developer per adaptation. If the reference needs correction, finalize contract/Astro/examples/docs in a lower PR and stack the Liquid implementation separately above it. Developer approval permits implementation while designer review is pending; the lower PR must satisfy its review gates and merge before the upper PR can merge. Native storefront and theme-editor verification are required before calling implementation complete.
+
+Skill bodies and topic references load on demand, not into the global agent guide:
+
+| Skill | Load when |
+| --- | --- |
+| [tailwind-design-system](../.agents/skills/tailwind-design-system/SKILL.md) | Mapping tokens, responsive utilities, variants or shared styles; framework-neutral guidance only, preserving native Liquid/no-Preflight/merchant boundaries. |
+| [make-interfaces-feel-better](../.agents/skills/make-interfaces-feel-better/SKILL.md) | Evaluating reference quality or checking visual details; proposed design changes return to contract/designer review, not silent implementation polish. |
+| [fixing-accessibility](../.agents/skills/fixing-accessibility/SKILL.md) | Planning semantics and interaction, implementing controls/forms/focus, or reviewing accessibility. Automated scans do not establish conformance. |
+| [agent-browser](../.agents/skills/agent-browser/SKILL.md) | Operating that CLI for authorized real-browser checks, after checking availability/version; otherwise use environment-provided browser tooling. |
+
+Canonical skill sources live only in `.agents/skills/`; `.claude/skills` is a single relative directory symlink to `../.agents/skills`, not a second skill tree. OpenCode discovers `.agents/skills/` directly. Loading a skill is not permission to install tools, add dependencies, change merchant state, or approve a design.
+
 ```text
 Help me work on [user task/view] with the existing Liquid implementation.
 First identify relevant native Liquid primitives, consumers and source files.

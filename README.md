@@ -105,6 +105,8 @@ Review actual Liquid views through an authorized Shopify preview. The homepage u
 
 Use the [designer workflow](docs/designer-workflow.md), [component contract template](docs/templates/component-contract.md) and [handoff template](docs/templates/design-handoff.md). Designers own visual/interaction decisions; developers accept implementation contracts and platform behavior.
 
+For AI-assisted adaptation, use the project [Astro-to-Liquid skill](.agents/skills/adapt-astro-reference-to-liquid/SKILL.md): agree the plan and editor controls before implementation, separate contract corrections from the stacked Liquid implementation PR, and verify actual storefront/editor behavior. Supporting Tailwind, interface-detail, accessibility and browser-operation skills are loaded only for relevant work; see the [loading rules](.agents/skills/adapt-astro-reference-to-liquid/SKILL.md#supporting-skills-load-at-the-relevant-stage).
+
 ## Deployment and project identity
 
 GitHub Actions validates pushes/PRs without deployment secrets. Automated Liquid delivery uses the native Shopify CLI after validation and explicit activation, from exact protected branches:
