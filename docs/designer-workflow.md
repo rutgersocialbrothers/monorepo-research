@@ -81,3 +81,69 @@ Capture actual reference and Liquid preview URLs (including necessary non-secret
 Record commands/checks only if actually run. There is no current `design:review` command or generated case-ID report. Manual screenshots, browser observations and any explicitly authorized automation belong in the handoff with their evidence paths, failures and limitations.
 
 CSS compilation/Theme Check cannot certify visual correctness, accessibility, checkout, persistence, real-device behavior or editor parity. A screenshot is not proof of a working user flow. Label no-action demos as simulated flow behavior; distinguish observed native control behavior from unverified integration. Do not enter customer/personal data; review screenshot/report content before sharing and obtain authorization before disclosure.
+
+## External Tupak prototype: local integration preparation
+
+### Source and scope
+
+The assessed source is the sibling `../tupak-design-system`, repository `JPPACQ/tupak-design-system`, branch `main`, commit `afd9c66` (`Homepage and layout trials: hero, category slider v2, page gutter`). Its working tree was clean during assessment. It is a static HTML/CSS/vanilla-JavaScript design prototype, not a package to install or a runtime to import. This preparation does not approve its designs or implement the port.
+
+Use its design intent, selected assets and state specifications as reference. Keep this repository's Astro/Tailwind workbench, CSS-first tokens, framework-free contracts, registry, source exports and package checks. No React, shadcn, new renderer, include loader, generator or additional build/watch plumbing is needed. The source repository remains unchanged; `apps/liquid`, deployment and store configuration are outside this integration.
+
+### What to retain, translate or discard
+
+| External material | Local treatment |
+| --- | --- |
+| `tokens.css`: structural blue, red commit actions, supporting-action colors, surfaces, typography, spacing and shape | Translate selected values and meanings into `packages/design-system/src/styles/tokens.css`. Do not introduce a second authority or blindly equate source “primary blue” with the local primary action. |
+| Token descriptions and rationale | Update `src/tokens/reference.ts` metadata and relevant foundation panels; values stay in CSS. Adjust `src/styleguide/data.ts` if accepted ramp names or groups change. |
+| `components.css`: visual recipes and states | Adapt existing family markup and complete Tailwind class maps. Do not import the global reset or roughly 5,000-line stylesheet wholesale. |
+| Source dark selectors `[data-theme="dark"]` | Do not copy. Retain fixed `data-theme="tupak"`, mode classes, `color-scheme`, `light-dark()`, pre-paint restoration and scoped controls. |
+| `fonts.css`: embedded Raleway and Instrument Sans | Resolve the font/weight choice, retain licenses and use the local bundled-font convention; do not copy base64 font CSS. |
+| Product/category/editorial imagery, logo and icons | Select assets with recorded provenance, rights and sufficient resolution. The logo snippet requests original artwork; placeholder gallery views and payment-method screenshots are not production assets. Reuse the existing Icon family. |
+| Reusable section layouts | Compose typed Astro sections at build/render time, with supplied content, optional media and real optional links. Keep prototype business content out of canonical defaults. |
+| Browser fragment fetching, ID rewriting, prototype toolbar and story/CSV runtime | Discard; Astro composition and renderer-owned IDs replace them. Keep useful design rationale, not another workbench. |
+| Fixture search/cart/filter/pricing code, rejected alternatives and invented commercial claims | Do not port as working features. Any retained demonstration must identify simulated behavior; no fake cart success, policy claims or FAQ structured data. |
+
+### Design decisions still unresolved
+
+Source filenames and comments are evidence of trials, not approval:
+
+- `tokens.css:23-47` marks the new blue ramp and extra `975` step provisional; its comments also disagree about derivation. Kraft/forest and feedback-color overlap need review.
+- `tokens.css:214-254` puts Instrument Sans before Raleway and marks font/case choices as trials. The Instrument payload provides 400/700 while hero styling requests 800; explicitly select supported weights rather than relying on synthesis.
+- Separate structural brand, red commitment actions, pale-blue supporting actions and navy navigation intent. Existing local button variants and shared Link recipes do not automatically express the source hover/active/disabled states.
+- Radius (4px versus an 8px finder treatment), container width (1600px trial versus earlier widths), header/footer and category/product carousel treatments remain competing choices.
+- Current `/prototype/index.html` uses navy header-v2/footer-v3, panel-free category-slider-v2 and no mosaic. `/prototype/index-v2.html` retains the older category row and mosaic. The suffix does not identify the newest approved design.
+- Product-card B is described as client-selected in `styleguide.html:1637-1639`, but later prose still calls the choice open. Preserve that reported preference and flag the documentation conflict.
+- Dark product support remains TBD here, regardless of approval claims in the source. A light-only port must preserve the existing effective dark values where shared palette changes would otherwise change both modes; retaining the toggle alone is insufficient.
+
+These choices can remain explicitly labelled candidates in the workbench until resolved. Do not publish every trial as an enduring component variant.
+
+### Integration sequence and acceptance
+
+The reusable configuration requirement is independent of approving or porting the external design. `@tupak/design-system/tokens.css` is the native Tailwind 4 CSS-first configuration, and canonical Astro global styles consume that public export. Keep its four source-export shapes and framework-free contracts; do not export Astro renderers as a runtime library or add a legacy TypeScript config/alias stylesheet. Consumers own the engine, Preflight, explicit template sources and package-aware font bundling; see the [consumer example](../packages/design-system/README.md#consume-the-public-tailwind-configuration). Global root defaults and generic utility namespace collisions require deliberate import order, not a new isolation framework.
+
+The existing Playwright lane must exercise an isolated consumer's real public-export Tailwind/Vite compilation and browser behavior, including nested runtime overrides/modes, source ownership/private-class exclusion, Preflight ownership and emitted fonts, alongside canonical Astro references. Run the existing gate after installation and implementation before claiming success. Configuration/check coverage does not approve the provisional palette, fonts, dark-mode product support or any external design port; the sibling source remains unchanged.
+
+1. **Foundations first.** Record the selected font/weights, palette roles, sizing, radius and container baseline. Edit `src/styles/tokens.css`, the applicable shared base/recipe rules in `src/styles/global.css`, token metadata and foundation documentation. Keep provisional labels for unresolved decisions. Acceptance: one token authority, no copied external theme selectors and both existing mode scopes remain usable.
+2. **Restyle existing primitives before adding families.** Reuse Button/Link shared recipes, Icon, Input, Select, Checkbox, Radio Group, Dialog and other existing contracts. Preserve native form submission, disabled/loading semantics, names, focus and keyboard behavior. Add capabilities only where a selected design requires them; do not treat appearance alone as a new family.
+3. **Fill actual capability gaps.** Evaluate product-card B, quantity controls, tier pricing/order matrix and responsive carousel presentation against existing Card/Input/section capabilities. Add focused `<family>/<family>.contract.ts` and `.astro` pairs only for genuine reusable behavior. The registry discovers them; no new registration layer or generic commerce engine is needed. Data, currency, units and state must be caller-supplied, not inferred from display names or fixed Dutch fixtures.
+4. **Compose selected sections, then page examples.** Adapt existing `src/sections/` where their contracts fit; add only selected missing hero, category, banner, image/text, product and editorial compositions. Register curated section examples in `src/styleguide/Sections.astro`. Keep long/empty/text-only cases. Header/drawer, filters/history and carousel endpoints need explicit behavior contracts before porting; the existing partner carousel is not proof of responsive pagination parity.
+5. **Verify and hand off.** Run the existing package gate after implementation, then compare the rendered Astro references with the selected source views at narrow/wide widths, both modes, content extremes and interaction states. Preserve meaningful form, keyboard, mode/persistence, popup, reduced-motion and accessibility coverage. Remove incidental starter-only font/hex/geometry assertions rather than re-pinning a new set of arbitrary defaults; retain resolved-token/clipboard consistency checks. Add regression coverage only for changed consumer-visible behavior. Record visual approval separately from technical acceptance. No automatic Liquid application follows.
+
+The local package already has 21 families: alert, badge, button, card, checkbox, dialog, dropdown-menu, empty-state, form-section, icon, input, label, link, page-header, radio-group, select, separator, switch, tabs, textarea and tooltip. Select is a custom combobox/listbox with existing behavior coverage, not a native select to replace casually.
+
+### Runtime and integration risks
+
+- Source homepage content relies on `prototype/assets/prototype.js:54-78` fetching/injecting HTML. Astro must render core content without this dependency.
+- Mobile navigation opens, focuses its close control and restores trigger focus on Escape in the observed prototype. Its code has no dialog semantics, inert background or focus containment; choose a modal dialog or a nonmodal disclosure contract rather than assuming it is accessible as a modal.
+- Source filters use `replaceState` and initialize from the URL once; sorting has a separate history path. Back/Forward/filter state is not a proven unified contract.
+- Search only echoes the query. Cart actions explicitly announce simulated success; prices, VAT, stock and variant identifiers are fixtures. None is a Shopify integration.
+- Carousels can hide an endpoint control; keyboard focus at that transition needs review. The dual-range pointer target is an 18px thumb, not the larger interactive track claimed in its comment.
+- Source token contrast tooling handles limited hex inputs, not all CSS color/compositing. It is not accessibility certification.
+- Asset provenance and business copy require review before shipping: fabricated reviews, policy text, company/contact claims, specifications, gallery views and enabled-payment claims must not become defaults.
+
+### Evidence from this assessment
+
+Inspected the source styleguide and alternate homepage in a real browser, with the homepage at 1440px and 390px. The observed alternate homepage had no horizontal document overflow at either width; mobile Menu opened, Escape closed it and returned focus to the trigger. No browser page exceptions were recorded in that session. Inspected the existing Astro workbench at 1440px as the local visual baseline. These observations do not certify all routes, accessibility, asset loading or commerce behavior.
+
+Both previews were served locally without dependency installation or Shopify access. External navigation was blocked during browser inspection. No source code, token values, dependencies, tests, store settings, Git history or remote repositories were changed by this preparation; only local integration guidance was updated. The full package gate was not rerun for this analysis-only task.

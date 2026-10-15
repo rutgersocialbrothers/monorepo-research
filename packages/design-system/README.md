@@ -79,18 +79,36 @@ There is no shadcn dependency, plugin/rule registration or `components.json`. Do
 
 The four source-export shapes remain:
 
-| Export                                   | Purpose                                                |
-| ---------------------------------------- | ------------------------------------------------------ |
-| `@tupak/design-system/tokens.css`        | Authored tokens and Tailwind mapping                   |
-| `@tupak/design-system/themes`            | Single Tupak identity and independent light/dark modes |
-| `@tupak/design-system/contracts`         | Shared interface and inferred prop types               |
-| `@tupak/design-system/<family>-contract` | Family capabilities/defaults; e.g. `button-contract`   |
+| Export                                   | Purpose                                                        |
+| ---------------------------------------- | -------------------------------------------------------------- |
+| `@tupak/design-system/tokens.css`        | Reusable Tailwind 4 CSS-first configuration and runtime tokens |
+| `@tupak/design-system/themes`            | Single Tupak identity and independent light/dark modes         |
+| `@tupak/design-system/contracts`         | Shared interface and inferred prop types                       |
+| `@tupak/design-system/<family>-contract` | Family capabilities/defaults; e.g. `button-contract`           |
 
-These are authored source, not a compiled library. CSS consumers need a compatible Tailwind 4 toolchain and package-aware asset bundler for Fontsource imports, and own their source registration. The workbench scans its own `src/`; importing tokens does not register internal renderers. No library artifact, token JSON, renderer generator or packed-consumer workflow is provided. Liquid does **not** consume this CSS export.
+These are authored source, not a compiled library. `tokens.css` **is the reusable Tailwind 4 configuration**: bundled font imports, runtime custom properties, mode scopes and `@theme inline` utility mappings. It does not include the Tailwind engine, Preflight, source registration or private workbench component classes. Canonical Astro references consume this same public export through `src/styles/global.css`; their renderers, recipes and behavior are not exported as a runtime component library. No library artifact, token JSON, renderer generator or packed-consumer workflow is provided. Liquid does **not** consume this CSS export.
+
+### Consume the public Tailwind configuration
+
+Use a compatible Tailwind 4 integration (for example, native `@tailwindcss/vite`) and a package-aware asset bundler that resolves the export's Fontsource imports and emits their font assets. In the consuming application's stylesheet:
+
+```css
+@import 'tailwindcss' source(none);
+@import '@tupak/design-system/tokens.css';
+
+/* Paths are relative to this stylesheet; register only your own templates. */
+@source "../src";
+```
+
+The consumer owns the Tailwind engine/version, Preflight decision and template discovery. `source(none)` disables automatic scanning; the public token export does not register workbench templates. For a consumer without Preflight, replace the first import with `@import "tailwindcss/theme.css" layer(theme);` and `@import "tailwindcss/utilities.css" layer(utilities) source(none);`, retaining the public token import and explicit `@source`.
+
+This is an unprefixed, global foundation: root defaults and generic utility namespaces such as colors, spacing, radii and fonts can overlap another Tailwind theme. Compose theme imports deliberately; later declarations can override matching defaults. Do not assume importing it creates an isolated component scope or clears unrelated Tailwind defaults. Runtime overrides and explicit mode scopes remain CSS inheritance concerns, not separate generated configurations.
+
+The existing Playwright check lane includes isolated consumer compilation with the native Tailwind/Vite integration and public export, plus browser assertions for token-backed utilities, nested overrides/modes, consumer-owned sources and Preflight, private-class exclusion and bundled fonts. This is the validation contract, not a claim that the current checkout has passed; report results only after running the checks.
 
 ## Component families
 
-Existing families are Button, Icon, Input, Link and Select. Each lower-case kebab-case folder contains `<family>.contract.ts` and `<family>.astro`, with optional `.example.astro`, styles, behavior and subparts beside them. Contracts export `as const satisfies ComponentContract`; renderer scalar/enum props derive from `ContractProps<typeof contract>`, while native attributes and structured data remain renderer-owned.
+Existing families are Alert, Badge, Button, Card, Checkbox, Dialog, Dropdown Menu, Empty State, Form Section, Icon, Input, Label, Link, Page Header, Radio Group, Select, Separator, Switch, Tabs, Textarea and Tooltip. Each lower-case kebab-case folder contains `<family>.contract.ts` and `<family>.astro`, with optional `.example.astro`, styles, behavior and subparts beside them. Contracts export `as const satisfies ComponentContract`; renderer scalar/enum props derive from `ContractProps<typeof contract>`, while native attributes and structured data remain renderer-owned. See the [external Tupak integration preparation](../../docs/designer-workflow.md#external-tupak-prototype-local-integration-preparation) before porting the separate prototype.
 
 `src/registry.ts` discovers siblings. Contract names must match their family; missing renderers and duplicate identities fail rather than disappear. New correctly named contracts automatically receive the `<family>-contract` export and Components/Contracts specimens; no barrel or page registration is needed. Enum/boolean states create matrices; other families receive default specimens. `preview` supplies `content`, `label`, `props`, `exclude` and `overlay` for specimen composition. Family anchors/imports derive from folder names; captions are slugified and are not a uniqueness guarantee.
 

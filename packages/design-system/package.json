@@ -47,7 +47,8 @@
     "jiti": "catalog:",
     "playwright": "catalog:",
     "tailwindcss": "catalog:",
-    "typescript": "catalog:astro-tooling"
+    "typescript": "catalog:astro-tooling",
+    "vite": "catalog:"
   },
   "engines": {
     "node": "24.x"

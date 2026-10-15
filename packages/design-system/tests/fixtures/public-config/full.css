@@ -1,0 +1,4 @@
+@import 'tailwindcss' source(none);
+@import '@tupak/design-system/tokens.css';
+
+@source './index.html';

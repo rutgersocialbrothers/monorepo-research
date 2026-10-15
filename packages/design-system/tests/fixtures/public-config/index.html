@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Public configuration consumer</title>
+    <link rel="stylesheet" href="./full.css" />
+  </head>
+  <body>
+    <h1>Consumer-owned Preflight</h1>
+    <div id="outer" class="bg-primary text-primary-foreground rounded-md p-4 text-sm font-sans">Consumer</div>
+    <div
+      id="outer-reference"
+      style="
+        background-color: var(--primary);
+        color: var(--primary-foreground);
+        border-radius: var(--ds-radius-md);
+        padding: calc(var(--ui-spacing) * 4);
+        font-size: var(--ds-text-sm-size);
+        line-height: var(--ds-text-sm-line-height);
+        font-family: var(--ui-font-sans);
+      "
+    >
+      Runtime token reference
+    </div>
+    <section
+      style="
+        --primary: rgb(12 34 56);
+        --primary-foreground: rgb(210 220 230);
+        --ds-radius-md: 23px;
+        --ui-spacing: 3px;
+        --ds-text-sm-size: 19px;
+        --ds-text-sm-line-height: 27px;
+        --ui-font-sans: monospace;
+      "
+    >
+      <div id="nested" class="bg-primary text-primary-foreground rounded-md p-4 text-sm font-sans">Consumer</div>
+      <div
+        id="nested-reference"
+        style="
+          background-color: var(--primary);
+          color: var(--primary-foreground);
+          border-radius: var(--ds-radius-md);
+          padding: calc(var(--ui-spacing) * 4);
+          font-size: var(--ds-text-sm-size);
+          line-height: var(--ds-text-sm-line-height);
+          font-family: var(--ui-font-sans);
+        "
+      >
+        Nested runtime token reference
+      </div>
+    </section>
+    <section class="light">
+      <div id="light" class="bg-background text-foreground">Light consumer</div>
+      <div id="light-reference" style="background-color: var(--background); color: var(--foreground)">
+        Light runtime token reference
+      </div>
+      <section class="dark">
+        <div id="dark" class="bg-background text-foreground">Nested dark consumer</div>
+        <div id="dark-reference" style="background-color: var(--background); color: var(--foreground)">
+          Dark runtime token reference
+        </div>
+      </section>
+    </section>
+    <div id="source-owned" class="w-[137px]">Consumer-only candidate</div>
+    <span id="private" class="ds-display ds-icon-geometry sg-icon-button sg-metadata">Private names</span>
+    <span id="private-reference">Unstyled reference</span>
+    <div id="display-font" class="font-display">Consumer</div>
+  </body>
+</html>

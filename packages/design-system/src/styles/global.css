@@ -1,5 +1,5 @@
 @import 'tailwindcss' source(none);
-@import './tokens.css';
+@import '@tupak/design-system/tokens.css';
 @import './styleguide.css';
 
 @source '../';
