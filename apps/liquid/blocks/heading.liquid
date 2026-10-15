@@ -1,0 +1,61 @@
+{% doc %}
+  Renders a merchant-editable semantic heading.
+
+  @example
+  {% content_for 'block', type: 'heading', id: 'heading' %}
+{% enddoc %}
+
+{% liquid
+  assign heading_tag = block.settings.heading_level | default: 'h2'
+%}
+
+{% if block.settings.text != blank %}
+  <{{ heading_tag }}
+    class="heading"
+    style="--text-align: {{ block.settings.alignment }}"
+    {{ block.shopify_attributes }}
+  >
+    {{ block.settings.text }}
+  </{{ heading_tag }}>
+{% endif %}
+
+{% stylesheet %}
+  .heading {
+    text-align: var(--text-align);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.heading",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:liquid_components.labels.text",
+      "default": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_level",
+      "label": "t:liquid_components.labels.heading_level",
+      "options": [
+        { "value": "h1", "label": "t:liquid_components.options.heading_level.h1" },
+        { "value": "h2", "label": "t:liquid_components.options.heading_level.h2" },
+        { "value": "h3", "label": "t:liquid_components.options.heading_level.h3" },
+        { "value": "h4", "label": "t:liquid_components.options.heading_level.h4" },
+        { "value": "h5", "label": "t:liquid_components.options.heading_level.h5" },
+        { "value": "h6", "label": "t:liquid_components.options.heading_level.h6" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:liquid_components.labels.alignment",
+      "default": "left"
+    }
+  ],
+  "presets": [{ "name": "t:liquid_components.general.heading" }]
+}
+{% endschema %}

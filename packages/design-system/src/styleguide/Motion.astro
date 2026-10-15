@@ -1,0 +1,11 @@
+---
+import Header from "./SectionHeader.astro"; import Block from "./Block.astro"; import Token from "./Token.astro"; import {group} from "./data";
+---
+<Header title="Motion">Motion explains change; it should never slow people down. Small elements move fast, large surfaces a little slower. Everything respects prefers-reduced-motion.</Header>
+<Block title="Durations">
+ <button slot="aside" type="button" id="motion-play" class="rounded-md border border-input px-3 py-2 text-sm">Play</button>
+ <div class="divide-y divide-border">{group("duration").map(t=><div class="grid items-center gap-3 py-4 md:sg-duration-columns"><Token name={t.name} /><span class="sg-value" data-css-value={t.name}></span><div class="sg-motion-track"><span data-motion-dot style={`transition-duration:var(${t.name})`}></span></div><span class="text-xs text-muted-foreground">{t.description}</span></div>)}</div>
+</Block>
+<Block title="Easing" description="Hover or focus a card to preview at 500ms. The curve is read from the live easing token.">
+ <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{group("ease").map(t=><button type="button" class="sg-panel sg-easing text-left" data-easing-token={t.name}><div class="flex items-start gap-5"><svg viewBox="-6 -16 112 132" class="h-24 w-24 shrink-0" aria-hidden="true"><rect width="100" height="100" fill="none" stroke="var(--border)" stroke-dasharray="2 3" /><path data-easing-curve fill="none" stroke="var(--primary)" stroke-width="3" /></svg><div class="min-w-0"><code class="sg-value break-all">{t.name}</code><span class="sg-value mt-2 block break-all" data-css-value={t.name}></span><p class="mt-2 text-xs text-muted-foreground">{t.description}</p></div></div><div class="sg-motion-track mt-5"><span style={`transition-duration:var(--ds-duration-slower);transition-timing-function:var(${t.name})`}></span></div></button>)}</div>
+</Block>

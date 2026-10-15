@@ -1,0 +1,37 @@
+---
+import type { TabsProps } from "./tabs.contract";
+interface Props extends TabsProps { label: string; items: ReadonlyArray<{ label:string; content:string; disabled?:boolean }>; }
+const { variant="default", orientation="horizontal", label, items } = Astro.props;
+const id = `tabs-${crypto.randomUUID()}`;
+const first = items.findIndex(item=>!item.disabled);
+---
+<div class:list={["flex w-full min-w-0 flex-col gap-4", orientation === "vertical" && "flex-row"]} data-component-tabs data-variant={variant} data-orientation={orientation}>
+ <div
+   role="tablist"
+   aria-label={label}
+   aria-orientation={orientation}
+   class:list={[
+     "flex w-fit max-w-full gap-1 overflow-x-auto rounded-(--ds-radius-lg) bg-muted ds-tabs-inset",
+     variant === "line" && "rounded-none border-b border-border bg-transparent",
+     orientation === "vertical" && "shrink-0 flex-col",
+   ]}
+ >
+ {items.map((item,i)=><button type="button" role="tab" id={`${id}-tab-${i}`} aria-controls={`${id}-panel-${i}`} aria-selected={i===first?"true":"false"} tabindex={i===first?0:-1} disabled={item.disabled} class:list={["cursor-pointer whitespace-nowrap rounded-(--ds-radius-md) px-3 py-2 text-(length:--ds-text-sm-size) text-muted-foreground aria-selected:bg-background aria-selected:text-foreground disabled:cursor-not-allowed disabled:opacity-(--ds-opacity-disabled)", variant === "line" ? "rounded-none border-b-2 border-transparent aria-selected:border-primary aria-selected:shadow-none" : "aria-selected:shadow-(--ds-shadow-sm)"]}>{item.label}</button>)}
+ </div>
+ {items.map((item,i)=><div role="tabpanel" id={`${id}-panel-${i}`} aria-labelledby={`${id}-tab-${i}`} hidden={i!==first} tabindex="0" class="text-(length:--ds-text-sm-size) text-muted-foreground">{item.content}</div>)}
+</div>
+<script>
+ for(const root of document.querySelectorAll<HTMLElement>("[data-component-tabs]")){
+  const tabs=[...root.querySelectorAll<HTMLButtonElement>('[role="tab"]:not(:disabled)')];
+  const panels=[...root.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+  function select(tab:HTMLButtonElement){for(const item of tabs){item.setAttribute("aria-selected",String(item===tab));item.tabIndex=item===tab?0:-1;} for(const panel of panels){panel.hidden=panel.id!==tab.getAttribute("aria-controls");}tab.focus();}
+  for(const tab of tabs){tab.addEventListener("click",()=>select(tab));}
+  root.querySelector('[role="tablist"]')?.addEventListener("keydown",(event)=>{
+   if(!(event instanceof KeyboardEvent)){return;}
+   const index=tabs.indexOf(document.activeElement as HTMLButtonElement);
+   const vertical=root.dataset.orientation==="vertical";
+   const next=event.key==="Home"?0:event.key==="End"?tabs.length-1:event.key===(vertical?"ArrowDown":"ArrowRight")?(index+1)%tabs.length:event.key===(vertical?"ArrowUp":"ArrowLeft")?(index+tabs.length-1)%tabs.length:undefined;
+   if(next!==undefined&&tabs[next]){event.preventDefault();select(tabs[next]);}
+  });
+ }
+</script>

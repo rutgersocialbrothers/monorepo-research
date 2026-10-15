@@ -1,0 +1,15 @@
+---
+import type { CardProps } from "./card.contract";
+interface Props extends CardProps { class?: string; heading?: "h2" | "h3" | "h4"; }
+const { title="Weekend tickets", description="Book before Friday and save 15%.", heading: Heading = "h3", class: className } = Astro.props;
+---
+<article
+  class:list={[
+    "grid min-w-0 gap-6 rounded-(--card-radius) border-(length:--card-border-width) border-border bg-card p-(--card-padding) text-card-foreground shadow-(--card-shadow)",
+    className,
+  ]}
+>
+ {title && <header><Heading class="ds-display text-2xl">{title}</Heading>{description && <p class="mt-2 text-sm text-muted-foreground">{description}</p>}<slot name="action" /></header>}
+ <div><slot /></div>
+ {Astro.slots.has("footer") && <footer class="flex flex-wrap items-center gap-2"><slot name="footer" /></footer>}
+</article>

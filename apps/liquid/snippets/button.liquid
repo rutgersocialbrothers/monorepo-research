@@ -1,0 +1,38 @@
+{%- doc -%}
+  Renders a native button using authored shared Liquid class selection.
+  A blank label renders nothing. Text and attribute values are escaped.
+
+  @param {string} label - Required button text
+  @param {string} [variant] - primary or secondary; defaults to primary
+  @param {string} [size] - small, medium, or large; defaults to medium
+  @param {string} [button_type] - button, submit, or reset; defaults to button
+  @param {string} [name] - Optional form field name
+  @param {string} [value] - Optional form field value
+  @param {boolean} [disabled] - Whether the native button is disabled
+
+  @example
+  {% assign checkout_label = 'cart.checkout' | t %}
+  {% render 'button', label: checkout_label, button_type: 'submit', name: 'checkout', value: checkout_label %}
+{%- enddoc -%}
+
+{%- unless label == blank -%}
+  {%- liquid
+    assign resolved_type = 'button'
+    case button_type
+      when 'submit', 'reset'
+        assign resolved_type = button_type
+    endcase
+  -%}
+  {%- capture button_classes -%}
+    {%- render 'design-button-classes', variant: variant, size: size -%}
+  {%- endcapture -%}
+  <button
+    type="{{ resolved_type | escape }}"
+    class="{{ button_classes | strip | escape }}"
+    {% if name != blank %}name="{{ name | escape }}"{% endif %}
+    {% if value != nil %}value="{{ value | escape }}"{% endif %}
+    {% if disabled == true %}disabled{% endif %}
+  >
+    {{- label | escape -}}
+  </button>
+{%- endunless -%}

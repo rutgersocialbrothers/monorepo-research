@@ -1,0 +1,198 @@
+@import 'tailwindcss' source(none);
+@import './tokens.css';
+@import './styleguide.css';
+
+@source '../';
+@source not '../**/*.stories.*';
+@source not '../**/*.test.*';
+@source not '../**/*.spec.*';
+@source not '../**/*.fixture.*';
+@source not '../**/*.fixtures.*';
+@source not '../**/__tests__/**';
+@source not '../**/tests/**';
+@source not '../**/__fixtures__/**';
+@source not '../**/fixtures/**';
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    margin: 0;
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--heading-font-family);
+    color: var(--foreground-heading);
+  }
+
+  h1 {
+    font-family: var(--heading-display-font-family);
+  }
+
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  code,
+  pre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  }
+}
+
+/* The designer's display face has a single, regular weight. */
+h1 {
+  font-family: var(--heading-display-font-family);
+  font-weight: var(--heading-font-weight);
+  letter-spacing: var(--heading-tracking);
+  color: var(--foreground-heading);
+}
+
+@layer components {
+  .ds-display {
+    font-family: var(--heading-display-font-family);
+    font-weight: var(--heading-font-weight);
+    letter-spacing: var(--heading-tracking);
+    color: var(--foreground-heading);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  .ds-tab {
+    position: relative;
+    color: var(--muted-foreground);
+  }
+
+  .ds-tab::after {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0;
+    left: 0.75rem;
+    height: 2px;
+    border-radius: 999px;
+    background: transparent;
+    content: '';
+  }
+
+  .ds-tab[aria-selected='true'] {
+    color: var(--foreground);
+  }
+
+  .ds-tab[aria-selected='true']::after {
+    background: var(--primary);
+  }
+
+  .ds-tab-panel[hidden] {
+    display: none;
+  }
+
+  .ds-collapsible[data-state='collapsed'] .ds-collapsible-body {
+    max-height: 18rem;
+    overflow: hidden;
+  }
+
+  .ds-collapsible:not([data-state='collapsed']) .ds-collapsible-fade,
+  .ds-collapsible[data-state='fits'] .ds-collapsible-toggle {
+    display: none;
+  }
+
+  .ds-collapsible-toggle {
+    display: flex;
+  }
+
+  .ds-collapsible[data-state='expanded'] .ds-collapsible-chevron {
+    rotate: 180deg;
+  }
+}
+
+/* Private canonical recipes preserve component mechanics, not foundation tokens. */
+@utility ds-icon-geometry {
+  width: 1em;
+  height: 1em;
+  min-width: 1em;
+}
+
+@utility ds-dialog-height {
+  max-height: calc(100dvh - 2rem);
+}
+
+@utility ds-dialog-width {
+  width: min(32rem, calc(100vw - 2rem));
+}
+
+@utility ds-floating-width {
+  max-width: calc(100vw - 3rem);
+}
+
+@utility ds-form-split {
+  grid-template-columns: 1fr 2fr;
+}
+
+@utility ds-switch-transition {
+  transition-property: background-color;
+  transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+  transition-duration: var(--tw-duration, var(--default-transition-duration));
+}
+
+@utility ds-tabs-inset {
+  padding: 3px;
+}
+
+@utility ds-masonry-rows {
+  grid-auto-rows: 1px;
+}
+
+@utility ds-specimen-tracking {
+  letter-spacing: -0.06em;
+}
+
+@utility ds-about-columns {
+  grid-template-columns: minmax(0, 1.05fr) minmax(24rem, 0.95fr);
+}
+
+@utility ds-footer-columns {
+  grid-template-columns: 1.15fr 1fr 1fr 1.1fr;
+}
+
+@utility ds-carousel-scrollbar {
+  scrollbar-width: none;
+}
+
+@utility ds-carousel-pair {
+  flex-basis: calc((100% - 0.75rem) / 2);
+}
+
+@utility ds-carousel-trio {
+  flex-basis: calc((100% - 1.5rem) / 3);
+}
+
+@utility ds-carousel-quartet {
+  flex-basis: calc((100% - 2.25rem) / 4);
+}

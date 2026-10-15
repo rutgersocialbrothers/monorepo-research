@@ -1,0 +1,5 @@
+---
+interface Props { name:string; label?:string; value?:boolean; color?:boolean; }
+const { name,label=name,value=false,color=false }=Astro.props;
+---
+<button type="button" class="sg-copy" data-copy-token={name} data-copy-color={color||undefined} title="Click to copy the variable; Shift+click copies its value">{label}</button>{value&&<span class="sg-value block" data-css-value={name} data-color={color||undefined}></span>}

@@ -1,0 +1,26 @@
+---
+import Header from "./SectionHeader.astro";
+import Block from "./Block.astro";
+import Token from "./Token.astro";
+import { ramps, steps, group, semanticGroup } from "./data";
+import { colorReferences } from "./color-references";
+const notes={neutral:"Text, surfaces, borders",brand:"Primary actions, focus, links",success:"Positive feedback",warning:"Caution, pending states",destructive:"Errors, destructive actions",info:"Neutral information"};
+const groups=["Surfaces","Text","Actions","Feedback","Borders & focus","Charts","Sidebar"];
+const semantic=group("semantic");
+function pair(name:string){if(semantic.some(t=>t.name===`${name}-foreground`)){return `${name}-foreground`;}if(["--foreground","--muted-foreground","--foreground-heading"].includes(name)){return "--background";}if(name.endsWith('-foreground')){const background=name.replace(/-foreground$/, '');if(semantic.some(t=>t.name===background)){return background;}}return "";}
+---
+<Header title="Colors">Two layers. <strong>Ramps</strong> are the provisional starter palette, with independent feedback colors. <strong>Semantic colors</strong> give each color a job and resolve in light and dark. Components only use semantic colors. The current palette and mode combinations are not approved Tupak branding.</Header>
+<Block title="Ramps" description="Eleven steps from 50 to 950. These authored palette values are the foundation; use semantic colors in components.">
+ <div class="space-y-8">{ramps.map(r=><div class="grid gap-3 md:sg-ramp-columns"><div><p class="text-sm font-semibold capitalize">{r}</p><p class="text-xs text-muted-foreground">{notes[r]}</p></div><div class="sg-scroll"><div class="grid sg-ramp-width grid-cols-11 gap-1.5">{steps.map(step=><div><button type="button" data-copy-token={`--palette-${r}-${step}`} data-copy-color class="h-14 w-full rounded-md border border-border transition-transform hover:-translate-y-0.5" style={`background:var(--palette-${r}-${step})`} aria-label={`Copy ${r} ${step}`}></button><p class="mt-1 text-xs font-medium">{step}</p><span class="sg-value" data-css-value={`--palette-${r}-${step}`} data-color></span></div>)}</div></div></div>)}</div>
+</Block>
+{groups.map(category=><Block title={category} description={category==="Surfaces"?"Use bg-background, bg-card and bg-surface-raised. Swatches show light and dark.":undefined}>
+ <div class="sg-scroll"><table class="sg-table sg-color-table sg-color-table-width print:min-w-0">
+ <colgroup><col class="sg-color-token-column" /><col /><col /><col /></colgroup>
+ <thead><tr><th scope="col">Token</th><th scope="col">Light</th><th scope="col">Dark</th><th scope="col">Contrast</th></tr></thead><tbody>
+ {semantic.filter(t=>semanticGroup(t.name)===category).map(t=><tr data-color-token={t.name}>
+  <td><div class="flex items-center gap-3"><div class="flex shrink-0"><span class="light size-7 rounded-md border border-black/10" style={`background:var(${t.name})`}></span><span class="dark -ml-1.5 size-7 rounded-md border border-black/10" style={`background:var(${t.name})`}></span></div><div class="min-w-0"><Token name={t.name} color /><p class="text-xs text-muted-foreground">{t.description}</p></div></div></td>
+  {["light","dark"].map(mode=><td><div class="sg-color-value"><span data-color-reference={JSON.stringify(colorReferences(t.name, mode as 'light'|'dark'))}></span><span class="uppercase" data-css-value={t.name} data-color data-value-mode={mode}></span></div></td>)}
+  <td>{pair(t.name)?<div class="flex flex-col items-start gap-1">{["light","dark"].map(mode=><span class="sg-contrast-badge" data-contrast-bg={t.name} data-contrast-fg={pair(t.name)} data-contrast-mode={mode}></span>)}</div>:<span class="text-xs text-muted-foreground">—</span>}</td>
+ </tr>)}
+ </tbody></table></div>
+</Block>)}

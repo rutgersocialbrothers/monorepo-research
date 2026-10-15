@@ -1,0 +1,103 @@
+---
+import type { SelectOption, SelectProps, SelectSize } from "./select.contract";
+import Icon from "../icon/icon.astro";
+
+interface Props extends SelectProps {
+  options: ReadonlyArray<SelectOption>;
+  id?: string;
+  name?: string;
+  describedBy?: string;
+  class?: string;
+}
+
+const {
+  options,
+  value = "",
+  placeholder = "Choose an option",
+  size = "md",
+  disabled = false,
+  invalid = false,
+  open = false,
+  id,
+  name,
+  describedBy,
+  class: className,
+} = Astro.props;
+
+const uid = id ?? `select-${Math.random().toString(36).slice(2, 8)}`;
+const listId = `${uid}-listbox`;
+const selected = options.find((option) => option.value === value);
+
+const sizes: Record<SelectSize, string> = {
+  sm: "min-h-[var(--input-height-sm)] py-1",
+  md: "min-h-[var(--input-height-md)] py-2",
+};
+---
+
+<div class:list={["relative w-full min-w-0", className]} data-select data-open={open ? "true" : "false"} data-select-pinned={open ? "" : undefined}>
+  <input type="hidden" name={name} value={value} disabled={disabled} data-select-input />
+  <button
+    type="button"
+    id={id}
+    role="combobox"
+    aria-haspopup="listbox"
+    aria-expanded={open ? "true" : "false"}
+    aria-controls={listId}
+    aria-invalid={invalid ? "true" : undefined}
+    aria-describedby={describedBy}
+    disabled={disabled}
+    data-select-trigger
+    class:list={[
+      "flex w-full min-w-0 items-center justify-between gap-2 rounded-(--input-radius) border-(length:--input-border-width) border-input bg-background px-(--input-padding-x) text-base text-foreground outline-none",
+      "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+      "aria-invalid:border-destructive aria-invalid:ring-destructive disabled:cursor-not-allowed disabled:opacity-50",
+      sizes[size],
+    ]}
+  >
+    <span data-select-value class:list={["truncate", !selected && "text-muted-foreground"]}>
+      {selected?.label ?? placeholder}
+    </span>
+    <Icon name="chevron-down" size={16} />
+  </button>
+
+  <ul
+    id={listId}
+    role="listbox"
+    hidden={!open}
+    data-select-list
+    class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-(--input-radius) border border-border bg-popover p-1 text-popover-foreground shadow-popover"
+  >
+    {
+      options.map((option) => {
+        const isSelected = option.value === value;
+
+        return (
+          <li
+            role="option"
+            tabindex={option.disabled ? undefined : -1}
+            data-select-option
+            data-value={option.value}
+            aria-selected={isSelected ? "true" : "false"}
+            aria-disabled={option.disabled ? "true" : undefined}
+            class:list={[
+              "group relative flex min-h-9 cursor-default items-center rounded-sm py-2 pr-8 pl-2 text-sm outline-none select-none",
+              "focus:bg-accent focus:text-accent-foreground",
+              option.disabled && "pointer-events-none opacity-50",
+            ]}
+          >
+            <span data-select-label>{option.label}</span>
+            <span class="pointer-events-none absolute right-2 flex items-center opacity-0 group-aria-selected:opacity-100">
+              <Icon name="check" size={16} />
+            </span>
+          </li>
+        );
+      })
+    }
+  </ul>
+</div>
+
+<script>
+  import { setupSelects } from "./select.behavior";
+
+  setupSelects();
+</script>

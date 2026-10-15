@@ -1,0 +1,40 @@
+---
+import type { DropdownMenuProps } from "./dropdown-menu.contract";
+import { buttonBaseClass, buttonSizeClass, buttonVariantClass } from "../button/button.styles";
+interface Props extends DropdownMenuProps { items:ReadonlyArray<{label:string;value:string;disabled?:boolean;destructive?:boolean}>; }
+const { label="Open menu",items }=Astro.props;
+const id=`menu-${crypto.randomUUID()}`;
+---
+<div class="relative" data-component-menu>
+ <button type="button" data-menu-trigger aria-haspopup="menu" aria-expanded="false" aria-controls={id} class:list={[buttonBaseClass,buttonSizeClass.md,buttonVariantClass.outline]}>{label}</button>
+ <div id={id} role="menu" aria-label={label} hidden class="absolute top-full left-0 z-(--ds-z-popover) mt-1 ds-floating-width min-w-48 rounded-(--overlay-radius) border border-border bg-popover p-1 text-popover-foreground shadow-(--overlay-shadow)">
+ {items.map(item=><button type="button" role="menuitem" tabindex="-1" disabled={item.disabled} data-value={item.value} class:list={["block w-full cursor-pointer rounded-(--ds-radius-sm) p-2 text-left text-(length:--ds-text-sm-size) hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-(--ds-opacity-disabled)", item.destructive&&"text-destructive"]}>{item.label}</button>)}
+ </div>
+ <span class="sr-only" role="status" data-menu-result></span>
+</div>
+<script>
+ for(const root of document.querySelectorAll<HTMLElement>("[data-component-menu]")){
+  const trigger=root.querySelector<HTMLButtonElement>("[data-menu-trigger]");
+  const menu=root.querySelector<HTMLElement>('[role="menu"]');
+  if(!trigger||!menu){continue;}
+  const items=[...menu.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')];
+  function close(restore=false){if(!menu||!trigger){return;}menu.hidden=true;trigger.setAttribute("aria-expanded","false");if(restore){trigger.focus();}}
+  function open(last=false){if(!menu||!trigger){return;}menu.hidden=false;trigger.setAttribute("aria-expanded","true");(last?items.at(-1):items[0])?.focus();}
+  trigger.addEventListener("click",()=>{if(menu.hidden){open();}else {close();}});
+  trigger.addEventListener("keydown",event=>{if(event.key==="ArrowDown"||event.key==="ArrowUp"){event.preventDefault();event.stopPropagation();open(event.key==="ArrowUp");}});
+  root.addEventListener("keydown",event=>{
+   if(event.key==="Escape"){close(true);event.stopPropagation();}
+   if(event.key==="Tab"){close();}
+   const current=items.indexOf(document.activeElement as HTMLButtonElement);
+   const next=event.key==="Home"?0:event.key==="End"?items.length-1:event.key==="ArrowDown"?(current+1)%items.length:event.key==="ArrowUp"?(current+items.length-1)%items.length:undefined;
+   if(next!==undefined){event.preventDefault();items[next]?.focus();}
+  });
+  root.addEventListener("focusout",event=>{if(event.relatedTarget instanceof Node&&!root.contains(event.relatedTarget)){close();}});
+  document.addEventListener("pointerdown",event=>{if(event.target instanceof Node&&!root.contains(event.target)){close();}});
+  for(const item of items){item.addEventListener("click",()=>{
+   root.dispatchEvent(new CustomEvent("menu-select",{bubbles:true,detail:{value:item.dataset.value}}));
+   const status=root.querySelector("[data-menu-result]");if(status){status.textContent=`Selected ${item.textContent}. Example only.`;}
+   close(true);
+  });}
+ }
+</script>

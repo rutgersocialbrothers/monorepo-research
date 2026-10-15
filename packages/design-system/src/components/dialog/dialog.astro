@@ -1,0 +1,30 @@
+---
+import type { DialogProps } from "./dialog.contract";
+import { buttonBaseClass, buttonSizeClass, buttonVariantClass } from "../button/button.styles";
+interface Props extends DialogProps { id?:string; }
+const { id=`dialog-${crypto.randomUUID()}`,title="Edit profile",description="Changes are saved to your account.",trigger="Open dialog" }=Astro.props;
+---
+<div data-component-dialog>
+ <button type="button" data-dialog-open aria-haspopup="dialog" aria-controls={id} class:list={[buttonBaseClass,buttonSizeClass.md,buttonVariantClass.outline]}>{trigger}</button>
+ <dialog id={id} aria-labelledby={`${id}-title`} aria-describedby={`${id}-description`} class="m-auto ds-dialog-height ds-dialog-width overflow-auto rounded-(--overlay-radius) border border-border bg-popover p-(--card-padding) text-popover-foreground shadow-(--overlay-shadow) backdrop:bg-black/60">
+  <h3 id={`${id}-title`} class="text-lg">{title}</h3>
+  <p id={`${id}-description`} class="mt-2 text-sm text-muted-foreground">{description}</p>
+  <div class="my-5"><slot /></div>
+  <div class="flex flex-wrap justify-end gap-2"><slot name="actions" /><button type="button" data-dialog-close class:list={[buttonBaseClass,buttonSizeClass.md,buttonVariantClass.outline]}>Close</button></div>
+ </dialog>
+</div>
+<script>
+ for(const root of document.querySelectorAll("[data-component-dialog]")){
+  const dialog=root.querySelector("dialog"),trigger=root.querySelector<HTMLButtonElement>("[data-dialog-open]");
+  trigger?.addEventListener("click",()=>dialog?.showModal());
+  for(const close of root.querySelectorAll("[data-dialog-close]")){close.addEventListener("click",()=>dialog?.close());}
+  dialog?.addEventListener("close",()=>trigger?.focus());
+  dialog?.addEventListener("keydown",(event)=>{
+   if(event.key!=="Tab") {return;}
+   const focusable=[...dialog.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]')].filter(node=>node.tabIndex>=0 && !node.matches(':disabled') && node.getClientRects().length>0);
+   const first=focusable[0],last=focusable.at(-1);
+   if(event.shiftKey && document.activeElement===first){event.preventDefault();last?.focus();}
+   else if(!event.shiftKey && document.activeElement===last){event.preventDefault();first?.focus();}
+  });
+ }
+</script>

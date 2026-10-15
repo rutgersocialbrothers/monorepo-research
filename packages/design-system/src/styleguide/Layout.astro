@@ -1,0 +1,13 @@
+---
+import Header from "./SectionHeader.astro"; import Block from "./Block.astro"; import Token from "./Token.astro"; import {group} from "./data";
+---
+<Header title="Layout">Mobile first. Styles apply from a breakpoint upward (md:grid-cols-2). Pages sit in a centered container with responsive side margins and a twelve-column grid.</Header>
+<Block title="Breakpoints" description="Minimum widths for responsive variants. Breakpoints are fixed at build time; they cannot change with a theme.">
+ <span slot="aside" class="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground" data-viewport></span>
+ <div class="space-y-3">{group("breakpoint").map(t=><div class="grid sg-breakpoint-columns items-center gap-4"><Token name={t.name} label={t.name.replace("--ds-breakpoint-","")+":"} /><span class="sg-value" data-css-value={t.name}></span><div class="h-6 rounded-sm bg-muted"><div class="h-full rounded-sm bg-primary/30" data-breakpoint-bar={t.name}></div></div></div>)}</div>
+</Block>
+<Block title="Grid" description="Use container-page for the page frame and grid-page for the twelve-column grid. Gutters and margins grow at md and lg.">
+ <div class="rounded-lg bg-surface-sunken py-6"><div class="container-page"><div class="grid-page">{Array.from({length:12},(_,i)=><div class="flex h-28 items-end justify-center rounded-xs border border-primary/20 bg-primary/10 pb-2 sg-caption">{i+1}</div>)}</div><div class="grid-page mt-4"><div class="col-span-12 rounded-sm border border-border bg-card p-3 text-xs md:col-span-8">col-span-8</div><div class="col-span-12 rounded-sm border border-border bg-card p-3 text-xs md:col-span-4">col-span-4</div></div></div></div>
+ <table class="sg-table mt-6"><thead><tr><th>Token</th><th>Value</th><th>Description</th></tr></thead><tbody>{group("grid").map(t=><tr><td><Token name={t.name} /></td><td><span class="sg-value" data-css-value={t.name}></span></td><td class="text-xs text-muted-foreground">{t.description}</td></tr>)}</tbody></table>
+</Block>
+<Block title="Containers" description="Maximum content widths. Use the CSS variables for custom containers."><div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{group("container").map(t=><div class="rounded-md border border-border p-3"><Token name={t.name} value /></div>)}</div></Block>

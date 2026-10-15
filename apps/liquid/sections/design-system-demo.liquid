@@ -1,0 +1,145 @@
+{% liquid
+  assign variants = 'primary,secondary' | split: ','
+  assign sizes = 'small,medium,large' | split: ','
+%}
+
+<div class="design-system-demo font-body bg-surface text-ink">
+  <header class="design-system-demo__intro">
+    <h1 class="text-4xl font-bold">{{ 'liquid_components.design_system.title' | t | escape }}</h1>
+    <p>{{ 'liquid_components.design_system.description' | t | escape }}</p>
+  </header>
+
+  <div class="design-system-demo__topic">
+    <h2 class="text-2xl font-bold">{{ 'liquid_components.design_system.buttons_title' | t | escape }}</h2>
+    <p>{{ 'liquid_components.design_system.buttons_description' | t | escape }}</p>
+    <div class="design-system-demo__grid">
+      {% for variant in variants %}
+        {% liquid
+          assign variant_key = 'liquid_components.design_system.variants.' | append: variant
+          assign variant_label = variant_key | t
+        %}
+        {% for size in sizes %}
+          {% liquid
+            assign size_key = 'liquid_components.design_system.sizes.' | append: size
+            assign size_label = size_key | t
+            assign enabled_label = 'liquid_components.design_system.enabled_label' | t: variant: variant_label, size: size_label
+            assign disabled_label = 'liquid_components.design_system.disabled_label' | t: variant: variant_label, size: size_label
+          %}
+          <div class="design-system-demo__card border border-line rounded-control">
+            <h3 class="font-semibold">{{ 'liquid_components.design_system.combination' | t: variant: variant_label, size: size_label | escape }}</h3>
+            <div class="design-system-demo__buttons">
+              {% render 'button', label: enabled_label, variant: variant, size: size, button_type: 'button' %}
+              {% render 'button', label: disabled_label, variant: variant, size: size, button_type: 'button', disabled: true %}
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="design-system-demo__topic">
+    <h2 class="text-2xl font-bold">{{ 'liquid_components.design_system.foundations_title' | t | escape }}</h2>
+    <p>{{ 'liquid_components.design_system.foundations_description' | t | escape }}</p>
+    <div class="design-system-demo__grid">
+      <div class="design-system-demo__card border border-line rounded-control bg-surface text-ink">
+        <h3 class="text-xl font-semibold">{{ 'liquid_components.design_system.surface' | t | escape }}</h3>
+        <p>{{ 'liquid_components.design_system.surface_description' | t | escape }}</p>
+      </div>
+      <div class="design-system-demo__card rounded-control bg-ink text-surface">
+        <h3 class="text-xl font-semibold">{{ 'liquid_components.design_system.ink' | t | escape }}</h3>
+        <p>{{ 'liquid_components.design_system.ink_description' | t | escape }}</p>
+      </div>
+      <div class="design-system-demo__card border-4 border-line rounded-control">
+        <h3 class="text-xl font-semibold">{{ 'liquid_components.design_system.line' | t | escape }}</h3>
+        <p>{{ 'liquid_components.design_system.line_description' | t | escape }}</p>
+      </div>
+    </div>
+    <div class="design-system-demo__card border border-line rounded-control font-body">
+      <h3 class="text-xl font-semibold">{{ 'liquid_components.design_system.typography_title' | t | escape }}</h3>
+      <p class="text-3xl font-bold">{{ 'liquid_components.design_system.typography_sample' | t | escape }}</p>
+      <p>{{ 'liquid_components.design_system.typography_description' | t | escape }}</p>
+    </div>
+    <div class="design-system-demo__card border border-line rounded-control">
+      <h3 class="text-xl font-semibold">{{ 'liquid_components.design_system.shape_title' | t | escape }}</h3>
+      <p>{{ 'liquid_components.design_system.shape_description' | t | escape }}</p>
+    </div>
+  </div>
+
+  <div class="design-system-demo__topic">
+    <h2 class="text-2xl font-bold">{{ 'liquid_components.design_system.image_title' | t | escape }}</h2>
+    <p>{{ 'liquid_components.design_system.image_description' | t | escape }}</p>
+    {% if section.settings.example_image != blank %}
+      <div class="design-system-demo__image">
+        {% render 'image', image: section.settings.example_image, width: 1200 %}
+      </div>
+    {% else %}
+      <p class="design-system-demo__card border border-line rounded-control">{{ 'liquid_components.design_system.image_empty' | t | escape }}</p>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .design-system-demo {
+    display: grid;
+    gap: 3rem;
+    padding-block: 3rem;
+    min-width: 0;
+  }
+
+  .design-system-demo__intro,
+  .design-system-demo__topic {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .design-system-demo__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: 1.25rem;
+  }
+
+  .design-system-demo__card {
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    padding: 1.25rem;
+    min-width: 0;
+  }
+
+  .design-system-demo__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .design-system-demo__buttons > button {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .design-system-demo__image {
+    max-width: 48rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.design_system_demo",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "example_image",
+      "label": "t:liquid_components.labels.demo_image",
+      "info": "t:liquid_components.info.demo_image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:liquid_components.general.design_system_demo"
+    }
+  ]
+}
+{% endschema %}

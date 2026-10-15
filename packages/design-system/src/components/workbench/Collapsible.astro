@@ -1,0 +1,88 @@
+---
+import Icon from "../icon/icon.astro";
+
+interface Props {
+  title: string;
+  count?: number;
+}
+
+const { title, count } = Astro.props;
+---
+
+<article class="ds-collapsible rounded-xl border border-border bg-background" data-ds-collapsible data-state="fits">
+  <div class="rounded-t-xl border-b border-border bg-muted px-5 py-3">
+    <span class="font-mono text-xs font-semibold text-muted-foreground">
+      {title}
+      {count !== undefined && <span class="ml-2 font-sans font-normal">({count})</span>}
+    </span>
+  </div>
+
+  <div class="relative">
+    <div class="ds-collapsible-body" data-ds-collapsible-body>
+      <slot />
+    </div>
+    <div
+      class="ds-collapsible-fade pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-background via-background/80 to-transparent"
+      aria-hidden="true"
+    >
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="ds-collapsible-toggle w-full cursor-pointer rounded-b-xl items-center justify-center gap-2 border-t border-border py-2.5 text-xs font-semibold text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+    aria-expanded="false"
+    data-ds-collapsible-toggle
+  >
+    <span data-ds-collapsible-label>Show all</span>
+    <Icon name="chevron-down" size={16} class="ds-collapsible-chevron transition-transform" />
+  </button>
+</article>
+
+<script>
+  function setExpanded(root: HTMLElement, expanded: boolean): void {
+    root.dataset.state = expanded ? "expanded" : "collapsed";
+
+    const toggle = root.querySelector<HTMLButtonElement>("[data-ds-collapsible-toggle]");
+    const label = root.querySelector<HTMLElement>("[data-ds-collapsible-label]");
+
+    toggle?.setAttribute("aria-expanded", String(expanded));
+
+    if (label) {
+      label.textContent = expanded ? "Show less" : "Show all";
+    }
+  }
+
+  function measure(root: HTMLElement, body: HTMLElement): void {
+    if (root.dataset.state === "expanded" || body.offsetParent === null) {
+      return;
+    }
+
+    root.dataset.state = "collapsed";
+    const overflows = body.scrollHeight > body.clientHeight + 1;
+    root.dataset.state = overflows ? "collapsed" : "fits";
+  }
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-ds-collapsible]")) {
+    const body = root.querySelector<HTMLElement>("[data-ds-collapsible-body]");
+    const toggle = root.querySelector<HTMLButtonElement>("[data-ds-collapsible-toggle]");
+
+    if (!body || !toggle) {
+      continue;
+    }
+
+    new ResizeObserver(() => {
+      measure(root, body);
+    }).observe(body);
+
+    toggle.addEventListener("click", () => {
+      setExpanded(root, root.dataset.state !== "expanded");
+    });
+
+    body.addEventListener("focusin", () => {
+      if (root.dataset.state === "collapsed") {
+        setExpanded(root, true);
+      }
+    });
+  }
+</script>

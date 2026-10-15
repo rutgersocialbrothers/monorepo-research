@@ -1,0 +1,57 @@
+---
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  accentTitle?: string;
+  description?: string;
+  quote?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  heading?: "h1" | "h2" | "h3";
+  id?: string;
+  class?: string;
+}
+
+const {
+  eyebrow = "Voorbeeldintroductie",
+  title = "Een duidelijke titel",
+  accentTitle = "met een accent.",
+  description =
+    "Deze sectie combineert een korte introductie, een titel en ondersteunende tekst. Voeg optioneel een afbeelding toe om de compositie met twee kolommen te bekijken.",
+  quote = "“Een tekstvoorbeeld, geen merkbelofte.”",
+  imageSrc,
+  imageAlt = "",
+  heading: Heading = "h2",
+  id,
+  class: className,
+} = Astro.props;
+
+const headingId = id ?? `about-intro-${crypto.randomUUID()}`;
+---
+
+<section class:list={["bg-background text-foreground", className]} aria-labelledby={headingId}>
+  <div
+    class:list={["mx-auto grid w-full max-w-(--ds-container-page) items-center gap-10 px-(--ds-grid-margin-sm) py-14 md:gap-12 md:px-(--ds-grid-margin-md) md:py-20 lg:gap-16 lg:px-(--ds-grid-margin-lg)", imageSrc && "lg:ds-about-columns"]}
+  >
+    <div class="max-w-2xl">
+      <p class="mb-5 text-sm font-bold uppercase tracking-wider text-muted-foreground">{eyebrow}</p>
+      <Heading id={headingId} class="!font-heading-content max-w-xl text-4xl leading-heading-content tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+        {title} <span class="block whitespace-nowrap text-primary">{accentTitle}</span>
+      </Heading>
+      <p class="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">{description}</p>
+      {quote && <p class="mt-6 text-lg font-semibold italic text-primary md:text-xl">{quote}</p>}
+    </div>
+
+    {imageSrc && (
+      <div class="order-first min-w-0 lg:order-none">
+        <img
+          src={imageSrc}
+          alt={imageAlt}
+          class="aspect-23/20 w-full rounded-(--ds-radius-xl) rounded-tr-(--section-media-radius) object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    )}
+  </div>
+</section>

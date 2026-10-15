@@ -1,0 +1,9 @@
+---
+import type { AlertProps } from "./alert.contract";
+interface Props extends AlertProps { role?: "alert" | "status"; }
+const { variant = "info", title = "Heads up", role } = Astro.props;
+const tones = { info: "bg-info-subtle text-info-subtle-foreground", success: "bg-success-subtle text-success-subtle-foreground", warning: "bg-warning-subtle text-warning-subtle-foreground", destructive: "bg-destructive-subtle text-destructive-subtle-foreground" };
+---
+<div role={role} class:list={["rounded-(--card-radius) border border-current/20 p-4 text-sm", tones[variant]]}>
+ <p class="font-semibold">{title}</p><div class="mt-1"><slot /></div>
+</div>

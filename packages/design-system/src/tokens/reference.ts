@@ -1,0 +1,1323 @@
+// Metadata only; values are read from authored CSS at runtime.
+export const tokenReference = [
+  {
+    name: '--ds-font-sans',
+    group: 'font',
+    description: '',
+  },
+  {
+    name: '--ds-font-heading',
+    group: 'font',
+    description: '',
+  },
+  {
+    name: '--ds-font-display',
+    group: 'font',
+    description: 'Script face for page titles and card titles only.',
+  },
+  {
+    name: '--ds-font-mono',
+    group: 'font',
+    description: 'Code and token names.',
+  },
+  {
+    name: '--ds-text-xs-size',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-xs-line-height',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-sm-size',
+    group: 'text',
+    description: 'Provisional starter body size (15px).',
+  },
+  {
+    name: '--ds-text-sm-line-height',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-base-size',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-base-line-height',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-lg-size',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-lg-line-height',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-xl-size',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-xl-line-height',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-2xl-size',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-2xl-line-height',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-3xl-size',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-3xl-line-height',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-4xl-size',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-4xl-line-height',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-5xl-size',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-5xl-line-height',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-6xl-size',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-text-6xl-line-height',
+    group: 'text',
+    description: '',
+  },
+  {
+    name: '--ds-font-weight-normal',
+    group: 'font-weight',
+    description: '',
+  },
+  {
+    name: '--ds-font-weight-medium',
+    group: 'font-weight',
+    description: '',
+  },
+  {
+    name: '--ds-font-weight-semibold',
+    group: 'font-weight',
+    description: '',
+  },
+  {
+    name: '--ds-font-weight-bold',
+    group: 'font-weight',
+    description: '',
+  },
+  {
+    name: '--ds-tracking-tighter',
+    group: 'tracking',
+    description: '',
+  },
+  {
+    name: '--ds-tracking-tight',
+    group: 'tracking',
+    description: '',
+  },
+  {
+    name: '--ds-tracking-normal',
+    group: 'tracking',
+    description: '',
+  },
+  {
+    name: '--ds-tracking-wide',
+    group: 'tracking',
+    description: '',
+  },
+  {
+    name: '--ds-tracking-wider',
+    group: 'tracking',
+    description: '',
+  },
+  {
+    name: '--ds-tracking-widest',
+    group: 'tracking',
+    description: '',
+  },
+  {
+    name: '--ds-leading-none',
+    group: 'leading',
+    description: '',
+  },
+  {
+    name: '--ds-leading-tight',
+    group: 'leading',
+    description: '',
+  },
+  {
+    name: '--ds-leading-heading-compact',
+    group: 'leading',
+    description: 'Compact editorial heading line height shared by all themes.',
+  },
+  {
+    name: '--ds-leading-snug',
+    group: 'leading',
+    description: '',
+  },
+  {
+    name: '--ds-leading-normal',
+    group: 'leading',
+    description: '',
+  },
+  {
+    name: '--ds-leading-relaxed',
+    group: 'leading',
+    description: '',
+  },
+  {
+    name: '--ds-leading-loose',
+    group: 'leading',
+    description: '',
+  },
+  {
+    name: '--ds-spacing-base',
+    group: 'spacing',
+    description: 'Spacing unit. Utilities multiply it: p-4 = 4 × 0.25rem = 16px.',
+  },
+  {
+    name: '--ds-radius-none',
+    group: 'radius',
+    description: '',
+  },
+  {
+    name: '--ds-radius-xs',
+    group: 'radius',
+    description: '',
+  },
+  {
+    name: '--ds-radius-sm',
+    group: 'radius',
+    description: '',
+  },
+  {
+    name: '--ds-radius-md',
+    group: 'radius',
+    description: 'The site radius: buttons, inputs, cards.',
+  },
+  {
+    name: '--ds-radius-lg',
+    group: 'radius',
+    description: '',
+  },
+  {
+    name: '--ds-radius-xl',
+    group: 'radius',
+    description: '',
+  },
+  {
+    name: '--ds-radius-2xl',
+    group: 'radius',
+    description: '',
+  },
+  {
+    name: '--ds-radius-full',
+    group: 'radius',
+    description: 'Pills and avatars.',
+  },
+  {
+    name: '--ds-border-width-default',
+    group: 'border-width',
+    description: '',
+  },
+  {
+    name: '--ds-border-width-thick',
+    group: 'border-width',
+    description: '',
+  },
+  {
+    name: '--ds-border-width-heavy',
+    group: 'border-width',
+    description: '',
+  },
+  {
+    name: '--ds-shadow-xs',
+    group: 'shadow',
+    description: '',
+  },
+  {
+    name: '--ds-shadow-sm',
+    group: 'shadow',
+    description: '',
+  },
+  {
+    name: '--ds-shadow-md',
+    group: 'shadow',
+    description: 'Soft glow, no offset.',
+  },
+  {
+    name: '--ds-shadow-lg',
+    group: 'shadow',
+    description: 'Strong glow for overlays.',
+  },
+  {
+    name: '--ds-shadow-xl',
+    group: 'shadow',
+    description: '',
+  },
+  {
+    name: '--ds-shadow-inset',
+    group: 'shadow',
+    description: '',
+  },
+  {
+    name: '--ds-breakpoint-sm',
+    group: 'breakpoint',
+    description: '640px',
+  },
+  {
+    name: '--ds-breakpoint-md',
+    group: 'breakpoint',
+    description: '768px',
+  },
+  {
+    name: '--ds-breakpoint-lg',
+    group: 'breakpoint',
+    description: '1024px',
+  },
+  {
+    name: '--ds-breakpoint-xl',
+    group: 'breakpoint',
+    description: '1280px',
+  },
+  {
+    name: '--ds-breakpoint-2xl',
+    group: 'breakpoint',
+    description: '1536px',
+  },
+  {
+    name: '--ds-container-3xs',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-2xs',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-xs',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-sm',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-md',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-lg',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-xl',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-2xl',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-3xl',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-4xl',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-5xl',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-6xl',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-7xl',
+    group: 'container',
+    description: '',
+  },
+  {
+    name: '--ds-container-prose',
+    group: 'container',
+    description: 'Comfortable reading width.',
+  },
+  {
+    name: '--ds-container-page',
+    group: 'container',
+    description: 'Maximum page content width (1360px).',
+  },
+  {
+    name: '--ds-grid-columns',
+    group: 'grid',
+    description: '',
+  },
+  {
+    name: '--ds-grid-gutter-sm',
+    group: 'grid',
+    description: 'Column gap below lg.',
+  },
+  {
+    name: '--ds-grid-gutter-lg',
+    group: 'grid',
+    description: 'Column gap from lg.',
+  },
+  {
+    name: '--ds-grid-margin-sm',
+    group: 'grid',
+    description: 'Page side margin on phones.',
+  },
+  {
+    name: '--ds-grid-margin-md',
+    group: 'grid',
+    description: 'Page side margin from md.',
+  },
+  {
+    name: '--ds-grid-margin-lg',
+    group: 'grid',
+    description: 'Page side margin from lg.',
+  },
+  {
+    name: '--ds-ease-standard',
+    group: 'ease',
+    description: 'Default for most UI movement.',
+  },
+  {
+    name: '--ds-ease-enter',
+    group: 'ease',
+    description: 'Elements appearing.',
+  },
+  {
+    name: '--ds-ease-exit',
+    group: 'ease',
+    description: 'Elements leaving.',
+  },
+  {
+    name: '--ds-ease-in',
+    group: 'ease',
+    description: '',
+  },
+  {
+    name: '--ds-ease-out',
+    group: 'ease',
+    description: '',
+  },
+  {
+    name: '--ds-ease-in-out',
+    group: 'ease',
+    description: '',
+  },
+  {
+    name: '--ds-duration-fast',
+    group: 'duration',
+    description: 'Hover and press feedback.',
+  },
+  {
+    name: '--ds-duration-base',
+    group: 'duration',
+    description: 'Most transitions.',
+  },
+  {
+    name: '--ds-duration-slow',
+    group: 'duration',
+    description: 'Panels, larger surfaces.',
+  },
+  {
+    name: '--ds-duration-slower',
+    group: 'duration',
+    description: 'Page-level and emphasis.',
+  },
+  {
+    name: '--ds-z-base',
+    group: 'z',
+    description: '',
+  },
+  {
+    name: '--ds-z-dropdown',
+    group: 'z',
+    description: '',
+  },
+  {
+    name: '--ds-z-sticky',
+    group: 'z',
+    description: '',
+  },
+  {
+    name: '--ds-z-overlay',
+    group: 'z',
+    description: '',
+  },
+  {
+    name: '--ds-z-modal',
+    group: 'z',
+    description: '',
+  },
+  {
+    name: '--ds-z-popover',
+    group: 'z',
+    description: '',
+  },
+  {
+    name: '--ds-z-toast',
+    group: 'z',
+    description: '',
+  },
+  {
+    name: '--ds-opacity-disabled',
+    group: 'opacity',
+    description: '',
+  },
+  {
+    name: '--ds-opacity-scrim',
+    group: 'opacity',
+    description: 'Backdrop behind modals.',
+  },
+  {
+    name: '--ds-icon-size-xs',
+    group: 'icon',
+    description: '',
+  },
+  {
+    name: '--ds-icon-size-sm',
+    group: 'icon',
+    description: 'Default in buttons and inputs.',
+  },
+  {
+    name: '--ds-icon-size-md',
+    group: 'icon',
+    description: '',
+  },
+  {
+    name: '--ds-icon-size-lg',
+    group: 'icon',
+    description: '',
+  },
+  {
+    name: '--ds-icon-size-xl',
+    group: 'icon',
+    description: '',
+  },
+  {
+    name: '--ds-icon-stroke-width',
+    group: 'icon',
+    description: 'Lucide stroke width.',
+  },
+  {
+    name: '--button-radius',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--button-border-width',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--button-shadow',
+    group: 'component',
+    description: 'Darker bottom edge on buttons.',
+  },
+  {
+    name: '--button-font-weight',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--button-height-sm',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--button-height-md',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--button-height-lg',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--button-padding-x',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--input-radius',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--input-border-width',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--input-shadow',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--input-height',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--card-radius',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--card-border-width',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--card-shadow',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--card-padding',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--badge-radius',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--badge-font-weight',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--heading-font-family',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--heading-display-font-family',
+    group: 'component',
+    description: 'h1, page titles and card titles.',
+  },
+  {
+    name: '--heading-font-weight',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--heading-content-font-weight',
+    group: 'component',
+    description: 'Weight used by content section headings.',
+  },
+  {
+    name: '--heading-content-line-height',
+    group: 'component',
+    description: 'Line height used by content section headings.',
+  },
+  {
+    name: '--heading-tracking',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--focus-ring-width',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--focus-ring-offset',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--overlay-radius',
+    group: 'component',
+    description: 'Dialogs, menus, select lists, popovers.',
+  },
+  {
+    name: '--overlay-shadow',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--overlay-padding',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--tooltip-radius',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--checkbox-radius',
+    group: 'component',
+    description: '',
+  },
+  {
+    name: '--section-media-radius',
+    group: 'component',
+    description: 'Featured media corner treatment used by editorial sections.',
+  },
+  {
+    name: '--palette-neutral-50',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-neutral-100',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-neutral-200',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-neutral-300',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-neutral-400',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-neutral-500',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-neutral-600',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-neutral-700',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-neutral-800',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-neutral-900',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-neutral-950',
+    group: 'color',
+    description: 'Starter neutral foreground in light mode.',
+  },
+  {
+    name: '--palette-brand-50',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-brand-100',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-brand-200',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-brand-300',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-brand-400',
+    group: 'color',
+    description: 'Provisional starter primary accent; not approved Tupak branding.',
+  },
+  {
+    name: '--palette-brand-500',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-brand-600',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-brand-700',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-brand-800',
+    group: 'color',
+    description: 'Starter heading foreground in light mode.',
+  },
+  {
+    name: '--palette-brand-900',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-brand-950',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-success-50',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-success-100',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-success-200',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-success-300',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-success-400',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-success-500',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-success-600',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-success-700',
+    group: 'color',
+    description: 'Independent success feedback color.',
+  },
+  {
+    name: '--palette-success-800',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-success-900',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-success-950',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-warning-50',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-warning-100',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-warning-200',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-warning-300',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-warning-400',
+    group: 'color',
+    description: 'Independent warning feedback color.',
+  },
+  {
+    name: '--palette-warning-500',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-warning-600',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-warning-700',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-warning-800',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-warning-900',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-warning-950',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-destructive-50',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-destructive-100',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-destructive-200',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-destructive-300',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-destructive-400',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-destructive-500',
+    group: 'color',
+    description: 'Independent destructive feedback color.',
+  },
+  {
+    name: '--palette-destructive-600',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-destructive-700',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-destructive-800',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-destructive-900',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-destructive-950',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-info-50',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-info-100',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-info-200',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-info-300',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-info-400',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-info-500',
+    group: 'color',
+    description: 'Independent information feedback color.',
+  },
+  {
+    name: '--palette-info-600',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-info-700',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-info-800',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-info-900',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-info-950',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-white',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--palette-black',
+    group: 'color',
+    description: '',
+  },
+  {
+    name: '--background',
+    group: 'semantic',
+    description: 'Page background.',
+  },
+  {
+    name: '--foreground',
+    group: 'semantic',
+    description: 'Default text.',
+  },
+  {
+    name: '--foreground-heading',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--foreground-disabled',
+    group: 'semantic',
+    description: 'Disabled text (exempt from contrast rules).',
+  },
+  {
+    name: '--surface-sunken',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--surface',
+    group: 'semantic',
+    description: 'Default content surface.',
+  },
+  {
+    name: '--surface-raised',
+    group: 'semantic',
+    description: 'Surfaces above content; pair with a shadow.',
+  },
+  {
+    name: '--card',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--card-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--popover',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--popover-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--primary',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--primary-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--primary-hover',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--primary-active',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--secondary',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--secondary-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--muted',
+    group: 'semantic',
+    description: 'Subdued backgrounds.',
+  },
+  {
+    name: '--muted-foreground',
+    group: 'semantic',
+    description: 'Supporting text.',
+  },
+  {
+    name: '--accent',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--accent-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--destructive',
+    group: 'semantic',
+    description: 'Destructive actions and errors.',
+  },
+  {
+    name: '--destructive-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--destructive-subtle',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--destructive-subtle-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--success',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--success-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--success-subtle',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--success-subtle-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--warning',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--warning-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--warning-subtle',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--warning-subtle-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--info',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--info-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--info-subtle',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--info-subtle-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--border',
+    group: 'semantic',
+    description: 'Default borders and dividers.',
+  },
+  {
+    name: '--border-strong',
+    group: 'semantic',
+    description: 'Hover and emphasized borders.',
+  },
+  {
+    name: '--input',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--ring',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--chart-1',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--chart-2',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--chart-3',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--chart-4',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--chart-5',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--sidebar',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--sidebar-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--sidebar-primary',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--sidebar-primary-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--sidebar-accent',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--sidebar-accent-foreground',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--sidebar-border',
+    group: 'semantic',
+    description: '',
+  },
+  {
+    name: '--sidebar-ring',
+    group: 'semantic',
+    description: '',
+  },
+] as const;

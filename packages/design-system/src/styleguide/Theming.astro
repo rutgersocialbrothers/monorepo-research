@@ -1,0 +1,21 @@
+---
+import Header from "./SectionHeader.astro"; import Block from "./Block.astro"; import {colorModes} from "../tokens/themes"; import Badge from "../components/badge/badge.astro"; import Card from "../components/card/card.astro"; import Input from "../components/input/input.astro"; import Button from "../components/button/button.astro";
+const layers=[["Palette","--palette-brand-400","The provisional starter ramp."],["Semantic","--foreground-heading","A job for a color, resolved in light and dark."],["Component","--button-radius","Shape, border, shadow and typography."],["Utility","bg-primary","What components use in their classes."]];
+---
+<Header title="Theming" eyebrow="System">One Tupak identity with light and dark modes. The existing mode mechanics remain available while the designer defines the approved tokens; the current colors and fonts are provisional. No alternative brand presets are configured.</Header>
+<Block title="How tokens flow"><ol class="grid gap-3 md:grid-cols-4">{layers.map(([title,token,note],i)=><li class="sg-panel"><p class="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{i+1}. {title}</p><p class="mt-2 break-all font-mono text-sm">{token}</p><p class="mt-2 text-xs text-muted-foreground">{note}</p></li>)}</ol></Block>
+<Block title="Tupak modes side by side" description="Each preview resets the Tupak tokens and explicitly sets its color mode, independently of the page mode.">
+ <div class="grid gap-4 md:grid-cols-2">{colorModes.map(mode=><div data-theme="tupak" class:list={[mode,"rounded-xl border border-border bg-background p-5 text-foreground"]}><div class="mb-4 flex items-center justify-between"><span class="text-xs text-muted-foreground">Tupak · {mode}</span><Badge variant="secondary">Provisional</Badge></div><Card title="Component example" description="The same composition in both color modes."><label class="grid gap-2 text-sm">Email address (Tupak {mode})<Input type="email" placeholder="Email address" /></label><Fragment slot="footer"><Button>Example action</Button><Button variant="outline">Details</Button></Fragment></Card></div>)}</div>
+</Block>
+<Block title="Edit tokens and scope modes" description="Edit authored CSS in src/styles/tokens.css. The shared :root and explicit Tupak scope contain the same starter values.">
+ <div class="grid gap-4 lg:grid-cols-2"><pre class="sg-code"><code>{`:root,
+[data-theme='tupak'] {
+  --foreground-heading: light-dark(var(--palette-brand-800), var(--palette-brand-300));
+  --button-radius: var(--ds-radius-md);
+}
+
+<section data-theme="tupak" class="dark">
+  <div class="light"><!-- Explicit light controls --></div>
+  <div data-theme="tupak"><!-- Inherits dark mode --></div>
+</section>`}</code></pre><div class="sg-panel text-sm leading-relaxed"><p>Update shared foundations and component tokens in the :root, [data-theme='tupak'] block when the Tupak design decisions are approved.</p><p class="mt-4">Use .light and .dark independently of data-theme. A theme-only section inherits the surrounding color mode; a mode-only section inherits the Tupak tokens. Nested popups stay within their component scope.</p><p class="mt-4">Changes appear in this Astro workbench. Liquid has its own authored tokens and markup; developers integrate approved design changes separately.</p></div></div>
+</Block>

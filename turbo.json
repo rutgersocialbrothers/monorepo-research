@@ -1,0 +1,64 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalDependencies": ["mise.toml"],
+  "tasks": {
+    "//#check:scripts": {
+      "cache": false
+    },
+    "//#check:tests": {
+      "cache": false
+    },
+    "demo:build": {
+      "dependsOn": [],
+      "outputs": ["dist/**"]
+    },
+    "dev:server": {
+      "cache": false,
+      "persistent": true,
+      "interactive": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "@2digits/liquid#build": {
+      "dependsOn": [],
+      "inputs": [
+        "styles/**",
+        "assets/**",
+        "!assets/tailwind.css",
+        "blocks/**",
+        "config/**",
+        "layout/**",
+        "locales/**",
+        "sections/**",
+        "snippets/**",
+        "templates/**",
+        "listings/**"
+      ],
+      "outputs": ["assets/tailwind.css"],
+      "cache": false
+    },
+    "check": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "@2digits/liquid#check": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "@2digits/liquid#dev": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "persistent": true,
+      "interruptible": false,
+      "env": ["SHOPIFY_FLAG_STORE"],
+      "passThroughEnv": ["SHOPIFY_CLI_THEME_TOKEN", "SHOPIFY_FLAG_STORE_PASSWORD"]
+    }
+  }
+}

@@ -1,0 +1,35 @@
+---
+import Select from "./select.astro";
+import { selectContract } from "./select.contract";
+---
+
+<div class="grid w-full max-w-sm gap-2">
+  <label class="text-sm font-medium" for="ds-example-select-error">Update frequency</label>
+  <Select
+    id="ds-example-select-error"
+    invalid
+    describedBy="ds-example-select-error-text"
+    options={selectContract.preview.props.options}
+  />
+  <p id="ds-example-select-error-text" class="text-sm text-destructive">Choose an update frequency.</p>
+</div>
+
+<div data-theme="tupak" class="dark grid w-full max-w-sm gap-4 rounded-lg border border-border bg-background p-4 text-foreground">
+  <p class="text-sm font-medium">Nested Tupak and color-mode scopes</p>
+  <div class="grid gap-2">
+    <label class="text-sm font-medium" for="ds-example-select-dark">Dark scope</label>
+    <Select id="ds-example-select-dark" options={selectContract.preview.props.options} />
+  </div>
+  <div data-theme="tupak" class="light grid gap-2 rounded-lg border border-border bg-background p-4 text-foreground">
+    <label class="text-sm font-medium" for="ds-example-select-mixed">Mixed scope</label>
+    <Select id="ds-example-select-mixed" options={selectContract.preview.props.options} />
+  </div>
+  <div data-theme="tupak" class="grid gap-2 rounded-lg border border-border bg-background p-4 text-foreground">
+    <label class="text-sm font-medium" for="ds-example-select-theme-only">Theme-only scope</label>
+    <Select id="ds-example-select-theme-only" options={selectContract.preview.props.options} />
+  </div>
+  <div class="light grid gap-2 rounded-lg border border-border bg-background p-4 text-foreground">
+    <label class="text-sm font-medium" for="ds-example-select-mode-only">Mode-only scope</label>
+    <Select id="ds-example-select-mode-only" options={selectContract.preview.props.options} />
+  </div>
+</div>

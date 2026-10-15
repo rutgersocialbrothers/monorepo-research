@@ -1,0 +1,33 @@
+---
+import DesignSystemLayout from "../layouts/DesignSystemLayout.astro";
+import Button from "../components/button/button.astro";
+import Badge from "../components/badge/badge.astro";
+import {ramps,steps,tokens} from "../styleguide/data";
+import Colors from "../styleguide/Colors.astro";
+import Typography from "../styleguide/Typography.astro";
+import Spacing from "../styleguide/Spacing.astro";
+import Layout from "../styleguide/Layout.astro";
+import Shape from "../styleguide/Shape.astro";
+import Elevation from "../styleguide/Elevation.astro";
+import Iconography from "../styleguide/Iconography.astro";
+import Components from "../styleguide/Components.astro";
+import Sections from "../styleguide/Sections.astro";
+import Theming from "../styleguide/Theming.astro";
+import Motion from "../styleguide/Motion.astro";
+import Variables from "../styleguide/Variables.astro";
+import Contracts from "../styleguide/Contracts.astro";
+const sections=[{id:"colors",title:"Colors",Page:Colors},{id:"typography",title:"Typography",Page:Typography},{id:"spacing",title:"Spacing",Page:Spacing},{id:"layout",title:"Layout",Page:Layout},{id:"shape",title:"Shape",Page:Shape},{id:"elevation",title:"Elevation",Page:Elevation},{id:"iconography",title:"Iconography",Page:Iconography},{id:"components",title:"Components",Page:Components},{id:"sections",title:"Sections",Page:Sections},{id:"theming",title:"Theming",Page:Theming},{id:"motion",title:"Motion",Page:Motion},{id:"variables",title:"Variables",Page:Variables},{id:"contracts",title:"Contracts",Page:Contracts}];
+---
+<DesignSystemLayout>
+<section class="relative overflow-hidden border-b border-border bg-surface-sunken">
+ <div class="sg-hero-grid" aria-hidden="true"></div>
+ <div class="container-page relative grid items-center gap-12 py-14 md:py-20 lg:sg-hero-columns">
+ <div><p class="mb-4 text-xs font-semibold uppercase tracking-widest text-(color:--link-foreground)">Styleguide</p><h1 class="max-w-3xl text-4xl md:text-6xl">Tupak design system</h1><p class="mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">A token-led workbench for Tupak designer integration: color, type, space, shape and components. The current palette and fonts are provisional starter values, not approved Tupak branding. Liquid integration is maintained separately.</p>
+ <dl class="mt-10 grid max-w-3xl grid-cols-2 gap-6 border-t border-border pt-6 sm:grid-cols-4">{[["Tokens",String(tokens.length)],["Modes","Light & dark"],["Built with","Astro · Tailwind v4"],["Status","Provisional starter"]].map(([k,v])=><div><dt class="text-xs text-muted-foreground">{k}</dt><dd class="mt-1 text-sm font-medium">{v}</dd></div>)}</dl>
+ </div>
+ <div class="hidden rounded-(--card-radius) border border-border bg-card p-6 shadow-lg lg:block"><div class="flex items-end justify-between gap-6"><p class="flex items-baseline gap-3 leading-none"><span class="ds-display text-6xl">Aa</span><span class="text-4xl">Aa</span></p><div class="text-right"><p class="text-sm font-medium">Tupak</p><p class="text-xs text-muted-foreground">Display · Sans · Mono</p></div></div><div class="mt-6 space-y-1">{ramps.map(r=><div class="grid grid-cols-11 gap-1">{steps.map(step=><span class="h-4 rounded-xs" style={`background:var(--palette-${r}-${step})`}></span>)}</div>)}</div><div class="mt-6 flex flex-wrap items-center gap-2"><Button size="sm">Primary</Button><Button size="sm" variant="outline">Outline</Button><Badge variant="success">Success</Badge><Badge variant="warning">Warning</Badge></div></div>
+ </div>
+</section>
+<nav class="sg-nav no-print" aria-label="Styleguide sections"><div class="container-page"><div role="tablist" aria-label="Sections" data-ds-tablist class="flex gap-1 overflow-x-auto">{sections.map((s,i)=><button type="button" role="tab" id={`tab-${s.id}`} aria-controls={`panel-${s.id}`} aria-selected={i===0?"true":"false"} tabindex={i===0?0:-1} data-ds-tab={s.id} class="ds-tab shrink-0 cursor-pointer whitespace-nowrap px-3 py-3.5 text-sm font-medium">{s.title}</button>)}</div></div></nav>
+<main class="container-page py-12 md:py-16">{sections.map((s,i)=><section id={`panel-${s.id}`} role="tabpanel" aria-labelledby={`tab-${s.id}`} tabindex="0" class="ds-tab-panel" data-ds-panel={s.id} hidden={i!==0}><s.Page /></section>)}</main>
+</DesignSystemLayout>

@@ -1,0 +1,81 @@
+---
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  title?: string;
+  description?: string;
+  note?: string;
+  exploreTitle?: string;
+  actionTitle?: string;
+  detailTitle?: string;
+  detailText?: string;
+  logoSrc?: string;
+  logoAlt?: string;
+  exploreLinks?: ReadonlyArray<FooterLink>;
+  actionLinks?: ReadonlyArray<FooterLink>;
+  class?: string;
+}
+
+const {
+  title = "Tupak design system",
+  description = "Een voorbeeldfooter met ruimte voor een introductie, navigatie en aanvullende informatie.",
+  note = "Voorbeeldinhoud, geen bedrijfsinformatie.",
+  exploreTitle = "Verken de workbench",
+  actionTitle = "Ontwerp en afspraken",
+  detailTitle = "Voorlopige basis",
+  detailText = "De huidige kleuren en lettertypen zijn startwaarden. De definitieve ontwerpwaarden worden door de designer aangeleverd.",
+  logoSrc,
+  logoAlt = title,
+  exploreLinks = [
+    { label: "Componenten", href: "#components" },
+    { label: "Secties", href: "#sections" },
+  ],
+  actionLinks = [
+    { label: "Ontwerpvariabelen", href: "#variables" },
+    { label: "Componentcontracten", href: "#contracts" },
+  ],
+  class: className,
+} = Astro.props;
+---
+
+<footer class:list={["bg-primary text-primary-foreground", className]}>
+  <div class="mx-auto grid w-full max-w-(--ds-container-page) gap-10 px-(--ds-grid-margin-sm) py-10 md:grid-cols-2 md:gap-x-12 md:gap-y-12 md:px-(--ds-grid-margin-md) lg:ds-footer-columns lg:gap-16 lg:px-(--ds-grid-margin-lg) lg:py-12">
+    <div>
+      {logoSrc ? (
+        <img src={logoSrc} alt={logoAlt} class="h-auto w-28" loading="lazy" decoding="async" />
+      ) : (
+        <p class="!font-heading-content text-xl">{title}</p>
+      )}
+      <p class="mt-5 max-w-48 text-xs leading-relaxed text-primary-foreground/80">{description}</p>
+      {note && <p class="mt-5 text-xs italic text-primary-foreground/80">{note}</p>}
+    </div>
+
+    {exploreLinks.length > 0 && (
+      <nav aria-labelledby="footer-explore-title">
+        <h2 id="footer-explore-title" class="!font-heading-content text-xs">{exploreTitle}</h2>
+        <ul class="mt-5 grid gap-3 text-xs text-primary-foreground/80">
+          {exploreLinks.map((link) => <li><a href={link.href} class="transition-colors hover:text-primary-foreground hover:underline">{link.label}</a></li>)}
+        </ul>
+      </nav>
+    )}
+
+    {actionLinks.length > 0 && (
+      <nav aria-labelledby="footer-action-title">
+        <h2 id="footer-action-title" class="!font-heading-content text-xs">{actionTitle}</h2>
+        <ul class="mt-5 grid gap-3 text-xs text-primary-foreground/80">
+          {actionLinks.map((link) => <li><a href={link.href} class="transition-colors hover:text-primary-foreground hover:underline">{link.label}</a></li>)}
+        </ul>
+      </nav>
+    )}
+
+    {detailText && (
+      <div aria-labelledby="footer-detail-title">
+        <h2 id="footer-detail-title" class="!font-heading-content text-xs">{detailTitle}</h2>
+        <p class="mt-5 max-w-prose text-xs leading-relaxed text-primary-foreground/80">{detailText}</p>
+      </div>
+    )}
+  </div>
+</footer>

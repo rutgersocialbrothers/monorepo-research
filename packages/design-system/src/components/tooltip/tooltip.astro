@@ -1,0 +1,22 @@
+---
+import type { TooltipProps } from "./tooltip.contract";
+type Props = TooltipProps;
+const { label="Hover or focus me",text="Tooltips explain; never put essential information here." }=Astro.props;
+const id=`tooltip-${crypto.randomUUID()}`;
+---
+<span class="relative inline-flex" data-component-tooltip>
+ <button type="button" aria-describedby={id} class="cursor-pointer rounded-(--button-radius) px-3 py-2.5 text-(length:--ds-text-sm-size) hover:bg-accent">{label}</button>
+ <span role="tooltip" id={id} hidden class="absolute bottom-full left-0 z-(--ds-z-popover) w-56 ds-floating-width rounded-(--tooltip-radius) bg-foreground px-3 py-1.5 text-(length:--ds-text-xs-size) text-background">{text}</span>
+</span>
+<script>
+ for(const root of document.querySelectorAll<HTMLElement>("[data-component-tooltip]")){
+  const button=root.querySelector("button"),tip=root.querySelector<HTMLElement>('[role="tooltip"]');
+  if(!button||!tip){continue;}
+  let hovering=false;
+  root.addEventListener("pointerenter",()=>{hovering=true;tip.hidden=false;});
+  root.addEventListener("pointerleave",()=>{hovering=false;if(document.activeElement!==button){tip.hidden=true;}});
+  button.addEventListener("focus",()=>{tip.hidden=false;});
+  button.addEventListener("blur",()=>{if(!hovering){tip.hidden=true;}});
+  root.addEventListener("keydown",event=>{if(event.key==="Escape"){tip.hidden=true;event.stopPropagation();}});
+ }
+</script>

@@ -1,0 +1,51 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import type { IconName } from "../../components/icon/icon.contract";
+
+interface ValueCard {
+  icon: IconName;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  cards?: Array<ValueCard>;
+  ariaLabel?: string;
+  class?: string;
+}
+
+const {
+  cards = [
+    {
+      icon: "compass",
+      title: "Structuur",
+      description: "Een icoon, titel en korte tekst geven iedere kaart een herkenbare opbouw.",
+    },
+    {
+      icon: "heart-handshake",
+      title: "Samenstelling",
+      description: "Gedeelde tokens verbinden de kaarten met de rest van de sectie.",
+    },
+    {
+      icon: "users-round",
+      title: "Toegankelijkheid",
+      description: "De tekst blijft leesbaar en de kaarten passen zich aan de beschikbare ruimte aan.",
+    },
+  ],
+  ariaLabel = "Voorbeeldkaarten",
+  class: className,
+} = Astro.props;
+---
+
+<section class:list={["bg-background text-foreground", className]} aria-label={ariaLabel}>
+  <div class="mx-auto grid w-full max-w-(--ds-container-page) grid-cols-1 gap-6 px-(--ds-grid-margin-sm) py-10 md:grid-cols-3 md:px-(--ds-grid-margin-md) md:py-14 lg:gap-7 lg:px-(--ds-grid-margin-lg)">
+    {cards.length === 0 && <p class="text-sm text-muted-foreground md:col-span-3">Geen kaarten om te tonen.</p>}
+    {cards.map((card) => (
+      <article class="rounded-(--card-radius) bg-accent p-7 text-accent-foreground">
+        <Icon name={card.icon} size={32} class="text-primary" />
+        <h2 class="!font-heading-content mt-7 text-xl text-foreground">{card.title}</h2>
+        <p class="mt-3 max-w-prose text-sm leading-relaxed text-muted-foreground">{card.description}</p>
+      </article>
+    ))}
+  </div>
+</section>

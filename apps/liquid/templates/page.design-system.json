@@ -1,0 +1,100 @@
+{
+  "sections": {
+    "demo": {
+      "type": "design-system-demo",
+      "settings": {}
+    },
+    "composition": {
+      "type": "custom-section",
+      "blocks": {
+        "content": {
+          "type": "group",
+          "settings": {
+            "layout_direction": "group--vertical",
+            "alignment": "flex-start",
+            "padding": 32
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "text": "Composable theme blocks",
+                "heading_level": "h2",
+                "alignment": "left"
+              }
+            },
+            "introduction": {
+              "type": "text",
+              "settings": {
+                "text": "This app-owned composition uses the shared custom section, nested groups, semantic headings, and editable text blocks. Change its content and layout in the theme editor.",
+                "text_style": "text--normal",
+                "alignment": "left"
+              }
+            },
+            "examples": {
+              "type": "group",
+              "settings": {
+                "layout_direction": "group--vertical",
+                "alignment": "flex-start",
+                "padding": 24
+              },
+              "blocks": {
+                "heading": {
+                  "type": "heading",
+                  "settings": {
+                    "text": "Text hierarchy inside a nested group",
+                    "heading_level": "h3",
+                    "alignment": "left"
+                  }
+                },
+                "title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "Title-style text",
+                    "text_style": "text--title",
+                    "alignment": "left"
+                  }
+                },
+                "subtitle": {
+                  "type": "text",
+                  "settings": {
+                    "text": "Subtitle-style supporting copy",
+                    "text_style": "text--subtitle",
+                    "alignment": "left"
+                  }
+                },
+                "body": {
+                  "type": "text",
+                  "settings": {
+                    "text": "Normal text inherits the merchant's body font and colors. The vertical group adapts to narrow screens without duplicating any shared component markup.",
+                    "text_style": "text--normal",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "heading",
+                "title",
+                "subtitle",
+                "body"
+              ]
+            }
+          },
+          "block_order": [
+            "heading",
+            "introduction",
+            "examples"
+          ]
+        }
+      },
+      "block_order": [
+        "content"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "demo",
+    "composition"
+  ]
+}

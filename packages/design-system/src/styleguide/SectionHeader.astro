@@ -1,0 +1,5 @@
+---
+interface Props { title:string; eyebrow?:string; }
+const { title,eyebrow="Foundations" }=Astro.props;
+---
+<header class="mb-10 max-w-3xl"><p class="mb-2 text-xs font-semibold uppercase tracking-widest text-(color:--link-foreground)">{eyebrow}</p><h2 class="ds-display text-3xl md:text-4xl">{title}</h2><div class="mt-4 text-sm leading-relaxed text-muted-foreground"><slot /></div></header>

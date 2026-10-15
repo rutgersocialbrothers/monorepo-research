@@ -1,0 +1,105 @@
+{% doc %}
+  Renders a group of blocks with configurable layout direction, padding and
+  alignment.
+
+  All settings apply to only one dimension to reduce configuration complexity.
+
+  This component is a wrapper concerned only with rendering its children in
+  the specified layout direction with appropriate padding and alignment.
+
+  @example
+  {% content_for 'block', type: 'group', id: 'group' %}
+{% enddoc %}
+
+<div
+  class="group {{ block.settings.layout_direction }}"
+  style="
+    --padding: {{ block.settings.padding }}px;
+    --alignment: {{ block.settings.alignment }};
+  "
+  {{ block.shopify_attributes }}
+>
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+  .group {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .group--horizontal {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--padding);
+  }
+
+  .group--vertical {
+    flex-direction: column;
+    align-items: var(--alignment);
+    padding: var(--padding) 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.group",
+  "blocks": [{ "type": "@theme" }],
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout_direction",
+      "label": "t:liquid_components.labels.layout_direction",
+      "default": "group--vertical",
+      "options": [
+        { "value": "group--horizontal", "label": "t:liquid_components.options.direction.horizontal" },
+        { "value": "group--vertical", "label": "t:liquid_components.options.direction.vertical" }
+      ]
+    },
+    {
+      "visible_if": "{{ block.settings.layout_direction == 'group--vertical' }}",
+      "type": "select",
+      "id": "alignment",
+      "label": "t:liquid_components.labels.alignment",
+      "default": "flex-start",
+      "options": [
+        { "value": "flex-start", "label": "t:liquid_components.options.alignment.left" },
+        { "value": "center", "label": "t:liquid_components.options.alignment.center" },
+        { "value": "flex-end", "label": "t:liquid_components.options.alignment.right" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "t:liquid_components.labels.padding",
+      "default": 0,
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:liquid_components.general.column",
+      "category": "t:liquid_components.general.layout",
+      "settings": {
+        "layout_direction": "group--vertical",
+        "alignment": "flex-start",
+        "padding": 0
+      }
+    },
+    {
+      "name": "t:liquid_components.general.row",
+      "category": "t:liquid_components.general.layout",
+      "settings": {
+        "layout_direction": "group--horizontal",
+        "padding": 0
+      }
+    }
+  ]
+}
+{% endschema %}

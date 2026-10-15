@@ -1,0 +1,6 @@
+{
+  "main": { "environment": "production", "allowLive": true },
+  "acceptance": { "environment": "acceptance", "allowLive": false },
+  "test": { "environment": "test", "allowLive": false },
+  "develop": { "environment": "development", "allowLive": false }
+}

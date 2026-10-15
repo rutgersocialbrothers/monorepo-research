@@ -1,0 +1,5 @@
+---
+import Header from "./SectionHeader.astro"; import {contracts} from "../registry";
+---
+<Header title="Contracts" eyebrow="Developer reference">Each family defines its supported props, defaults, states and accessibility expectations. These contracts drive automatic specimen discovery. New Astro families currently target HTML; adapting them to other platforms is a separate implementation step.</Header>
+<div class="space-y-4">{contracts.map(entry=><details class="rounded-lg border border-border p-5"><summary class="cursor-pointer font-semibold">{entry.name}</summary><p class="my-4 text-sm text-muted-foreground">{entry.contract.description}</p><div class="sg-scroll"><table class="sg-table"><thead><tr><th>Prop</th><th>Values</th><th>Default</th></tr></thead><tbody>{entry.rows.map(row=><tr><td>{row.name}</td><td>{row.values}</td><td>{row.defaultValue}</td></tr>)}</tbody></table></div><ul class="my-4 list-disc space-y-2 pl-5 text-sm">{entry.contract.accessibility.map(text=><li>{text}</li>)}</ul><pre class="sg-code"><code>{entry.json}</code></pre></details>)}</div>

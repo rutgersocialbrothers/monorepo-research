@@ -1,0 +1,37 @@
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+node_modules/
+
+# Shopify CLI files
+.shopify/
+
+## Release files
+release
+*.zip
+*.tgz
+
+# Workspace build and local tooling state
+.turbo/
+.vitest/
+.astro/
+.cache/
+test-results/
+playwright-report/
+blob-report/
+browser-results/
+*.log
+*.tsbuildinfo
+**/dist/
+apps/liquid/assets/tailwind.css
+
+# Credentials and remote theme snapshots
+.env*
+!.env.example
+.shopify-pull/

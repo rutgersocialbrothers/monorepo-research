@@ -1,0 +1,15 @@
+---
+import type { SeparatorProps } from "./separator.contract";
+type Props = SeparatorProps;
+const { orientation="horizontal", decorative=true } = Astro.props;
+---
+<div
+  role={decorative ? undefined : "separator"}
+  aria-hidden={decorative ? "true" : undefined}
+  aria-orientation={decorative ? undefined : orientation}
+  class:list={[
+    "shrink-0 bg-border",
+    orientation === "vertical" ? "h-5 w-px self-stretch" : "h-px w-full",
+  ]}
+  data-orientation={orientation}
+></div>

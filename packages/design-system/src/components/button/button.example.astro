@@ -1,0 +1,15 @@
+---
+import Button from "./button.astro";
+import Icon from "../icon/icon.astro";
+---
+
+<div class="flex flex-wrap items-center justify-center gap-3">
+  <Button variant="secondary">
+    <Icon slot="leadingIcon" name="check" size={16} />
+    Save
+  </Button>
+  <Button>
+    Continue
+    <Icon slot="trailingIcon" name="arrow-right" size={16} />
+  </Button>
+</div>

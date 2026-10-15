@@ -1,0 +1,15 @@
+{
+  "name": "@2digits/liquid",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tailwindcss -i styles/tailwind.css -o assets/tailwind.css --minify",
+    "dev": "node --env-file-if-exists=.env.local node_modules/@shopify/cli/bin/run.js theme dev --path .",
+    "check": "shopify theme check --path . --config .theme-check.yml"
+  },
+  "devDependencies": {
+    "@shopify/cli": "4.8.3",
+    "@tailwindcss/cli": "catalog:",
+    "tailwindcss": "catalog:"
+  }
+}

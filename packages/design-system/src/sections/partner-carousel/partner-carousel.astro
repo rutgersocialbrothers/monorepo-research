@@ -1,0 +1,129 @@
+---
+import Icon from "../../components/icon/icon.astro";
+
+interface Partner {
+  name: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  href?: string;
+  isNew?: boolean;
+}
+
+interface Props {
+  categoryLabel?: string;
+  partners?: Array<Partner>;
+  ariaLabel?: string;
+  class?: string;
+}
+
+const {
+  categoryLabel = "Voorbeeldcollectie",
+  partners = [
+    { name: "Voorbeeldkaart 1" },
+    { name: "Voorbeeldkaart 2" },
+    { name: "Voorbeeldkaart 3" },
+    { name: "Voorbeeldkaart 4" },
+    { name: "Voorbeeldkaart 5" },
+    { name: "Voorbeeldkaart 6", isNew: true },
+    { name: "Voorbeeldkaart 7" },
+    { name: "Voorbeeldkaart 8" },
+  ],
+  ariaLabel = "Voorbeeldcollectie",
+  class: className,
+} = Astro.props;
+
+const carouselId = `partner-carousel-${crypto.randomUUID()}`;
+const pageCount = Math.ceil(partners.length / 4);
+---
+
+<section
+  id={carouselId}
+  class:list={["bg-background py-8 text-foreground", className]}
+  aria-label={ariaLabel}
+  aria-roledescription="carousel"
+>
+  <div class="mx-auto w-full max-w-(--ds-container-page) px-(--ds-grid-margin-sm) md:px-(--ds-grid-margin-md) lg:px-(--ds-grid-margin-lg)">
+    <p class="text-center text-sm font-medium text-(color:--link-foreground)">{categoryLabel}</p>
+
+    <div class="relative mt-4">
+      {partners.length > 0 ? (
+        <div data-carousel-track class="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 ds-carousel-scrollbar [&::-webkit-scrollbar]:hidden">
+          {partners.map((partner, index) => {
+            const Card = partner.href ? "a" : "div";
+            return (
+              <article
+                class="min-w-0 shrink-0 basis-full snap-start overflow-hidden rounded-(--ds-radius-sm) bg-card sm:ds-carousel-pair md:ds-carousel-trio lg:ds-carousel-quartet"
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`Kaart ${index + 1} van ${partners.length}`}
+              >
+                <Card href={partner.href || undefined} class="group relative flex aspect-31/20 items-end overflow-hidden bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+                  {partner.imageSrc && (
+                    <img
+                      src={partner.imageSrc}
+                      alt={partner.imageAlt ?? ""}
+                      class="absolute inset-0 size-full object-cover transition-transform duration-(--ds-duration-slow) group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
+                  <span class:list={["relative flex w-full items-center gap-2 font-medium", partner.imageSrc ? "bg-gradient-to-t from-black/70 to-transparent px-3 pb-3 pt-8 text-xs text-white" : "px-5 py-6 text-sm text-accent-foreground"]}>
+                    <Icon name="heart" size={12} />
+                    {partner.name}
+                  </span>
+                  {partner.isNew && <span class="absolute right-3 top-3 rounded-(--ds-radius-sm) bg-primary px-2 py-1 text-(length:--ds-text-xs-size) font-semibold text-primary-foreground">Nieuw</span>}
+                </Card>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="py-6 text-center text-sm text-muted-foreground">Geen kaarten om te tonen.</p>
+      )}
+    </div>
+
+    {pageCount > 0 && (
+      <nav class="mt-2 flex justify-center gap-2" aria-label="Collectiepagina's">
+        {Array.from({ length: pageCount }, (_, index) => (
+          <button
+            type="button"
+            data-carousel-page={index}
+            aria-label={`Ga naar collectiepagina ${index + 1}`}
+            aria-current={index === 0 ? "true" : undefined}
+            class:list={["size-2 cursor-pointer rounded-full bg-muted transition-colors", index === 0 && "bg-primary"]}
+          ></button>
+        ))}
+      </nav>
+    )}
+  </div>
+</section>
+
+<script>
+  for (const track of document.querySelectorAll<HTMLElement>("[data-carousel-track]")) {
+    const root = track.closest<HTMLElement>("[aria-roledescription='carousel']");
+    const pages = [...(root?.querySelectorAll<HTMLButtonElement>("[data-carousel-page]") ?? [])];
+    if (!root || pages.length === 0) {
+      continue;
+    }
+
+    function selectPage(index: number) {
+      for (const [pageIndex, page] of pages.entries()) {
+        page.setAttribute("aria-current", pageIndex === index ? "true" : "false");
+        page.classList.toggle("bg-primary", pageIndex === index);
+        page.classList.toggle("bg-muted", pageIndex !== index);
+      }
+    }
+
+    for (const [index, page] of pages.entries()) {
+      page.addEventListener("click", () => {
+        track.scrollTo({ left: index * track.clientWidth, behavior: "smooth" });
+        selectPage(index);
+      });
+    }
+
+    track.addEventListener("scroll", () => {
+      const pageWidth = Math.max(track.clientWidth, 1);
+      selectPage(Math.min(pages.length - 1, Math.round(track.scrollLeft / pageWidth)));
+    }, { passive: true });
+  }
+</script>

@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  # Manual runs only retrieve a snapshot; they cannot push or accept target inputs.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Workspace checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@v4
+      - run: pnpm install --frozen-lockfile
+      - name: Install canonical workbench browser runtime
+        run: pnpm --filter @tupak/design-system exec playwright install chromium --with-deps
+      # The check graph compiles Liquid CSS before native Theme Check.
+      - run: pnpm check
+
+  prepare:
+    name: Resolve credential-free delivery mapping
+    needs: checks
+    if: >-
+      vars.SHOPIFY_DEPLOY_ENABLED == 'true' &&
+      github.ref_type == 'branch' && github.ref_protected &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.mapping.outputs.environment }}
+      allow_live: ${{ steps.mapping.outputs.allow_live }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@v4
+      - name: Resolve exact branch
+        id: mapping
+        # No Environment, store/theme variables or Shopify secrets are available here.
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync, readFileSync } from 'node:fs';
+          const mappings = JSON.parse(readFileSync('deployments/shopify.json', 'utf8'));
+          const branch = process.env.GITHUB_REF_NAME;
+          if (!Object.hasOwn(mappings, branch)) {
+            throw new Error(`No Shopify deployment mapping for branch: ${branch}`);
+          }
+          const target = mappings[branch];
+          if (!target.environment) {
+            throw new Error(`Missing Shopify environment for branch: ${branch}`);
+          }
+          appendFileSync(process.env.GITHUB_OUTPUT, `environment=${target.environment}\nallow_live=${target.allowLive === true}\n`);
+          NODE
+
+  delivery:
+    name: Shopify delivery
+    needs: [checks, prepare]
+    if: >-
+      vars.SHOPIFY_DEPLOY_ENABLED == 'true' &&
+      github.ref_type == 'branch' && github.ref_protected &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    environment: ${{ needs.prepare.outputs.environment }}
+    concurrency:
+      group: shopify-${{ needs.prepare.outputs.environment }}
+      cancel-in-progress: false
+      queue: max
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@v4
+      - run: pnpm install --frozen-lockfile
+      - name: Install canonical workbench browser runtime
+        run: pnpm --filter @tupak/design-system exec playwright install chromium --with-deps
+      # Check compiles CSS and validates this checkout's native theme; no cross-job reuse.
+      # Credentials are scoped only to the delivery step, never checks/builds/install.
+      - run: pnpm check
+      - name: Deliver exact existing theme
+        env:
+          DEPLOY_ENVIRONMENT: ${{ needs.prepare.outputs.environment }}
+          ALLOW_LIVE: ${{ needs.prepare.outputs.allow_live }}
+          SHOPIFY_STORE: ${{ vars.SHOPIFY_STORE }}
+          SHOPIFY_THEME_ID: ${{ vars.SHOPIFY_THEME_ID }}
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+        run: |
+          : "${SHOPIFY_STORE:?Missing Environment variable SHOPIFY_STORE}"
+          : "${SHOPIFY_THEME_ID:?Missing Environment variable SHOPIFY_THEME_ID}"
+          : "${SHOPIFY_CLI_THEME_TOKEN:?Missing Environment secret SHOPIFY_CLI_THEME_TOKEN}"
+          : "${DEPLOY_ENVIRONMENT:?Missing mapped Shopify environment}"
+          case "$GITHUB_EVENT_NAME" in
+            push)
+              args=(theme push --store "$SHOPIFY_STORE" --theme "$SHOPIFY_THEME_ID"
+                --path "$GITHUB_WORKSPACE/apps/liquid"
+                --ignore config/settings_data.json)
+              if [[ "$ALLOW_LIVE" == "true" ]]; then
+                args+=(--allow-live)
+              fi
+              pnpm --filter @2digits/liquid exec shopify "${args[@]}"
+              ;;
+            workflow_dispatch)
+              snapshot="$GITHUB_WORKSPACE/.shopify-pull/$DEPLOY_ENVIRONMENT/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+              mkdir -p "$(dirname "$snapshot")"
+              mkdir "$snapshot"
+              pnpm --filter @2digits/liquid exec shopify theme pull \
+                --store "$SHOPIFY_STORE" --theme "$SHOPIFY_THEME_ID" --path "$snapshot"
+              ;;
+            *) exit 1 ;;
+          esac
+      - name: Upload manual pull snapshot
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: shopify-pull-${{ needs.prepare.outputs.environment }}-${{ github.run_id }}-${{ github.run_attempt }}
+          # The snapshot ancestor is hidden. Explicit theme-only paths permit it without
+          # collecting root CLI state; exclusions still omit all hidden descendants.
+          include-hidden-files: true
+          path: |
+            .shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/assets/
+            .shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/blocks/
+            .shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/config/
+            .shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/layout/
+            .shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/locales/
+            .shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/sections/
+            .shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/snippets/
+            .shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/templates/
+            .shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/listings/
+            !.shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/**/.*
+            !.shopify-pull/${{ needs.prepare.outputs.environment }}/${{ github.run_id }}-${{ github.run_attempt }}/**/.*/**
+          if-no-files-found: error
+          retention-days: 3

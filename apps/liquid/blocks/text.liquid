@@ -1,0 +1,59 @@
+{% doc %}
+  Renders a text block.
+
+  @example
+  {% content_for 'block', type: 'text', id: 'text' %}
+{% enddoc %}
+
+<div
+  class="text {{ block.settings.text_style }}"
+  style="--text-align: {{ block.settings.alignment }}"
+  {{ block.shopify_attributes }}
+>
+  {{ block.settings.text }}
+</div>
+
+{% stylesheet %}
+  .text {
+    text-align: var(--text-align);
+  }
+  .text--title {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  .text--subtitle {
+    font-size: 1.5rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.text",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:liquid_components.labels.text",
+      "default": "Text"
+    },
+    {
+      "type": "select",
+      "id": "text_style",
+      "label": "t:liquid_components.labels.text_style",
+      "options": [
+        { "value": "text--title", "label": "t:liquid_components.options.text_style.title" },
+        { "value": "text--subtitle", "label": "t:liquid_components.options.text_style.subtitle" },
+        { "value": "text--normal", "label": "t:liquid_components.options.text_style.normal" }
+      ],
+      "default": "text--title"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:liquid_components.labels.alignment",
+      "default": "left"
+    }
+  ],
+  "presets": [{ "name": "t:liquid_components.general.text" }]
+}
+{% endschema %}

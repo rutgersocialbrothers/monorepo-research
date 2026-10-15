@@ -1,0 +1,16 @@
+---
+import type { TextareaProps } from "./textarea.contract";
+interface Props extends TextareaProps { id?: string; name?: string; describedBy?: string; value?: string; required?: boolean; }
+const { id, name, describedBy, disabled=false, invalid=false, rows=3, placeholder="Your message", value="", required=false } = Astro.props;
+---
+<textarea
+  id={id}
+  name={name}
+  rows={rows}
+  placeholder={placeholder}
+  disabled={disabled}
+  required={required}
+  aria-invalid={invalid || undefined}
+  aria-describedby={describedBy}
+  class="w-full min-w-0 resize-y rounded-(--input-radius) border-(length:--input-border-width) border-input bg-background px-3 py-2.5 text-foreground shadow-(--input-shadow) aria-[invalid=true]:border-destructive disabled:cursor-not-allowed disabled:opacity-(--ds-opacity-disabled)"
+>{value}</textarea>

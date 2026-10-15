@@ -1,0 +1,43 @@
+---
+import { icons } from "./icons";
+import type { IconProps, IconSize } from "./icon.contract";
+
+interface Props extends IconProps {
+  class?: string;
+}
+
+const { name, size = 24, spin = false, label, class: className } = Astro.props;
+
+
+
+const sizes: Record<IconSize, string> = {
+  12: "text-[0.75rem]",
+  16: "text-[1rem]",
+  20: "text-[1.25rem]",
+  24: "text-[1.5rem]",
+  32: "text-[2rem]",
+  48: "text-[3rem]",
+  64: "text-[4rem]",
+};
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="var(--ds-icon-stroke-width)"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class:list={[
+    "ds-icon-geometry shrink-0 [&_[stroke-width]]:stroke-(--ds-icon-stroke-width)",
+    sizes[size],
+    spin && "motion-safe:animate-spin",
+    className,
+  ]}
+  role={label ? "img" : undefined}
+  aria-label={label || undefined}
+  aria-hidden={label ? undefined : "true"}
+>
+  <g set:html={icons[name].body} />
+</svg>

@@ -1,0 +1,45 @@
+---
+import type { ButtonProps } from "./button.contract";
+import { buttonBaseClass, buttonSizeClass, buttonVariantClass } from "./button.styles";
+import Icon from "../icon/icon.astro";
+
+interface Props extends ButtonProps {
+  class?: string;
+}
+
+const {
+  variant = "primary",
+  size = "md",
+  disabled = false,
+  loading = false,
+  type = "button",
+  class: className,
+} = Astro.props;
+
+const hasLeadingIcon = Astro.slots.has("leadingIcon");
+const hasTrailingIcon = Astro.slots.has("trailingIcon");
+---
+
+<button
+  type={type}
+  disabled={disabled || loading}
+  aria-busy={loading || undefined}
+  class:list={[buttonBaseClass, buttonVariantClass[variant], buttonSizeClass[size], className]}
+>
+  {loading && <Icon name="loader" size={16} spin />}
+  {
+    hasLeadingIcon && (
+      <span class="inline-flex shrink-0" aria-hidden="true">
+        <slot name="leadingIcon" />
+      </span>
+    )
+  }
+  <span><slot /></span>
+  {
+    hasTrailingIcon && (
+      <span class="inline-flex shrink-0" aria-hidden="true">
+        <slot name="trailingIcon" />
+      </span>
+    )
+  }
+</button>

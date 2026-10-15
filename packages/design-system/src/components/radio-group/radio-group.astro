@@ -1,0 +1,9 @@
+---
+import type { RadioGroupProps } from "./radio-group.contract";
+interface Props extends RadioGroupProps { name?: string; label: string; options: ReadonlyArray<{value:string;label:string;disabled?:boolean}>; }
+const { label, options, name=`radio-${crypto.randomUUID()}`, value="comfortable", disabled=false } = Astro.props;
+---
+<fieldset disabled={disabled} class="grid gap-3 disabled:opacity-(--ds-opacity-disabled)">
+ <legend class="mb-3 text-sm font-medium">{label}</legend>
+ {options.map(option=><label class="flex items-center gap-2 text-sm has-[:disabled]:opacity-(--ds-opacity-disabled)"><input type="radio" name={name} value={option.value} checked={value===option.value} disabled={option.disabled} class="size-4 accent-primary" /><span>{option.label}</span></label>)}
+</fieldset>

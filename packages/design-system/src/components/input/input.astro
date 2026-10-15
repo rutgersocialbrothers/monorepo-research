@@ -1,0 +1,41 @@
+---
+import type { InputProps } from "./input.contract";
+
+interface Props extends InputProps {
+  id?: string;
+  name?: string;
+  describedBy?: string;
+  class?: string;
+}
+
+const {
+  type = "text",
+  disabled = false,
+  invalid = false,
+  placeholder,
+  value,
+  id,
+  name,
+  describedBy,
+  class: className,
+} = Astro.props;
+---
+
+<input
+  type={type}
+  id={id}
+  name={name}
+  disabled={disabled}
+  placeholder={placeholder}
+  value={value}
+  aria-invalid={invalid ? "true" : undefined}
+  aria-describedby={describedBy}
+  class:list={[
+    "min-h-(--input-height-md) w-full min-w-0 rounded-(--input-radius) border-(length:--input-border-width) border-input bg-background px-(--input-padding-x) py-2 text-base text-foreground shadow-(--input-shadow)",
+    "placeholder:text-muted-foreground outline-none",
+    "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "aria-invalid:border-destructive aria-invalid:ring-destructive",
+    "disabled:cursor-not-allowed disabled:opacity-50",
+    className,
+  ]}
+/>

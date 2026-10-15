@@ -1,0 +1,53 @@
+packages:
+  - apps/*
+  - packages/*
+
+catalog:
+  '@2digits/oxfmt-config': 0.3.27
+  '@2digits/oxlint-config': 1.2.2
+  '@2digits/tsconfig': 0.9.0
+  '@astrojs/check': 0.9.10
+  '@fontsource-variable/nunito': 5.3.0
+  '@fontsource/lobster': 5.3.0
+  '@iconify-icons/lucide': 2.0.13
+  '@sindresorhus/slugify': 3.0.1
+  '@tailwindcss/vite': 4.3.3
+  '@typescript-eslint/parser': 8.70.1
+  astro: 7.3.5
+  astro-eslint-parser: 3.2.0
+  axe-core: 4.13.0
+  eslint: 10.11.0
+  eslint-plugin-better-tailwindcss: 4.9.0
+  jiti: 2.7.0
+  oxfmt: 0.69.0
+  oxlint: 1.84.0
+  oxlint-tsgolint: 7.0.2002
+  playwright: 1.63.0
+  '@types/node': 24.19.0
+  tailwindcss: 4.3.3
+  '@tailwindcss/cli': 4.3.3
+  typescript-native: npm:typescript@7.0.2
+  vite: 8.3.1
+  vitest: 5.0.3
+
+# Astro's checker requires the compiler API; root tooling stays on TypeScript 7.
+catalogs:
+  astro-tooling:
+    typescript: 6.0.3
+
+# The shared lint preset's Zod plugin also requires the legacy compiler API.
+packageExtensions:
+  eslint-plugin-zod@4.14.2:
+    dependencies:
+      typescript: 6.0.3
+
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  sharp: true
+
+minimumReleaseAgeExclude:
+  - '@shopify/cli@4.8.3'
+  - '@vitest/mocker@5.0.3'
+  - '@vitest/spy@5.0.3'
+  - vitest@5.0.3

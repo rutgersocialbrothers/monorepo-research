@@ -1,0 +1,8 @@
+---
+import Header from "./SectionHeader.astro"; import Block from "./Block.astro"; import Token from "./Token.astro"; import {group} from "./data";
+const radii=group("component").filter(t=>t.name.endsWith("-radius"));
+---
+<Header title="Shape">Corner radius sets much of a brand’s character. Components read their own radius tokens, so a brand can make buttons pill-shaped without touching cards.</Header>
+<Block title="Radius"><div class="grid grid-cols-2 gap-6 sm:grid-cols-4 lg:grid-cols-8">{group("radius").map(t=><div><div class="aspect-square border border-primary/30 bg-primary/10" style={`border-radius:var(${t.name})`}></div><div class="mt-3"><Token name={t.name} value /></div></div>)}</div></Block>
+<Block title="Component radius" description="Which radius each component uses in this theme."><div class="grid grid-cols-2 gap-4 md:grid-cols-4">{radii.map(t=><div class="sg-panel"><div class="mb-4 flex h-10 items-center justify-center bg-primary text-xs text-primary-foreground" style={`border-radius:var(${t.name})`}>{t.name.replace("--","").replace("-radius","")}</div><Token name={t.name} value /></div>)}</div></Block>
+<Block title="Border width" description="Default borders are 1px in the border color. Starter controls use 2px input borders."><div class="grid gap-4 sm:grid-cols-3">{group("border-width").map(t=><div class="sg-panel"><div class="mb-4 h-12 rounded-md border-solid border-foreground/70" style={`border-width:var(${t.name})`}></div><Token name={t.name} value /></div>)}</div></Block>

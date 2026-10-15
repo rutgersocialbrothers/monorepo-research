@@ -1,0 +1,12 @@
+---
+import type { CheckboxProps } from "./checkbox.contract";
+interface Props extends CheckboxProps { id?: string; name?: string; value?: string; label: string; describedBy?: string; required?: boolean; }
+const { id, name, value="on", label, checked=false, disabled=false, invalid=false, indeterminate=false, describedBy, required=false } = Astro.props;
+---
+<label class="inline-flex items-center gap-2 text-(length:--ds-text-sm-size) has-[:disabled]:opacity-(--ds-opacity-disabled)">
+ <input type="checkbox" id={id} name={name} value={value} checked={checked} disabled={disabled} required={required} aria-invalid={invalid || undefined} aria-describedby={describedBy} data-mixed={indeterminate || undefined} class="size-4 accent-primary aria-[invalid=true]:outline-1 aria-[invalid=true]:outline-destructive aria-[invalid=true]:outline-offset-2" />
+ <span>{label}</span>
+</label>
+<script>
+ for (const input of document.querySelectorAll<HTMLInputElement>("input[data-mixed]")) {input.indeterminate = true;}
+</script>

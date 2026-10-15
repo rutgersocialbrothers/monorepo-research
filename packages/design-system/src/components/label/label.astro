@@ -1,0 +1,6 @@
+---
+import type { LabelProps } from "./label.contract";
+interface Props extends LabelProps { for: string; }
+const { for: target, required=false } = Astro.props;
+---
+<label for={target} class="text-sm font-medium"><slot />{required && <span class="text-muted-foreground"> (required)</span>}</label>

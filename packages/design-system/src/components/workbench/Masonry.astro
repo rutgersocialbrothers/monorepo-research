@@ -1,0 +1,33 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["grid items-start gap-4 lg:ds-masonry-rows lg:grid-cols-2 lg:gap-y-0", className]} data-ds-masonry>
+  <slot />
+</div>
+
+<script>
+  const gap = 16;
+  const wide = globalThis.matchMedia("(min-width: 64rem)");
+
+  function layout(root: HTMLElement): void {
+    for (const item of root.children) {
+      if (!(item instanceof HTMLElement)) {
+        continue;
+      }
+      item.style.gridRowEnd = wide.matches ? `span ${Math.ceil(item.getBoundingClientRect().height + gap)}` : "";
+    }
+  }
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-ds-masonry]")) {
+    const observer = new ResizeObserver(() => layout(root));
+    for (const item of root.children) {
+      observer.observe(item);
+    }
+    wide.addEventListener("change", () => layout(root));
+  }
+</script>

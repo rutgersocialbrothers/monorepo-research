@@ -1,0 +1,34 @@
+---
+import "../styles/global.css";
+import Icon from "../components/icon/icon.astro";
+interface Props { title?:string; description?:string; }
+const { title="Tupak styleguide",description="A Tupak design workbench with provisional starter tokens, components and scoped light and dark modes." }=Astro.props;
+---
+<!doctype html>
+<html lang="en" data-theme="tupak" class="light">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width" /><meta name="description" content={description} /><title>{title}</title>
+<script is:inline>
+try {
+ const root=document.documentElement;
+ const mode=localStorage.getItem("tupak-design-system-mode");
+ if(mode==="dark"){root.classList.remove("light");root.classList.add("dark");}
+} catch {}
+</script>
+</head>
+<body>
+<header class="border-b border-border"><div class="container-page flex min-h-16 items-center justify-between gap-4 py-3">
+ <a href="/" class="flex min-w-0 items-center gap-3"><span class="text-sm font-semibold">Tupak</span><span class="hidden text-border sm:inline" aria-hidden="true">/</span><span class="hidden truncate text-sm text-muted-foreground md:inline">Design workbench</span></a>
+ <div class="no-print flex items-center gap-2">
+ <span class="hidden rounded-full border border-border px-2.5 py-1 font-mono sg-metadata text-muted-foreground sm:inline">v0.1</span>
+ <button type="button" id="print-styleguide" class="sg-icon-button" aria-label="Print or save as PDF" title="Print or save as PDF"><Icon name="printer" size={16} /></button>
+ <button type="button" id="mode-toggle" class="sg-icon-button" aria-label="Switch to dark mode" title="Switch to dark mode"><span data-mode-icon="dark"><Icon name="moon" size={16} /></span><span data-mode-icon="light" hidden><Icon name="sun" size={16} /></span></button>
+ </div>
+</div></header>
+<slot />
+<footer class="border-t border-border"><div class="container-page flex flex-wrap items-center justify-between gap-2 py-8 text-xs text-muted-foreground"><span>Tupak styleguide · provisional starter tokens</span><span>v0.1 · Astro</span></div></footer>
+<p id="copy-status" class="sg-toast" role="status" aria-live="polite"></p>
+<script>
+ import {initStyleguide} from "../styleguide/behavior";
+ initStyleguide();
+</script>
+</body></html>

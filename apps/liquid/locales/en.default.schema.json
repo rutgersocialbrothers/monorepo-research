@@ -1,0 +1,102 @@
+{
+  "general": {
+    "404": "Not found",
+    "article": "Article",
+    "block": "Block",
+    "blog": "Blog",
+    "cart": "Cart",
+    "collection": "Collection",
+    "collections": "Collections",
+    "collection_card": "Collection card",
+    "collections_grid": "Collections grid",
+    "colors": "Colors",
+    "content": "Content",
+    "fonts": "Fonts",
+    "footer": "Footer",
+    "header": "Header",
+    "layout": "Layout",
+    "main": "Main",
+    "page": "Page",
+    "password": "Password",
+    "primary": "Primary",
+    "product": "Product",
+    "search": "Search",
+    "secondary": "Secondary",
+    "section": "Section",
+    "settings": "Settings",
+    "sidebar": "Sidebar",
+    "theme": "Theme",
+    "typography": "Typography"
+  },
+  "labels": {
+    "background": "Background",
+    "foreground": "Foreground",
+    "grid_gap": "Grid spacing",
+    "grid_item_width": "Grid item width",
+    "input_corner_radius": "Input corner radius",
+    "menu": "Menu",
+    "customer_account_menu": "Customer account menu",
+    "page_margin": "Page margin",
+    "page_width": "Page width",
+    "show_payment_icons": "Show payment icons"
+  },
+  "options": {
+    "page_width": {
+      "narrow": "Narrow",
+      "wide": "Wide"
+    },
+    "size": {
+      "large": "Large",
+      "small": "Small"
+    }
+  },
+  "liquid_components": {
+    "general": {
+      "column": "Column",
+      "custom_section": "Custom section",
+      "design_system_demo": "Design system demo",
+      "group": "Group",
+      "heading": "Heading",
+      "layout": "Layout",
+      "row": "Row",
+      "text": "Text"
+    },
+    "labels": {
+      "alignment": "Alignment",
+      "background": "Background",
+      "demo_image": "Example image",
+      "heading_level": "Heading level",
+      "layout_direction": "Layout direction",
+      "padding": "Padding",
+      "text": "Text",
+      "text_style": "Text style"
+    },
+    "info": {
+      "demo_image": "Optional Shopify image for the responsive image example. Buttons are previews only and perform no action."
+    },
+    "options": {
+      "alignment": {
+        "left": "Left",
+        "center": "Center",
+        "right": "Right"
+      },
+      "heading_level": {
+        "h1": "Heading 1",
+        "h2": "Heading 2",
+        "h3": "Heading 3",
+        "h4": "Heading 4",
+        "h5": "Heading 5",
+        "h6": "Heading 6"
+      },
+      "direction": {
+        "horizontal": "Horizontal",
+        "vertical": "Vertical"
+      },
+      "text_style": {
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "normal": "Normal text"
+      }
+    }
+  }
+}

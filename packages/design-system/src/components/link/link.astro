@@ -1,0 +1,30 @@
+---
+import type { LinkProps } from "./link.contract";
+import { buttonBaseClass, buttonSizeClass, buttonVariantClass } from "../button/button.styles";
+
+interface Props extends LinkProps {
+  class?: string;
+}
+
+const {
+  href,
+  appearance = "text",
+  variant = "primary",
+  size = "md",
+  class: className,
+} = Astro.props;
+
+const textClass =
+  "rounded-sm text-(color:--link-foreground) underline underline-offset-(--link-underline-offset) outline-none hover:no-underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+---
+
+<a
+  href={href}
+  class:list={
+    appearance === "button"
+      ? [buttonBaseClass, buttonVariantClass[variant], buttonSizeClass[size], "no-underline", className]
+      : [textClass, className]
+  }
+>
+  <slot />
+</a>

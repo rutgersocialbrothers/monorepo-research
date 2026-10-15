@@ -1,0 +1,6 @@
+{
+  "extends": ["@2digits/tsconfig", "astro/tsconfigs/strict"],
+  "compilerOptions": {
+    "tsBuildInfoFile": "${configDir}/.cache/tsbuildinfo.json"
+  }
+}

@@ -1,0 +1,6 @@
+---
+import type { EmptyStateProps } from "./empty-state.contract";
+type Props = EmptyStateProps;
+const { variant="bordered", title="No projects yet", description="Create your first project to get started." } = Astro.props;
+---
+<section class:list={["rounded-(--card-radius) p-8 text-center",variant==="bordered"&&"border border-dashed border-border"]}><h3 class="text-xl">{title}</h3><p class="mt-2 text-sm text-muted-foreground">{description}</p><div class="mt-5 flex justify-center gap-2"><slot name="action" /></div></section>

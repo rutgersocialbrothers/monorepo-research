@@ -1,0 +1,15 @@
+@theme inline {
+  --color-surface: var(--color-background, #ffffff);
+  --color-ink: var(--color-foreground, #202020);
+  --color-line: var(--color-border, #767676);
+  --font-body: var(--font-primary--family, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji");
+  --radius-control: var(--style-border-radius-inputs, 0.375rem);
+  --color-button-primary: var(--color-foreground, #202020);
+  --color-button-primary-foreground: var(--color-background, #ffffff);
+  --color-button-primary-hover: color-mix(in srgb, var(--color-foreground, #202020) 85%, var(--color-background, #ffffff));
+  --color-button-secondary: var(--color-background, #ffffff);
+  --color-button-secondary-foreground: var(--color-foreground, #202020);
+  --color-button-secondary-border: var(--color-foreground, #202020);
+  --color-button-secondary-hover: color-mix(in srgb, var(--color-background, #ffffff) 90%, var(--color-foreground, #202020));
+  --color-button-focus: var(--color-foreground, #202020);
+}

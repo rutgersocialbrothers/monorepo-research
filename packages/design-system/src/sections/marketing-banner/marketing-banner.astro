@@ -1,0 +1,49 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import Link from "../../components/link/link.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+  ariaLabel?: string;
+  class?: string;
+}
+
+const {
+  title = "Bekijk de componentvoorbeelden",
+  description = "Verken de onderdelen en hun afspraken in deze workbench. De inhoud en vormgeving zijn voorbeelden voor verdere uitwerking.",
+  primaryLabel = "Bekijk componenten",
+  primaryHref = "#components",
+  secondaryLabel = "Bekijk contracten",
+  secondaryHref = "#contracts",
+  ariaLabel = "Workbench verkennen",
+  class: className,
+} = Astro.props;
+---
+
+<section class:list={["bg-background px-(--ds-grid-margin-sm) py-8 text-foreground", className]} aria-label={ariaLabel}>
+  <div class="mx-auto max-w-(--ds-container-page) rounded-(--ds-radius-xl) bg-accent px-6 py-12 text-center md:px-10 md:py-14 lg:px-16">
+    <h2 class="!font-heading-content text-2xl leading-heading-content text-foreground sm:text-3xl">{title}</h2>
+    <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">{description}</p>
+    {(primaryHref || secondaryHref) && (
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        {primaryHref && (
+          <Link href={primaryHref} appearance="button" variant="primary">
+            {primaryLabel}
+            <Icon name="arrow-right" size={16} class="ml-1" />
+          </Link>
+        )}
+        {secondaryHref && (
+          <Link href={secondaryHref} appearance="button" variant="outline">
+            {secondaryLabel}
+            <Icon name="arrow-right" size={16} class="ml-1" />
+          </Link>
+        )}
+      </div>
+    )}
+  </div>
+</section>

@@ -1,0 +1,26 @@
+{%- comment -%}
+  Authored shared button utilities. Merchant color, font, and radius mappings live
+  in apps/liquid/styles/tokens.css. Variant and size fall back independently.
+  Parameters: variant (primary/secondary), size (small/medium/large).
+{%- endcomment -%}
+{%- liquid
+  assign base_classes = 'inline-flex max-w-full items-center justify-center gap-2 rounded-control border font-body font-medium leading-none no-underline wrap-anywhere transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-button-focus disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
+
+  case variant
+    when 'secondary'
+      assign variant_classes = 'border-button-secondary-border bg-button-secondary text-button-secondary-foreground not-disabled:hover:bg-button-secondary-hover'
+    else
+      assign variant_classes = 'border-button-primary bg-button-primary text-button-primary-foreground not-disabled:hover:bg-button-primary-hover'
+  endcase
+
+  case size
+    when 'small'
+      assign size_classes = 'min-h-9 px-3 py-2 text-sm'
+    when 'large'
+      assign size_classes = 'min-h-13 px-7 py-4 text-lg'
+    else
+      assign size_classes = 'min-h-11 px-5 py-3 text-base'
+  endcase
+
+  echo base_classes | append: ' ' | append: variant_classes | append: ' ' | append: size_classes
+-%}

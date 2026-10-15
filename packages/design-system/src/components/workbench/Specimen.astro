@@ -1,0 +1,29 @@
+---
+import Button from "../button/button.astro";
+---
+
+<div class="rounded-(--card-radius) border border-border bg-background p-6 shadow-(--card-shadow)">
+  <div class="flex items-end justify-between gap-6">
+    <div class="flex items-baseline gap-3 leading-none text-foreground">
+      <span class="text-6xl font-black ds-specimen-tracking">Aa</span>
+      <span class="text-3xl font-medium">Aa</span>
+    </div>
+    <div class="text-right">
+      <p class="text-sm font-semibold text-foreground">Tupak</p>
+      <p class="text-xs text-muted-foreground">Canonical HTML · Tailwind v4</p>
+    </div>
+  </div>
+  <div class="mt-6 grid grid-cols-6 gap-1.5">
+    <span class="h-5 rounded-sm bg-primary"></span>
+    <span class="h-5 rounded-sm bg-accent"></span>
+    <span class="h-5 rounded-sm bg-secondary"></span>
+    <span class="h-5 rounded-sm bg-muted"></span>
+    <span class="h-5 rounded-sm bg-border"></span>
+    <span class="h-5 rounded-sm bg-foreground"></span>
+  </div>
+  <div class="mt-6 flex flex-wrap items-center gap-2">
+    <Button size="sm">Primary</Button>
+    <Button size="sm" variant="secondary">Secondary</Button>
+    <Button size="sm" variant="ghost">Ghost</Button>
+  </div>
+</div>

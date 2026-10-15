@@ -1,0 +1,60 @@
+---
+import AboutIntro from "../sections/about-intro/about-intro.astro";
+import SiteFooter from "../sections/site-footer/site-footer.astro";
+import ValueCards from "../sections/value-cards/value-cards.astro";
+import MarketingBanner from "../sections/marketing-banner/marketing-banner.astro";
+import PartnerCarousel from "../sections/partner-carousel/partner-carousel.astro";
+import Header from "./SectionHeader.astro";
+import Block from "./Block.astro";
+---
+
+<Header title="Sections" eyebrow="Compositions">
+  Page-level compositions built from the canonical design-system components. Sections own responsive layout and content structure while consuming the shared Tupak tokens and color modes.
+</Header>
+
+<Block title="About intro" description="A text-first introduction with an eyebrow, split-color heading, supporting copy and quote. Supplied editorial media is optional.">
+  <div class="overflow-hidden rounded-(--ds-radius-lg) border border-border bg-background">
+    <AboutIntro heading="h2" />
+  </div>
+</Block>
+
+<Block title="Value cards" description="A simple three-column sample composition with a semantic surface, icon and short supporting copy.">
+  <div class="overflow-hidden rounded-(--ds-radius-lg) border border-border bg-background">
+    <ValueCards />
+  </div>
+</Block>
+
+<Block title="Marketing banner" description="A centered banner with supporting copy and working navigation to component and contract examples.">
+  <div class="overflow-hidden rounded-(--ds-radius-lg) border border-border bg-background">
+    <MarketingBanner />
+  </div>
+</Block>
+
+<Block title="Partner carousel" description="A horizontally scrollable generic sample collection with optional media, non-link cards when no destination is supplied, and accessible pagination.">
+  <div class="overflow-hidden rounded-(--ds-radius-lg) border border-border bg-background">
+    <PartnerCarousel />
+  </div>
+</Block>
+
+<Block title="Site footer" description="A compact four-column footer with Tupak workbench navigation and an editable generic sample note; no business or contact details are implied.">
+  <div class="overflow-hidden rounded-(--ds-radius-lg) border border-border bg-background">
+    <SiteFooter />
+  </div>
+</Block>
+
+<Block title="Section rules" description="Sections are page-level compositions, not primitive controls. Keep data and business logic outside the design-system renderer.">
+  <div class="grid gap-4 md:grid-cols-3">
+    <div class="rounded-(--ds-radius-lg) border border-border bg-card p-5">
+      <h3 class="text-lg">Compose</h3>
+      <p class="mt-2 text-sm leading-relaxed text-muted-foreground">Reuse Buttons, Links, Cards, Icons and other canonical components instead of recreating their markup.</p>
+    </div>
+    <div class="rounded-(--ds-radius-lg) border border-border bg-card p-5">
+      <h3 class="text-lg">Own layout</h3>
+      <p class="mt-2 text-sm leading-relaxed text-muted-foreground">Keep responsive grids, section spacing and media treatment inside the section.</p>
+    </div>
+    <div class="rounded-(--ds-radius-lg) border border-border bg-card p-5">
+      <h3 class="text-lg">Stay token-driven</h3>
+      <p class="mt-2 text-sm leading-relaxed text-muted-foreground">Use semantic Tailwind utilities and authored CSS variables; do not add local style blocks or raw brand values.</p>
+    </div>
+  </div>
+</Block>

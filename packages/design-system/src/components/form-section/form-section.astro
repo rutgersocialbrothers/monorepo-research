@@ -1,0 +1,15 @@
+---
+import type { FormSectionProps } from "./form-section.contract";
+type Props = FormSectionProps;
+const { layout="stacked", title="Profile", description="Your public profile details." } = Astro.props;
+---
+<fieldset data-layout={layout}>
+  <legend class="text-xl">{title}</legend>
+  <div class:list={["mt-4 grid gap-6", layout === "split" && "lg:ds-form-split"]}>
+    <p class="text-sm text-muted-foreground">{description}</p>
+    <div class="grid gap-5">
+      <slot />
+      <div class="flex flex-wrap justify-end gap-2"><slot name="actions" /></div>
+    </div>
+  </div>
+</fieldset>

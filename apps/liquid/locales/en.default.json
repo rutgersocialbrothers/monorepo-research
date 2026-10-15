@@ -1,0 +1,88 @@
+{
+  "404": {
+    "title": "404",
+    "not_found": "Page not found.",
+    "back_to_shopping": "Back to shopping"
+  },
+  "blog": {
+    "article_comments": "Comments",
+    "article_metadata_html": "{{ date }} by {{ author }}",
+    "comment_form_body": "Comment",
+    "comment_form_email": "Email",
+    "comment_form_name": "Name",
+    "comment_form_submit": "Post",
+    "comment_form_title": "Add a comment"
+  },
+  "cart": {
+    "checkout": "Checkout",
+    "title": "Cart",
+    "update": "Update",
+    "remove": "Remove"
+  },
+  "customers": {
+    "login": {
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "title": "Login"
+    }
+  },
+  "collections": {
+    "title": "Collections"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Add to Apple Wallet",
+    "card": "Gift card",
+    "expired": "This gift card has expired",
+    "expires_on": "Expires on {{ expires_on }}",
+    "use_at_checkout": "Use this gift card at checkout"
+  },
+  "password": {
+    "title": "This shop is private",
+    "password": "Password",
+    "enter": "Enter"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search articles, pages, or products",
+    "submit": "Search",
+    "no_results_html": "No results found for {{ terms }}",
+    "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "liquid_components": {
+    "design_system": {
+      "title": "Design system",
+      "description": "Reusable Liquid components styled by the shared design tokens and this theme's merchant settings.",
+      "buttons_title": "Native button previews",
+      "buttons_description": "All six variant and size combinations use the shared button snippet. Enabled previews perform no action. Tab to explore keyboard focus, hover to preview feedback, and compare native disabled controls. Motion follows your device's reduced-motion preference.",
+      "combination": "{{ variant }} · {{ size }}",
+      "enabled_label": "{{ variant }} {{ size }} preview — no action",
+      "disabled_label": "{{ variant }} {{ size }} disabled",
+      "variants": {
+        "primary": "Primary",
+        "secondary": "Secondary"
+      },
+      "sizes": {
+        "small": "Small",
+        "medium": "Medium",
+        "large": "Large"
+      },
+      "foundations_title": "Semantic foundations",
+      "foundations_description": "Colors, body typography, borders, and control corners use semantic utilities rather than component-specific values. Update the theme settings to see them change together.",
+      "surface": "Surface",
+      "surface_description": "The background token for content and secondary buttons.",
+      "ink": "Ink",
+      "ink_description": "The foreground token for text and primary buttons.",
+      "line": "Line",
+      "line_description": "The shared border token.",
+      "typography_title": "Body typography",
+      "typography_sample": "One type family, a clear reading hierarchy",
+      "typography_description": "The body font token follows the theme's primary font setting. Size and weight establish hierarchy without changing the family.",
+      "shape_title": "Borders and corners",
+      "shape_description": "This panel uses the line border and control-radius tokens. Control corners follow the theme's input corner setting.",
+      "image_title": "Responsive Shopify image",
+      "image_description": "A real Shopify image is rendered through the shared image snippet, using Shopify's image URL and image tag filters.",
+      "image_empty": "Choose an example image in this section's theme-editor settings to preview the shared image component. No placeholder or external image is requested."
+    }
+  }
+}
