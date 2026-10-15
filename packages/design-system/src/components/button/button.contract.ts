@@ -3,12 +3,13 @@ import type { ComponentContract, ContractProps } from '../../contracts/schema';
 export const buttonContract = {
   name: 'Button',
   version: 1,
-  description: 'Triggers an action. The contract defines capabilities; each target implements them idiomatically.',
+  description:
+    'Triggers an action. Primary commits, secondary supports, outline and ghost de-emphasize; nav is the shared solid-navy treatment for destination links.',
   element: 'button',
   props: {
     variant: {
       type: 'enum',
-      values: ['primary', 'secondary', 'outline', 'ghost'],
+      values: ['primary', 'secondary', 'nav', 'outline', 'ghost'],
       default: 'primary',
     },
     size: {
@@ -54,7 +55,7 @@ export const buttonContract = {
   ],
   targets: ['html', 'react', 'shopify-liquid', 'bigcommerce-stencil'],
   preview: {
-    content: 'Buy tickets',
+    content: 'Continue',
     exclude: ['type'],
   },
 } as const satisfies ComponentContract;

@@ -1,0 +1,16 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import Link from "../../components/link/link.astro";
+import type {FaqItem, SectionLink} from "../homepage.contract";
+interface Props {title: string; eyebrow?: string; text?: string; items: ReadonlyArray<FaqItem>; action?: SectionLink; emptyText?: string;}
+const {title, eyebrow, text, items, action, emptyText = "Nog geen vragen om te tonen."} = Astro.props;
+---
+<section class="py-12 md:py-20" aria-label={title}>
+  <div class="container-page grid items-start gap-10 lg:grid-cols-[1fr_1.5fr] lg:gap-20">
+    <div>{eyebrow && <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-foreground-link">{eyebrow}</p>}<h2 class="max-w-sm text-3xl md:text-4xl">{title}</h2>{text && <p class="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">{text}</p>}{action && <Link href={action.href} appearance="button" variant="outline" class="mt-6">{action.label} →</Link>}</div>
+    <div class="min-w-0 border-t border-border">{items.length > 0 ? items.map(item => <details class="group border-b border-border">
+      <summary class="flex cursor-pointer list-none items-start justify-between gap-5 rounded-sm py-5 outline-none focus-visible:ring-2 focus-visible:ring-ring"><h3 class="min-w-0 break-words text-base font-semibold">{item.question}</h3><span class="mt-0.5 shrink-0 text-foreground-link transition-transform group-open:rotate-180 motion-reduce:transition-none"><Icon name="chevron-down" size={20} /></span></summary>
+      <div class="max-w-prose pb-6 text-sm leading-relaxed text-muted-foreground"><p class="whitespace-pre-line">{item.answer}</p>{item.link && <Link href={item.link.href} class="mt-3 inline-block">{item.link.label}</Link>}</div>
+    </details>) : <p class="py-6 text-muted-foreground">{emptyText}</p>}</div>
+  </div>
+</section>

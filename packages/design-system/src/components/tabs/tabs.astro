@@ -11,12 +11,12 @@ const first = items.findIndex(item=>!item.disabled);
    aria-label={label}
    aria-orientation={orientation}
    class:list={[
-     "flex w-fit max-w-full gap-1 overflow-x-auto rounded-(--ds-radius-lg) bg-muted ds-tabs-inset",
+     "flex w-fit max-w-full gap-1 overflow-x-auto rounded-(--ds-radius-lg) bg-secondary ds-tabs-inset",
      variant === "line" && "rounded-none border-b border-border bg-transparent",
      orientation === "vertical" && "shrink-0 flex-col",
    ]}
  >
- {items.map((item,i)=><button type="button" role="tab" id={`${id}-tab-${i}`} aria-controls={`${id}-panel-${i}`} aria-selected={i===first?"true":"false"} tabindex={i===first?0:-1} disabled={item.disabled} class:list={["cursor-pointer whitespace-nowrap rounded-(--ds-radius-md) px-3 py-2 text-(length:--ds-text-sm-size) text-muted-foreground aria-selected:bg-background aria-selected:text-foreground disabled:cursor-not-allowed disabled:opacity-(--ds-opacity-disabled)", variant === "line" ? "rounded-none border-b-2 border-transparent aria-selected:border-primary aria-selected:shadow-none" : "aria-selected:shadow-(--ds-shadow-sm)"]}>{item.label}</button>)}
+ {items.map((item,i)=><button type="button" role="tab" id={`${id}-tab-${i}`} aria-controls={`${id}-panel-${i}`} aria-selected={i===first?"true":"false"} tabindex={i===first?0:-1} disabled={item.disabled} class:list={["min-h-11 cursor-pointer whitespace-nowrap rounded-(--ds-radius-md) px-4 py-2 text-(length:--ds-text-sm-size) font-semibold text-secondary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-(--ds-opacity-disabled)", variant === "line" ? "rounded-none border-b-2 border-transparent aria-selected:border-nav aria-selected:bg-transparent aria-selected:text-foreground-heading aria-selected:shadow-none" : "aria-selected:bg-nav aria-selected:text-nav-foreground aria-selected:shadow-(--ds-shadow-sm)"]}>{item.label}</button>)}
  </div>
  {items.map((item,i)=><div role="tabpanel" id={`${id}-panel-${i}`} aria-labelledby={`${id}-tab-${i}`} hidden={i!==first} tabindex="0" class="text-(length:--ds-text-sm-size) text-muted-foreground">{item.content}</div>)}
 </div>

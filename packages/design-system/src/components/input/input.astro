@@ -31,8 +31,8 @@ const {
   aria-invalid={invalid ? "true" : undefined}
   aria-describedby={describedBy}
   class:list={[
-    "min-h-(--input-height-md) w-full min-w-0 rounded-(--input-radius) border-(length:--input-border-width) border-input bg-background px-(--input-padding-x) py-2 text-base text-foreground shadow-(--input-shadow)",
-    "placeholder:text-muted-foreground outline-none",
+    "min-h-(--input-height-md) w-full min-w-0 rounded-(--input-radius) border-(length:--input-border-width) border-input bg-surface-raised px-(--input-padding-x) py-2 text-base text-foreground shadow-(--input-shadow)",
+    "placeholder:text-muted-foreground outline-none transition-colors duration-(--ds-duration-fast) motion-reduce:transition-none",
     "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
     "aria-invalid:border-destructive aria-invalid:ring-destructive",
     "disabled:cursor-not-allowed disabled:opacity-50",

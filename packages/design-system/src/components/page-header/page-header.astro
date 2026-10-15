@@ -3,4 +3,4 @@ import type { PageHeaderProps } from "./page-header.contract";
 interface Props extends PageHeaderProps { heading?: "h1" | "h2" | "h3"; }
 const { title="Account settings", description="Manage your profile and preferences.", heading: Heading="h2" } = Astro.props;
 ---
-<header class="flex flex-wrap items-start justify-between gap-6"><div><Heading class="ds-display text-3xl">{title}</Heading>{description && <p class="mt-2 text-muted-foreground">{description}</p>}</div><div class="flex flex-wrap gap-2"><slot name="actions" /></div></header>
+<header class="flex flex-wrap items-end justify-between gap-6"><div><Heading class="font-heading text-3xl font-bold tracking-tight text-foreground-heading">{title}</Heading>{description && <p class="mt-3 max-w-2xl text-muted-foreground">{description}</p>}</div><div class="flex flex-wrap gap-3"><slot name="actions" /></div></header>

@@ -4,12 +4,12 @@ import Block from "./Block.astro";
 import Token from "./Token.astro";
 import { ramps, steps, group, semanticGroup } from "./data";
 import { colorReferences } from "./color-references";
-const notes={neutral:"Text, surfaces, borders",brand:"Primary actions, focus, links",success:"Positive feedback",warning:"Caution, pending states",destructive:"Errors, destructive actions",info:"Neutral information"};
+const notes={neutral:"Reading, surfaces and borders",brand:"Structural blue, navigation, focus and links · trial",action:"Red commit action and small accents",warm:"Kraft surfaces · trial",natural:"Forest surfaces · trial",success:"Positive feedback",warning:"Caution, pending states",destructive:"Errors, destructive actions",info:"Neutral information"};
 const groups=["Surfaces","Text","Actions","Feedback","Borders & focus","Charts","Sidebar"];
 const semantic=group("semantic");
 function pair(name:string){if(semantic.some(t=>t.name===`${name}-foreground`)){return `${name}-foreground`;}if(["--foreground","--muted-foreground","--foreground-heading"].includes(name)){return "--background";}if(name.endsWith('-foreground')){const background=name.replace(/-foreground$/, '');if(semantic.some(t=>t.name===background)){return background;}}return "";}
 ---
-<Header title="Colors">Two layers. <strong>Ramps</strong> are the provisional starter palette, with independent feedback colors. <strong>Semantic colors</strong> give each color a job and resolve in light and dark. Components only use semantic colors. The current palette and mode combinations are not approved Tupak branding.</Header>
+<Header title="Colors">Two layers. <strong>Ramps</strong> adapt the external Tupak candidate: structural blue, a red commit action, kraft and forest surfaces, alongside independent feedback colors. <strong>Semantic colors</strong> give each color a job. Existing dark semantic colors remain independent; neither the candidate light palette nor dark product support is approved.</Header>
 <Block title="Ramps" description="Eleven steps from 50 to 950. These authored palette values are the foundation; use semantic colors in components.">
  <div class="space-y-8">{ramps.map(r=><div class="grid gap-3 md:sg-ramp-columns"><div><p class="text-sm font-semibold capitalize">{r}</p><p class="text-xs text-muted-foreground">{notes[r]}</p></div><div class="sg-scroll"><div class="grid sg-ramp-width grid-cols-11 gap-1.5">{steps.map(step=><div><button type="button" data-copy-token={`--palette-${r}-${step}`} data-copy-color class="h-14 w-full rounded-md border border-border transition-transform hover:-translate-y-0.5" style={`background:var(--palette-${r}-${step})`} aria-label={`Copy ${r} ${step}`}></button><p class="mt-1 text-xs font-medium">{step}</p><span class="sg-value" data-css-value={`--palette-${r}-${step}`} data-color></span></div>)}</div></div></div>)}</div>
 </Block>

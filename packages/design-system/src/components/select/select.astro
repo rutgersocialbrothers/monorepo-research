@@ -48,7 +48,7 @@ const sizes: Record<SelectSize, string> = {
     disabled={disabled}
     data-select-trigger
     class:list={[
-      "flex w-full min-w-0 items-center justify-between gap-2 rounded-(--input-radius) border-(length:--input-border-width) border-input bg-background px-(--input-padding-x) text-base text-foreground outline-none",
+      "flex w-full min-w-0 items-center justify-between gap-3 rounded-(--input-radius) border-(length:--input-border-width) border-input bg-surface-raised px-(--input-padding-x) text-base text-foreground outline-none transition-colors duration-(--ds-duration-fast) motion-reduce:transition-none",
       "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       "aria-invalid:border-destructive aria-invalid:ring-destructive disabled:cursor-not-allowed disabled:opacity-50",
       sizes[size],
@@ -65,7 +65,7 @@ const sizes: Record<SelectSize, string> = {
     role="listbox"
     hidden={!open}
     data-select-list
-    class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-(--input-radius) border border-border bg-popover p-1 text-popover-foreground shadow-popover"
+    class="absolute z-50 mt-2 max-h-60 w-full overflow-auto rounded-(--overlay-radius) border border-border bg-popover p-2 text-popover-foreground shadow-popover"
   >
     {
       options.map((option) => {
@@ -80,8 +80,8 @@ const sizes: Record<SelectSize, string> = {
             aria-selected={isSelected ? "true" : "false"}
             aria-disabled={option.disabled ? "true" : undefined}
             class:list={[
-              "group relative flex min-h-9 cursor-default items-center rounded-sm py-2 pr-8 pl-2 text-sm outline-none select-none",
-              "focus:bg-accent focus:text-accent-foreground",
+              "group relative flex min-h-11 cursor-default items-center rounded-sm py-2 pr-8 pl-3 text-sm outline-none select-none",
+              "focus:bg-secondary focus:text-secondary-foreground aria-selected:bg-secondary aria-selected:text-secondary-foreground",
               option.disabled && "pointer-events-none opacity-50",
             ]}
           >

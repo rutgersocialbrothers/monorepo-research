@@ -152,7 +152,7 @@ export function initStyleguide(): void {
   function refreshColors(): void {
     for (const element of document.querySelectorAll<HTMLElement>('[data-color-reference]')) {
       const references = JSON.parse(element.dataset.colorReference ?? '{}') as Record<string, string>;
-      element.textContent = references.tupak ?? 'starter value';
+      element.textContent = references.tupak ?? 'authored value';
     }
     for (const element of document.querySelectorAll<HTMLElement>('[data-contrast-bg]')) {
       const a = luminance(color(element, element.dataset.contrastBg ?? '').rgb);

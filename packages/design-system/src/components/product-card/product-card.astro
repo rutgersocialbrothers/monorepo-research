@@ -1,0 +1,41 @@
+---
+import type { ProductCardProps } from './product-card.contract';
+import Badge from '../badge/badge.astro';
+import Icon from '../icon/icon.astro';
+
+interface Props extends ProductCardProps {
+  class?: string;
+}
+
+const { title, href, image, eyebrow, description, price, badge, heading: Heading = 'h3', class: className } = Astro.props;
+const Element = href ? 'a' : 'article';
+---
+
+<!-- Candidate presentation adapted from the external Tupak prototype; content and media rights remain caller-owned. -->
+<Element
+  href={href || undefined}
+  class:list={[
+    'group flex h-full min-w-0 flex-col overflow-hidden rounded-(--card-radius) border border-border bg-card text-card-foreground no-underline shadow-(--card-shadow)',
+    href && 'transition-colors duration-(--ds-duration-fast) motion-reduce:transition-none hover:border-border-strong hover:shadow-(--ds-shadow-lg) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+    className,
+  ]}
+>
+  {image && (
+    <div class="relative aspect-square overflow-hidden bg-muted p-6">
+      <img src={image.src} alt={image.alt} loading="lazy" decoding="async" width="480" height="480" class="h-full w-full object-contain" />
+      {badge && <Badge class="absolute top-4 left-4">{badge}</Badge>}
+    </div>
+  )}
+  <div class="flex flex-1 flex-col gap-3 p-(--card-padding)">
+    {!image && badge && <Badge>{badge}</Badge>}
+    {eyebrow && <p class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{eyebrow}</p>}
+    <Heading class:list={['font-heading text-xl leading-tight font-bold text-foreground-heading', href && 'group-hover:underline group-hover:underline-offset-4']}>{title}</Heading>
+    {description && <p class="text-sm leading-relaxed text-muted-foreground">{description}</p>}
+    {(price || href) && (
+      <div class="mt-auto flex items-end justify-between gap-3 border-t border-border pt-4">
+        {price && <p class="text-xl font-bold text-foreground-heading">{price}</p>}
+        {href && <Icon name="arrow-right" size={16} class="ml-auto text-foreground-link" />}
+      </div>
+    )}
+  </div>
+</Element>

@@ -151,7 +151,6 @@ for (const storedMode of ['dark', 'light', 'invalid-mode', null] as const) {
     await page.goto('/#colors');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'tupak');
     await expect(page.locator('html')).toHaveClass(storedMode === 'dark' ? 'dark' : 'light');
-    await expect(page.locator('[data-color-token="--primary"] [data-css-value]')).toHaveText(['#ffc20e', '#ffc20e']);
     await expect(page.getByRole('combobox', { name: 'Theme', exact: true })).toHaveCount(0);
   });
 }

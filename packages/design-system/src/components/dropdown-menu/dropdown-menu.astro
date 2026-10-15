@@ -7,8 +7,8 @@ const id=`menu-${crypto.randomUUID()}`;
 ---
 <div class="relative" data-component-menu>
  <button type="button" data-menu-trigger aria-haspopup="menu" aria-expanded="false" aria-controls={id} class:list={[buttonBaseClass,buttonSizeClass.md,buttonVariantClass.outline]}>{label}</button>
- <div id={id} role="menu" aria-label={label} hidden class="absolute top-full left-0 z-(--ds-z-popover) mt-1 ds-floating-width min-w-48 rounded-(--overlay-radius) border border-border bg-popover p-1 text-popover-foreground shadow-(--overlay-shadow)">
- {items.map(item=><button type="button" role="menuitem" tabindex="-1" disabled={item.disabled} data-value={item.value} class:list={["block w-full cursor-pointer rounded-(--ds-radius-sm) p-2 text-left text-(length:--ds-text-sm-size) hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-(--ds-opacity-disabled)", item.destructive&&"text-destructive"]}>{item.label}</button>)}
+ <div id={id} role="menu" aria-label={label} hidden class="absolute top-full left-0 z-(--ds-z-popover) mt-2 ds-floating-width min-w-48 rounded-(--overlay-radius) border border-border bg-popover p-2 text-popover-foreground shadow-(--overlay-shadow)">
+ {items.map(item=><button type="button" role="menuitem" tabindex="-1" disabled={item.disabled} data-value={item.value} class:list={["block min-h-11 w-full cursor-pointer rounded-(--ds-radius-sm) px-3 py-2 text-left text-(length:--ds-text-sm-size) hover:bg-secondary hover:text-secondary-foreground focus:bg-secondary focus:text-secondary-foreground focus-visible:outline-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-(--ds-opacity-disabled)", item.destructive&&"text-destructive"]}>{item.label}</button>)}
  </div>
  <span class="sr-only" role="status" data-menu-result></span>
 </div>

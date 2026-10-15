@@ -44,10 +44,16 @@ test('public configuration supports an isolated native Tailwind consumer', async
   try {
     await cp(fixtureRoot, root, { recursive: true });
     await mkdir(join(root, 'node_modules/@tupak'), { recursive: true });
+    await mkdir(join(root, 'node_modules/@fontsource-variable'), { recursive: true });
     // Normal package resolution, outside the workspace: no private CSS alias or inherited Vite config.
     await Promise.all([
       symlink(packageRoot, join(root, 'node_modules/@tupak/design-system'), 'dir'),
       symlink(join(packageRoot, 'node_modules/tailwindcss'), join(root, 'node_modules/tailwindcss'), 'dir'),
+      symlink(
+        join(packageRoot, 'node_modules/@fontsource-variable/instrument-sans'),
+        join(root, 'node_modules/@fontsource-variable/instrument-sans'),
+        'dir',
+      ),
     ]);
     const result = await build({
       root,

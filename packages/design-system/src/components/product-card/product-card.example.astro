@@ -1,0 +1,19 @@
+---
+import ProductCard from './product-card.astro';
+---
+
+<div class="grid max-w-3xl gap-6 sm:grid-cols-2">
+  <ProductCard
+    title="Vouwdoos — prototypefoto"
+    href="/tupak-reference/amerikaanse-vouwdoos.webp"
+    image={{ src: '/tupak-reference/amerikaanse-vouwdoos.webp', alt: 'Bruine kartonnen vouwdoos uit het Tupak-prototype.' }}
+    eyebrow="Visuele proef"
+    description="Deze kaart opent alleen de referentiefoto, niet een product of winkelmand."
+    badge="Prototype"
+  />
+  <ProductCard
+    title="Verzendkoker — statische proef"
+    image={{ src: '/tupak-reference/verzendkokers-deksel.webp', alt: 'Kartonnen verzendkokers met deksels uit het Tupak-prototype.' }}
+    description="Zonder bestemming blijft deze kaart gewone inhoud. Er wordt geen prijs, voorraad of productbeleid verondersteld."
+  />
+</div>

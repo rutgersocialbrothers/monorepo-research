@@ -5,8 +5,8 @@ const { label="Hover or focus me",text="Tooltips explain; never put essential in
 const id=`tooltip-${crypto.randomUUID()}`;
 ---
 <span class="relative inline-flex" data-component-tooltip>
- <button type="button" aria-describedby={id} class="cursor-pointer rounded-(--button-radius) px-3 py-2.5 text-(length:--ds-text-sm-size) hover:bg-accent">{label}</button>
- <span role="tooltip" id={id} hidden class="absolute bottom-full left-0 z-(--ds-z-popover) w-56 ds-floating-width rounded-(--tooltip-radius) bg-foreground px-3 py-1.5 text-(length:--ds-text-xs-size) text-background">{text}</span>
+ <button type="button" aria-describedby={id} class="min-h-11 cursor-pointer rounded-(--button-radius) px-4 py-2.5 text-(length:--ds-text-sm-size) font-semibold text-foreground-heading hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">{label}</button>
+ <span role="tooltip" id={id} hidden class="absolute bottom-full left-0 z-(--ds-z-popover) w-56 ds-floating-width rounded-(--tooltip-radius) bg-nav px-3 py-2 text-(length:--ds-text-xs-size) text-nav-foreground shadow-(--overlay-shadow)">{text}</span>
 </span>
 <script>
  for(const root of document.querySelectorAll<HTMLElement>("[data-component-tooltip]")){

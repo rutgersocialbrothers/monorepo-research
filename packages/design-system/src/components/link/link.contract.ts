@@ -5,7 +5,7 @@ export const linkContract = {
   name: 'Link',
   version: 1,
   description:
-    'Navigates to a destination. Text is the default appearance. Button appearance reuses the Button variant and size, and the element stays an anchor.',
+    'Navigates to a destination. Text is the default appearance. Button appearance reuses the Button variant and size, defaults to solid-navy nav, and the element stays an anchor.',
   element: 'a',
   props: {
     href: {
@@ -21,7 +21,7 @@ export const linkContract = {
     variant: {
       type: 'enum',
       values: buttonContract.props.variant.values,
-      default: 'primary',
+      default: 'nav',
     },
     size: {
       type: 'enum',

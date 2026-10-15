@@ -1,3 +1,5 @@
+/* Font delivery is an explicit consumer choice, not part of public configuration. */
+@import '@fontsource-variable/instrument-sans';
 @import 'tailwindcss' source(none);
 @import '@tupak/design-system/tokens.css';
 

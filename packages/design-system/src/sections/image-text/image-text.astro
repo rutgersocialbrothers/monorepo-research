@@ -1,0 +1,19 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import Link from "../../components/link/link.astro";
+import type {SectionImage, SectionLink, SectionPoint} from "../homepage.contract";
+interface Props {title: string; eyebrow?: string; text?: string; image?: SectionImage; imageSide?: "left" | "right"; badge?: string; points?: ReadonlyArray<SectionPoint>; action?: SectionLink;}
+const {title, eyebrow, text, image, imageSide = "left", badge, points = [], action} = Astro.props;
+---
+<section class="py-10 md:py-16" aria-label={title}>
+  <div class:list={["container-page grid items-center gap-10 lg:gap-16", image && "md:grid-cols-2"]}>
+    {image && <div class:list={["relative min-w-0 pb-5 pr-5", imageSide === "right" && "md:order-2"]}>
+      <img src={image.src} alt={image.alt} width="816" height="816" loading="lazy" decoding="async" class="aspect-square w-full rounded-(--ds-radius-lg) object-cover" />
+      {badge && <span class="absolute bottom-0 right-0 flex size-28 items-center justify-center rounded-full border-8 border-background bg-surface-natural p-3 text-center text-xs font-semibold uppercase tracking-wide text-foreground md:size-36">{badge}</span>}
+    </div>}
+    <div class="min-w-0">{eyebrow && <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-foreground-link">{eyebrow}</p>}<h2 class="max-w-xl break-words text-3xl md:text-4xl">{title}</h2>{text && <p class="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">{text}</p>}
+      {points.length > 0 && <ul class="mt-6 grid gap-4">{points.map(point => <li class="flex gap-3"><span class="mt-0.5 shrink-0 text-foreground-link"><Icon name={point.icon ?? "check"} size={20} /></span><span><strong class="text-sm font-medium">{point.title}</strong>{point.text && <span class="mt-1 block text-sm text-muted-foreground">{point.text}</span>}</span></li>)}</ul>}
+      {action && <Link href={action.href} appearance="button" variant="nav" class="mt-7">{action.label} →</Link>}
+    </div>
+  </div>
+</section>

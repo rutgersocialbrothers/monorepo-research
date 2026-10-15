@@ -29,8 +29,7 @@
     "types": "astro check"
   },
   "dependencies": {
-    "@fontsource-variable/nunito": "catalog:",
-    "@fontsource/lobster": "catalog:",
+    "@fontsource-variable/instrument-sans": "catalog:",
     "@iconify-icons/lucide": "catalog:",
     "@sindresorhus/slugify": "catalog:"
   },

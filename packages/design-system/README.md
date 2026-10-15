@@ -2,7 +2,7 @@
 
 Private source package for the Tupak designer workbench: authored CSS-first tokens, framework-independent component contracts and canonical Astro references. Astro + Tailwind v4 render semantic HTML and native behavior. There is one theme (`tupak`), no tenant chooser and no shadcn tooling or components.
 
-The current yellow starter palette and Nunito/Lobster fonts are **provisional, not approved Tupak branding**. Existing light/dark mechanics and their independent values are retained for review. Whether the product needs dark mode is **TBD**; retaining a toggle does not approve dark-mode design or product support. Designers supply the approved Tupak design system rather than treating these defaults as client decisions.
+The current candidate manually adapts the blue/red/kraft/forest foundations and Instrument Sans from `JPPACQ/tupak-design-system` `main` at `afd9c66`. These remain **design trials, not production-approved Tupak branding**. The light-mode port retains independent light/dark mechanics and the prior effective dark colors. Whether the product needs dark mode is **TBD**; retaining a toggle does not approve its design or product support.
 
 ## Start, edit, review and hand off
 
@@ -14,9 +14,9 @@ pnpm install --frozen-lockfile
 pnpm dev:design-system
 ```
 
-Open the URL Astro prints, normally `http://localhost:4321`. This native Astro entrypoint works without Turbo's TUI and requires no CMS, database, credentials, Shopify account or upload. Default editorial examples use generic content and optional media, not remote brand assets or business facts. Do not use root `pnpm dev` for design-only work: it also starts upload-capable Liquid preview.
+Open the URL Astro prints, normally `http://localhost:4321`, for the workbench; `/preview` is the composed candidate homepage. This native Astro entrypoint needs no CMS, database, credentials, Shopify account or upload. Canonical defaults stay generic with optional media. The composed preview uses locally copied reference assets with provenance in `src/sections/reference-assets.ts` and explicitly labelled prototype content, not a live shop or verified commercial claims. Do not use root `pnpm dev` for design-only work: it also starts upload-capable Liquid preview.
 
-1. **Edit approved foundations:** `src/styles/tokens.css` owns palette, semantic/component tokens, fonts, spacing, radii and Tailwind mappings. `src/tokens/reference.ts` owns token descriptions/categories only, never duplicate values. `src/tokens/themes.ts` owns the single identity and mode types.
+1. **Edit foundations:** `src/styles/tokens.css` owns palette, semantic/component tokens, font stacks, spacing, radii and Tailwind mappings. Fontsource asset delivery belongs to private `src/styles/global.css`, not the public token export. `src/tokens/reference.ts` owns token descriptions/categories only, never duplicate values. `src/tokens/themes.ts` owns the single identity and mode types.
 2. **Edit canonical examples:** `src/components/<family>/` owns contracts, markup, states and behavior; `src/sections/<slug>/` owns generic editorial compositions with optional media. `src/styleguide/` and `src/styles/styleguide.css` own documentation and workbench presentation.
 3. **Review:** inspect both light and dark, narrow/wide layouts, long/empty content, keyboard/focus/disabled behavior, native control popups and reduced motion. Token click copies `var(--name)`; Shift+click copies the resolved value. Print reveals all documentation sections. Only mode is persisted, under `tupak-design-system-mode`; no theme selection is stored.
 4. **Agree the contract:** use the [component contract template](../../docs/templates/component-contract.md) for props/defaults, content, states, semantics, accessibility and renderer obligations. Visual or interaction changes need human decisions; AI proposals are not approval.
@@ -86,11 +86,11 @@ The four source-export shapes remain:
 | `@tupak/design-system/contracts`         | Shared interface and inferred prop types                       |
 | `@tupak/design-system/<family>-contract` | Family capabilities/defaults; e.g. `button-contract`           |
 
-These are authored source, not a compiled library. `tokens.css` **is the reusable Tailwind 4 configuration**: bundled font imports, runtime custom properties, mode scopes and `@theme inline` utility mappings. It does not include the Tailwind engine, Preflight, source registration or private workbench component classes. Canonical Astro references consume this same public export through `src/styles/global.css`; their renderers, recipes and behavior are not exported as a runtime component library. No library artifact, token JSON, renderer generator or packed-consumer workflow is provided. Liquid does **not** consume this CSS export.
+These are authored source, not a compiled library. `tokens.css` **is the reusable Tailwind 4 configuration**: asset-neutral runtime custom properties, mode scopes and `@theme inline` utility mappings. It does not include the Tailwind engine, Preflight, fonts/assets, source registration or private workbench component classes. Canonical Astro references consume this same public export through `src/styles/global.css`; their renderers, recipes and behavior are not exported as a runtime component library. No library artifact, token JSON, renderer generator or packed-consumer workflow is provided. Liquid does **not currently** consume this CSS export.
 
 ### Consume the public Tailwind configuration
 
-Use a compatible Tailwind 4 integration (for example, native `@tailwindcss/vite`) and a package-aware asset bundler that resolves the export's Fontsource imports and emits their font assets. In the consuming application's stylesheet:
+Use a compatible Tailwind 4 integration (for example, native `@tailwindcss/vite` or the native CLI). The CSS-only export needs no font asset bundler: consumers own font delivery and may use Fontsource, platform-managed fonts or their own assets. The Astro workbench privately bundles Instrument Sans through Fontsource. In the consuming application's stylesheet:
 
 ```css
 @import 'tailwindcss' source(none);
@@ -100,15 +100,24 @@ Use a compatible Tailwind 4 integration (for example, native `@tailwindcss/vite`
 @source "../src";
 ```
 
-The consumer owns the Tailwind engine/version, Preflight decision and template discovery. `source(none)` disables automatic scanning; the public token export does not register workbench templates. For a consumer without Preflight, replace the first import with `@import "tailwindcss/theme.css" layer(theme);` and `@import "tailwindcss/utilities.css" layer(utilities) source(none);`, retaining the public token import and explicit `@source`.
+The consumer owns the Tailwind engine/version, Preflight decision and template discovery. `source(none)` disables automatic scanning; the public token export does not register workbench templates. A consumer without Preflight must explicitly establish layer order before split imports:
+
+```css
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities) source(none);
+@import '@tupak/design-system/tokens.css';
+
+@source "../src";
+```
 
 This is an unprefixed, global foundation: root defaults and generic utility namespaces such as colors, spacing, radii and fonts can overlap another Tailwind theme. Compose theme imports deliberately; later declarations can override matching defaults. Do not assume importing it creates an isolated component scope or clears unrelated Tailwind defaults. Runtime overrides and explicit mode scopes remain CSS inheritance concerns, not separate generated configurations.
 
-The existing Playwright check lane includes isolated consumer compilation with the native Tailwind/Vite integration and public export, plus browser assertions for token-backed utilities, nested overrides/modes, consumer-owned sources and Preflight, private-class exclusion and bundled fonts. This is the validation contract, not a claim that the current checkout has passed; report results only after running the checks.
+The existing Playwright check lane includes isolated consumer compilation with native Tailwind/Vite and the public export, plus browser assertions for token-backed utilities, nested overrides/modes, consumer-owned sources and Preflight, and private-class exclusion. Font delivery remains consumer-owned; private Astro font loading is separate from the asset-neutral public CSS contract. Report current outcomes only after running the checks.
 
 ## Component families
 
-Existing families are Alert, Badge, Button, Card, Checkbox, Dialog, Dropdown Menu, Empty State, Form Section, Icon, Input, Label, Link, Page Header, Radio Group, Select, Separator, Switch, Tabs, Textarea and Tooltip. Each lower-case kebab-case folder contains `<family>.contract.ts` and `<family>.astro`, with optional `.example.astro`, styles, behavior and subparts beside them. Contracts export `as const satisfies ComponentContract`; renderer scalar/enum props derive from `ContractProps<typeof contract>`, while native attributes and structured data remain renderer-owned. See the [external Tupak integration preparation](../../docs/designer-workflow.md#external-tupak-prototype-local-integration-preparation) before porting the separate prototype.
+The 22 families are Alert, Badge, Button, Card, Checkbox, Dialog, Dropdown Menu, Empty State, Form Section, Icon, Input, Label, Link, Page Header, Product Card, Radio Group, Select, Separator, Switch, Tabs, Textarea and Tooltip. Each lower-case kebab-case folder contains `<family>.contract.ts` and `<family>.astro`, with optional `.example.astro`, styles, behavior and subparts beside them. Contracts export `as const satisfies ComponentContract`; renderer scalar/enum props derive from `ContractProps<typeof contract>`, while native attributes and structured data remain renderer-owned. Button and Link share red primary, pale-blue secondary and navy `nav` treatments. Product Card implements the selected B-style candidate without fake commerce actions. See the [external Tupak integration record](../../docs/designer-workflow.md#external-tupak-prototype-local-integration-preparation) for source selection, implementation status and unresolved design decisions.
 
 `src/registry.ts` discovers siblings. Contract names must match their family; missing renderers and duplicate identities fail rather than disappear. New correctly named contracts automatically receive the `<family>-contract` export and Components/Contracts specimens; no barrel or page registration is needed. Enum/boolean states create matrices; other families receive default specimens. `preview` supplies `content`, `label`, `props`, `exclude` and `overlay` for specimen composition. Family anchors/imports derive from folder names; captions are slugified and are not a uniqueness guarantee.
 

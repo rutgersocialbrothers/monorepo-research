@@ -8,7 +8,7 @@ Keep the existing project identity, Git history/remotes and uncommitted work. Gi
 
 The initial commit is intended to contain the complete approved codebase. Do not stage, commit or push while preparing its initial state.
 
-The workbench has one theme, `tupak`, and no tenant chooser. Current palette/fonts are provisional starter values, not approved Tupak design. Retain independent light/dark mechanics and existing mode values pending designer decisions; dark-mode product support is TBD. Do not invent new brand colors, business facts or assets. No shadcn components, configuration or tooling may be added.
+The workbench has one theme, `tupak`, and no tenant chooser. Its candidate blue/red/kraft/forest foundations and Instrument Sans are manually adapted from the external prototype at `main` `afd9c66`, not production-approved branding. Retain independent light/dark mechanics and prior effective dark colors; dark-mode product support is TBD. `/preview` is a labelled composed candidate, not a live shop. Do not invent brand decisions, business facts or asset rights. No shadcn components, configuration or tooling may be added.
 
 ## First-time setup
 
@@ -36,11 +36,13 @@ Turbo's standard package watcher reruns the finite CSS build for nonignored app-
 | --- | --- |
 | `apps/liquid` | Native Shopify theme root: layouts, config, templates, merchant state, snippets, blocks, sections, locales and merchant-variable bridges |
 | `apps/liquid/assets/tailwind.css` | Generated CSS; Git-ignored, compiled before preview/upload |
-| `packages/design-system` | `@tupak/design-system`: Tupak workbench, provisional tokens, framework-free contracts and canonical Astro components; not merchant CSS or a Liquid build prerequisite |
+| `packages/design-system` | `@tupak/design-system`: candidate foundations, reusable public Tailwind configuration, framework-free contracts and canonical Astro references; not merchant CSS or a Liquid build prerequisite |
 
 Native components include button/image snippets, group/heading/text blocks, custom-section and the design demo. Preserve filenames, schema IDs and `{{ block.shopify_attributes }}`.
 
 Current merchant-aware utility tokens are authored in `apps/liquid/styles/tokens.css`. Button class selection is authored in `apps/liquid/snippets/design-button-classes.liquid`, not generated from TypeScript. The Tupak workbench's CSS values live in `packages/design-system/src/styles/tokens.css`; `src/tokens/reference.ts` describes them without owning values. Designers integrate approved intent there; developers manually adapt contracts into Liquid after explicit handoff. Do not import workbench CSS into Liquid or automatically apply visual changes. There is no React/UI workspace, Storybook, generated adapter or vendored-skills dependency.
+
+`@tupak/design-system/tokens.css` is the existing asset-neutral Tailwind 4 CSS-first configuration. Canonical Astro imports that public export; Fontsource delivery stays in private `src/styles/global.css`. Consumers own font delivery, Tailwind engine, Preflight and explicit sources. Do not add wrapper exports or legacy TS configuration. For split no-Preflight imports, declare `@layer theme, base, components, utilities;` first. The 22 canonical families include Product Card and shared Button/Link `nav` styling; renderers are not exported as a runtime library. Selected local reference assets and their source paths are recorded in `src/sections/reference-assets.ts`; preserve candidate/rights labels and the unchanged external sibling.
 
 Liquid paths are relative to `apps/liquid`:
 - `layout/theme.liquid` loads variables, critical CSS, generated CSS, header and footer groups.

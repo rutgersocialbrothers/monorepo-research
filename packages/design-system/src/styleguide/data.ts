@@ -8,7 +8,17 @@ export const tokens: ReadonlyArray<ReferenceToken> = tokenReference;
 export function group(name: string): Array<ReferenceToken> {
   return tokens.filter((token) => token.group === name);
 }
-export const ramps = ['neutral', 'brand', 'success', 'warning', 'destructive', 'info'] as const;
+export const ramps = [
+  'neutral',
+  'brand',
+  'action',
+  'warm',
+  'natural',
+  'success',
+  'warning',
+  'destructive',
+  'info',
+] as const;
 export const steps = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;
 export function semanticGroup(name: string): string {
   if (name.startsWith('--sidebar')) {
@@ -23,7 +33,7 @@ export function semanticGroup(name: string): string {
   if (/^--(success|warning|destructive|info)/u.test(name)) {
     return 'Feedback';
   }
-  if (/^--(primary|secondary|accent)/u.test(name)) {
+  if (/^--(primary|secondary|accent|nav)/u.test(name)) {
     return 'Actions';
   }
   if (/^--(foreground|muted-foreground)/u.test(name)) {

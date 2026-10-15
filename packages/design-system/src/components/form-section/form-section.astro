@@ -4,7 +4,7 @@ type Props = FormSectionProps;
 const { layout="stacked", title="Profile", description="Your public profile details." } = Astro.props;
 ---
 <fieldset data-layout={layout}>
-  <legend class="text-xl">{title}</legend>
+  <legend class="font-heading text-xl font-bold text-foreground-heading">{title}</legend>
   <div class:list={["mt-4 grid gap-6", layout === "split" && "lg:ds-form-split"]}>
     <p class="text-sm text-muted-foreground">{description}</p>
     <div class="grid gap-5">

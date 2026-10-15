@@ -3,17 +3,17 @@ export const tokenReference = [
   {
     name: '--ds-font-sans',
     group: 'font',
-    description: '',
+    description: 'Candidate Instrument Sans body face; font assets are supplied by the consuming application.',
   },
   {
     name: '--ds-font-heading',
     group: 'font',
-    description: '',
+    description: 'Candidate heading role, sharing the body face and independently overridable.',
   },
   {
     name: '--ds-font-display',
     group: 'font',
-    description: 'Script face for page titles and card titles only.',
+    description: 'Candidate Instrument Sans display role; extra-bold rather than script.',
   },
   {
     name: '--ds-font-mono',
@@ -33,7 +33,7 @@ export const tokenReference = [
   {
     name: '--ds-text-sm-size',
     group: 'text',
-    description: 'Provisional starter body size (15px).',
+    description: 'Small supporting copy, labels and metadata.',
   },
   {
     name: '--ds-text-sm-line-height',
@@ -139,6 +139,11 @@ export const tokenReference = [
     name: '--ds-font-weight-bold',
     group: 'font-weight',
     description: '',
+  },
+  {
+    name: '--ds-font-weight-extrabold',
+    group: 'font-weight',
+    description: 'Candidate display and hero emphasis.',
   },
   {
     name: '--ds-tracking-tighter',
@@ -648,7 +653,7 @@ export const tokenReference = [
   {
     name: '--heading-display-font-family',
     group: 'component',
-    description: 'h1, page titles and card titles.',
+    description: 'Display and page-title face, independently overridable.',
   },
   {
     name: '--heading-font-weight',
@@ -763,7 +768,7 @@ export const tokenReference = [
   {
     name: '--palette-neutral-950',
     group: 'color',
-    description: 'Starter neutral foreground in light mode.',
+    description: 'Neutral foreground in light mode.',
   },
   {
     name: '--palette-brand-50',
@@ -788,7 +793,7 @@ export const tokenReference = [
   {
     name: '--palette-brand-400',
     group: 'color',
-    description: 'Provisional starter primary accent; not approved Tupak branding.',
+    description: 'Candidate structural blue ramp; not the red commit-action color.',
   },
   {
     name: '--palette-brand-500',
@@ -808,7 +813,7 @@ export const tokenReference = [
   {
     name: '--palette-brand-800',
     group: 'color',
-    description: 'Starter heading foreground in light mode.',
+    description: 'Candidate inline-link foreground in light mode.',
   },
   {
     name: '--palette-brand-900',
@@ -820,6 +825,47 @@ export const tokenReference = [
     group: 'color',
     description: '',
   },
+  { name: '--palette-action-50', group: 'color', description: 'Candidate red accent ramp.' },
+  { name: '--palette-action-100', group: 'color', description: '' },
+  { name: '--palette-action-200', group: 'color', description: '' },
+  { name: '--palette-action-300', group: 'color', description: '' },
+  { name: '--palette-action-400', group: 'color', description: '' },
+  { name: '--palette-action-500', group: 'color', description: '' },
+  {
+    name: '--palette-action-600',
+    group: 'color',
+    description: 'Commit-action fill in light mode; never a large structural surface.',
+  },
+  { name: '--palette-action-700', group: 'color', description: '' },
+  { name: '--palette-action-800', group: 'color', description: '' },
+  { name: '--palette-action-900', group: 'color', description: '' },
+  { name: '--palette-action-950', group: 'color', description: '' },
+  { name: '--palette-warm-50', group: 'color', description: 'External kraft trial; designer sign-off pending.' },
+  { name: '--palette-warm-100', group: 'color', description: '' },
+  { name: '--palette-warm-200', group: 'color', description: '' },
+  { name: '--palette-warm-300', group: 'color', description: '' },
+  { name: '--palette-warm-400', group: 'color', description: '' },
+  { name: '--palette-warm-500', group: 'color', description: '' },
+  { name: '--palette-warm-600', group: 'color', description: '' },
+  { name: '--palette-warm-700', group: 'color', description: '' },
+  { name: '--palette-warm-800', group: 'color', description: '' },
+  { name: '--palette-warm-900', group: 'color', description: '' },
+  { name: '--palette-warm-950', group: 'color', description: '' },
+  {
+    name: '--palette-natural-50',
+    group: 'color',
+    description: 'External forest trial, distinct from success feedback; designer sign-off pending.',
+  },
+  { name: '--palette-natural-100', group: 'color', description: '' },
+  { name: '--palette-natural-200', group: 'color', description: '' },
+  { name: '--palette-natural-300', group: 'color', description: '' },
+  { name: '--palette-natural-400', group: 'color', description: '' },
+  { name: '--palette-natural-500', group: 'color', description: '' },
+  { name: '--palette-natural-600', group: 'color', description: '' },
+  { name: '--palette-natural-700', group: 'color', description: '' },
+  { name: '--palette-natural-800', group: 'color', description: '' },
+  { name: '--palette-natural-900', group: 'color', description: '' },
+  { name: '--palette-natural-950', group: 'color', description: '' },
   {
     name: '--palette-success-50',
     group: 'color',
@@ -1063,7 +1109,7 @@ export const tokenReference = [
   {
     name: '--foreground-heading',
     group: 'semantic',
-    description: '',
+    description: 'Structural navy headings in the light candidate; retained independent dark color.',
   },
   {
     name: '--foreground-disabled',
@@ -1108,7 +1154,7 @@ export const tokenReference = [
   {
     name: '--primary',
     group: 'semantic',
-    description: '',
+    description: 'The red commit action in the light candidate, not the structural brand ramp.',
   },
   {
     name: '--primary-foreground',
@@ -1128,7 +1174,7 @@ export const tokenReference = [
   {
     name: '--secondary',
     group: 'semantic',
-    description: '',
+    description: 'Pale-blue supporting action in the light candidate.',
   },
   {
     name: '--secondary-foreground',
@@ -1319,5 +1365,40 @@ export const tokenReference = [
     name: '--sidebar-ring',
     group: 'semantic',
     description: '',
+  },
+  { name: '--foreground-link', group: 'semantic', description: 'Inline links and text navigation.' },
+  { name: '--foreground-accent', group: 'semantic', description: 'Blue emphasis for a display phrase, not body text.' },
+  { name: '--foreground-inverse', group: 'semantic', description: 'Light content on the inverse surface.' },
+  { name: '--surface-band', group: 'semantic', description: 'Quiet page band; the prototype’s mixed neutral trial.' },
+  {
+    name: '--surface-inverse',
+    group: 'semantic',
+    description: 'Structural navy header, footer and contrast panels in the light candidate.',
+  },
+  { name: '--surface-brand', group: 'semantic', description: 'Pale structural blue band.' },
+  { name: '--surface-warm', group: 'semantic', description: 'Candidate kraft panel, not warning feedback.' },
+  { name: '--surface-warm-subtle', group: 'semantic', description: 'Quieter kraft panel beside another color band.' },
+  { name: '--surface-natural', group: 'semantic', description: 'Candidate forest tint, not success feedback.' },
+  {
+    name: '--surface-accent',
+    group: 'semantic',
+    description: 'Pale rose accent panel; never a saturated red page fill.',
+  },
+  { name: '--secondary-hover', group: 'semantic', description: 'Supporting action hover.' },
+  { name: '--secondary-active', group: 'semantic', description: 'Supporting action pressed state.' },
+  { name: '--secondary-border', group: 'semantic', description: 'Visible supporting-action boundary.' },
+  {
+    name: '--nav',
+    group: 'semantic',
+    description: 'Solid navy destination action in the light candidate, distinct from red commit actions.',
+  },
+  { name: '--nav-hover', group: 'semantic', description: 'Navigation-action hover.' },
+  { name: '--nav-active', group: 'semantic', description: 'Navigation-action pressed state.' },
+  { name: '--nav-foreground', group: 'semantic', description: 'Label on the navigation-action fill.' },
+  {
+    name: '--media-blend-mode',
+    group: 'component',
+    description:
+      'Studio-image compositing follows the nearest explicit light or dark mode, not the operating-system preference.',
   },
 ] as const;

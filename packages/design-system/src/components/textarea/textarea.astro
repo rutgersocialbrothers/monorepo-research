@@ -12,5 +12,5 @@ const { id, name, describedBy, disabled=false, invalid=false, rows=3, placeholde
   required={required}
   aria-invalid={invalid || undefined}
   aria-describedby={describedBy}
-  class="w-full min-w-0 resize-y rounded-(--input-radius) border-(length:--input-border-width) border-input bg-background px-3 py-2.5 text-foreground shadow-(--input-shadow) aria-[invalid=true]:border-destructive disabled:cursor-not-allowed disabled:opacity-(--ds-opacity-disabled)"
+  class="w-full min-w-0 resize-y rounded-(--input-radius) border-(length:--input-border-width) border-input bg-surface-raised px-(--input-padding-x) py-3 text-foreground shadow-(--input-shadow) outline-none transition-colors duration-(--ds-duration-fast) motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-[invalid=true]:border-destructive disabled:cursor-not-allowed disabled:opacity-(--ds-opacity-disabled)"
 >{value}</textarea>

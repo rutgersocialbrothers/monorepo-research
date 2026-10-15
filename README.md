@@ -1,6 +1,6 @@
 # Tupak Shopify workspace
 
-The Tupak workspace contains a native Liquid storefront and the independent `@tupak/design-system` Astro workbench. Designers integrate the Tupak design system in that workbench; developers manually adapt approved intent to Liquid. Its current palette and Nunito/Lobster fonts are provisional starter values, not approved Tupak branding. Light/dark mechanics and their existing values remain available for review; whether Tupak needs dark mode is **TBD**. No store credentials or project IDs are embedded.
+The Tupak workspace contains a native Liquid storefront and the independent `@tupak/design-system` Astro workbench. Its current visual candidate manually adapts blue/red/kraft/forest foundations and Instrument Sans from the external Tupak prototype, without claiming production design approval. Developers manually adapt approved intent to Liquid; this port leaves Liquid unchanged. Light/dark mechanics retain the prior effective dark colors; whether Tupak needs dark mode is **TBD**. No store credentials or project IDs are embedded.
 
 ## First-time setup
 
@@ -31,7 +31,7 @@ pnpm dev:liquid:local # Rebuild CSS on theme/style input changes; no browser or 
 pnpm dev:design-system # Astro reference workbench, normally http://localhost:4321
 ```
 
-The workbench includes tokens, typography, the single Tupak theme in light/dark modes, canonical components/contracts and generic editorial sections with optional media. There is no tenant chooser. Fontsource fonts are bundled locally; default examples contain no remote brand assets or business data. No CMS, database, credentials or upload dependency is required. This is reference rendering, not proof of Liquid or merchant-editor parity.
+The workbench includes tokens, typography, the single Tupak theme in light/dark modes, 22 canonical component families/contracts and editorial sections with optional media. `/preview` composes the current external `main` homepage selection as an explicitly labelled candidate, not a live shop. Reference artwork is local, with provenance in `src/sections/reference-assets.ts`; production rights and design approval remain separate. Instrument Sans is bundled privately with Fontsource, while the public token CSS stays asset-neutral and leaves font delivery to consumers. There is no tenant chooser, CMS, database, credentials or upload dependency. Astro rendering is not proof of Liquid or merchant-editor parity.
 
 **Liquid preview — authenticated, upload-capable:**
 
@@ -63,7 +63,7 @@ Turbo's standard package watcher reruns the finite Liquid CSS build after nonign
 | --- | --- |
 | `apps/liquid` | Native Shopify theme root: layouts, config, templates, merchant state, snippets, blocks, sections and locales |
 | `apps/liquid/styles/tokens.css` | Current authored CSS token authority and merchant-variable mappings |
-| `packages/design-system` | Private `@tupak/design-system`: Tupak workbench, provisional tokens, framework-free contracts and canonical Astro components |
+| `packages/design-system` | Private `@tupak/design-system`: candidate Tupak foundations, reusable public Tailwind configuration, framework-free contracts and canonical Astro references |
 | `scripts`, `deployments` | Local configuration pull and native CI branch-to-Environment mappings |
 
 Commit authored source only. `apps/liquid/assets/tailwind.css` is compiled and Git-ignored, but must be built before previews or uploads. All other theme files are authored directly in `apps/liquid`; Shopify CLI filters its supported theme folders, so app metadata and `styles/` are not uploaded. The repository root is not a theme root. Do not enable repository-root Shopify GitHub synchronization.
@@ -95,7 +95,7 @@ Liquid stays close to Shopify's component model: small plain-JavaScript enhancem
 
 ### Designer integration and manual Liquid adaptation
 
-Start with `pnpm dev:design-system`. Edit `packages/design-system/src/styles/tokens.css` for approved shared values, `src/tokens/reference.ts` for descriptions, component families for canonical states/behavior and sections for editorial compositions. CSS is the value authority; metadata is not a second token store. Review light and dark independently, even while dark-mode product support remains undecided. Keep the existing baseline unless an approved design brief changes it.
+Start with `pnpm dev:design-system`; review the workbench at `/` and composed candidate homepage at `/preview`. Edit `packages/design-system/src/styles/tokens.css` for shared values, `src/tokens/reference.ts` for descriptions, component families for canonical states/behavior and sections for editorial compositions. CSS is the value authority; metadata is not a second token store. The current candidate follows external `main` at `afd9c66`, not the older `index-v2.html` trial. Review light and dark independently: the port retains prior effective dark colors without deciding dark-mode product support. Source trials and local implementation are not design approval.
 
 Use the [package guide](packages/design-system/README.md) for the actual source exports and five ordered check gates. There is no shadcn dependency, component configuration or lint plugin; retain native Better Tailwind class validation. This workspace has no React/UI adaptation package, Storybook or generated renderer pipeline.
 

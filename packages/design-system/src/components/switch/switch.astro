@@ -3,18 +3,18 @@ import type { SwitchProps } from "./switch.contract";
 interface Props extends SwitchProps { id?: string; name?: string; label: string; }
 const { id, name, label, checked=false, disabled=false, size="md" } = Astro.props;
 ---
-<label class="group relative inline-flex cursor-pointer items-center gap-3 text-(length:--ds-text-sm-size) has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-(--ds-opacity-disabled)" data-size={size}>
+<label class="group relative inline-flex min-h-11 cursor-pointer items-center gap-3 text-(length:--ds-text-sm-size) text-foreground has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-(--ds-opacity-disabled)" data-size={size}>
  <input type="checkbox" role="switch" id={id} name={name} checked={checked} disabled={disabled} class="peer absolute m-0 h-5 w-9 opacity-0" />
  <span
    class:list={[
-     "flex items-center rounded-full bg-border-strong p-0.5 ds-switch-transition duration-(--ds-duration-base) peer-checked:bg-primary peer-focus-visible:outline-(length:--focus-ring-width) peer-focus-visible:outline-ring peer-focus-visible:outline-offset-(--focus-ring-offset)",
+     "flex items-center rounded-full bg-border-strong p-0.5 ds-switch-transition duration-(--ds-duration-base) motion-reduce:transition-none peer-checked:bg-nav peer-focus-visible:outline-(length:--focus-ring-width) peer-focus-visible:outline-ring peer-focus-visible:outline-offset-(--focus-ring-offset)",
      size === "sm" ? "h-4 w-7" : "h-5 w-9",
    ]}
    aria-hidden="true"
  ><span
    class:list={[
-     "rounded-full bg-(--switch-thumb) shadow-(--ds-shadow-sm) transition-transform duration-(--ds-duration-base) ease-(--ds-ease-standard)",
-     size === "sm" ? "size-3 peer-checked:translate-x-3" : "size-4 peer-checked:translate-x-4",
+     "rounded-full bg-(--switch-thumb) shadow-(--ds-shadow-sm) transition-transform duration-(--ds-duration-base) motion-reduce:transition-none ease-(--ds-ease-standard)",
+     size === "sm" ? "size-3 group-has-[:checked]:translate-x-3" : "size-4 group-has-[:checked]:translate-x-4",
    ]}
  ></span></span><span>{label}</span>
 </label>

@@ -7,8 +7,7 @@ catalog:
   '@2digits/oxlint-config': 1.2.2
   '@2digits/tsconfig': 0.9.0
   '@astrojs/check': 0.9.10
-  '@fontsource-variable/nunito': 5.3.0
-  '@fontsource/lobster': 5.3.0
+  '@fontsource-variable/instrument-sans': 5.3.0
   '@iconify-icons/lucide': 2.0.13
   '@sindresorhus/slugify': 3.0.1
   '@tailwindcss/vite': 4.3.3

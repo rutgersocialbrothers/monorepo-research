@@ -1,0 +1,41 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import Link from "../../components/link/link.astro";
+import type { SectionLink, SectionImage } from "../homepage.contract";
+interface Props {
+  title?: string;
+  homeHref?: string;
+  logo?: SectionImage;
+  links?: ReadonlyArray<SectionLink>;
+  catalogue?: ReadonlyArray<SectionLink>;
+  action?: SectionLink;
+  searchAction?: string;
+  searchLabel?: string;
+}
+const {title = "Tupak", homeHref = "/", logo, links = [], catalogue = [], action, searchAction, searchLabel = "Zoek in het assortiment"} = Astro.props;
+const searchId = `site-search-${crypto.randomUUID()}`;
+---
+<header>
+  <div class="bg-surface-inverse text-foreground-inverse">
+    <div class="container-page flex flex-wrap items-center gap-x-8 gap-y-4 py-6">
+      <a href={homeHref} aria-label={`${title}, homepage`} class="shrink-0 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-current">
+        {logo ? <img src={logo.src} alt={logo.alt} width="175" height="58" class="h-auto w-36 md:w-44" /> : <span class="text-3xl font-bold">{title}</span>}
+      </a>
+      {searchAction ? <form action={searchAction} method="get" role="search" class="flex min-w-0 flex-1 items-center rounded-full bg-background p-1 text-foreground">
+        <label for={searchId} class="sr-only">{searchLabel}</label>
+        <input id={searchId} name="q" type="search" placeholder={searchLabel} class="min-w-0 flex-1 rounded-full bg-transparent px-5 py-2 outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+        <button type="submit" aria-label="Zoeken" class="grid size-10 place-items-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"><Icon name="search" size={20} /></button>
+      </form> : <p class="hidden min-w-0 flex-1 rounded-full border border-current/20 px-5 py-3 text-sm text-foreground-inverse/75 sm:block">Ontwerpvoorbeeld · geen actieve webshop</p>}
+      {action && <Link href={action.href} appearance="button" variant="outline" size="sm">{action.label}</Link>}
+    </div>
+  </div>
+  {(links.length > 0 || catalogue.length > 0) && <nav aria-label="Hoofdnavigatie" class="border-b border-border bg-background">
+    <div class="container-page flex flex-wrap items-center gap-x-8 gap-y-3 py-4 text-sm font-semibold">
+      {catalogue.length > 0 && <details class="group relative">
+        <summary class="flex cursor-pointer list-none items-center gap-2 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring">Assortiment <span class="transition-transform group-open:rotate-180"><Icon name="chevron-down" size={16} /></span></summary>
+        <ul class="absolute left-0 top-full z-20 mt-4 grid max-h-96 w-64 gap-1 overflow-y-auto rounded-(--ds-radius-lg) border border-border bg-background p-3 shadow-lg">{catalogue.map(link => <li><a href={link.href} class="block rounded-sm px-3 py-2 outline-none hover:bg-surface-sunken focus-visible:ring-2 focus-visible:ring-ring">{link.label}</a></li>)}</ul>
+      </details>}
+      {links.map(link => <a href={link.href} class="rounded-sm outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring">{link.label}</a>)}
+    </div>
+  </nav>}
+</header>

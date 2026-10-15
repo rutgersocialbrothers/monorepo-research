@@ -1,5 +1,6 @@
 @import 'tailwindcss' source(none);
 @import '@tupak/design-system/tokens.css';
+@import '@fontsource-variable/instrument-sans';
 @import './styleguide.css';
 
 @source '../';
@@ -40,10 +41,13 @@
   h6 {
     font-family: var(--heading-font-family);
     color: var(--foreground-heading);
+    font-weight: var(--heading-content-font-weight);
+    letter-spacing: var(--heading-tracking);
   }
 
   h1 {
     font-family: var(--heading-display-font-family);
+    font-weight: var(--heading-font-weight);
   }
 
   ::selection {
@@ -54,14 +58,6 @@
   pre {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   }
-}
-
-/* The designer's display face has a single, regular weight. */
-h1 {
-  font-family: var(--heading-display-font-family);
-  font-weight: var(--heading-font-weight);
-  letter-spacing: var(--heading-tracking);
-  color: var(--foreground-heading);
 }
 
 @layer components {
