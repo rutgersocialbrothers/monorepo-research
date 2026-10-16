@@ -73,7 +73,7 @@ Turbo build inputs/outputs describe the finite CSS task; standard watch mode ope
 | Command                               | Result                                                                                                |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `pnpm build:liquid`                   | Compile app styles to `apps/liquid/assets/tailwind.css`                                               |
-| `pnpm --filter @2digits/liquid check` | Native Theme Check against `apps/liquid`                                                              |
+| `pnpm --filter @tupak/liquid check` | Native Theme Check against `apps/liquid`                                                              |
 | `pnpm check`                          | Root script types/tests, Liquid CSS build/check and the canonical package's five ordered check leaves |
 | `pnpm typecheck:scripts`              | Root script/test TypeScript checking                                                                  |
 | `pnpm test` / `test:watch`            | Run / watch root Vitest tests                                                                         |
@@ -137,6 +137,6 @@ Repository files define delivery behavior, not account rulesets, credentials, st
 ## Guides and license
 
 - [Liquid](apps/liquid/README.md)
-- [Delivery/safety](docs/shopify-deployment.md), [decisions/history](docs/decisions.md), [agent rules](AGENTS.md) (`CLAUDE.md` imports them)
+- [Delivery/safety](docs/shopify-deployment.md), [decisions](docs/decisions.md), [agent rules](AGENTS.md) (`CLAUDE.md` imports them)
 
 The Liquid theme derives from [Shopify's Skeleton Theme](https://github.com/Shopify/skeleton-theme). Preserve `LICENSE.md` and its applicable terms. No new redistribution license is granted for newly authored workspace packages.

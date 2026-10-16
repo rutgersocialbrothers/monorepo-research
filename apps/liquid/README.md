@@ -34,7 +34,7 @@ Alternatively, copy `.env.example` to `.env.local` and configure native keys man
 pnpm dev:liquid:local               # Turbo CSS rebuilds; no Shopify/server
 # Ctrl-C stops development; stop before builds/checks:
 pnpm build:liquid                   # Finite Tailwind compilation
-pnpm --filter @2digits/liquid check # Native Theme Check against this app
+pnpm --filter @tupak/liquid check # Native Theme Check against this app
 ```
 
 Root preview commands use `turbo watch`. The initial finite CSS build is a prerequisite of the persistent, noninterruptible Shopify CLI task. Standard package watching handles additions, changes and deletions; ignored generated CSS, env files and Shopify state do not trigger feedback. Build inputs/outputs remain declared, but watch granularity is package-level and some unrelated app-file changes also rebuild CSS. Task-input watch mode is disabled because installed Turbo 2.11.5 missed source deletions in the smoke probe. Shopify CLI watches the native theme files and generated asset without restarting on every source edit. Astro owns its independent watcher; it is not a Liquid dependency.

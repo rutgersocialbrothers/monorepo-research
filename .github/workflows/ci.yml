@@ -1,7 +1,10 @@
 name: CI
 
 on:
+  # Pushes run only on mapped delivery branches (keep in sync with deployments/shopify.json);
+  # feature branches are checked through their pull request, not twice.
   push:
+    branches: [main, acceptance, test, develop]
   pull_request:
   # Manual runs only retrieve a snapshot; they cannot push or accept target inputs.
   workflow_dispatch:
@@ -75,17 +78,19 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
+          # The drift check compares the store with the previously delivered commit.
+          fetch-depth: 0
       - uses: jdx/mise-action@v4
       - run: pnpm install --frozen-lockfile
       - name: Install canonical workbench browser runtime
         run: pnpm --filter @tupak/design-system exec playwright install chromium --with-deps
       # Check compiles CSS and validates this checkout's native theme; no cross-job reuse.
-      # Credentials are scoped only to the delivery step, never checks/builds/install.
+      # Credentials are scoped only to the pull and push steps, never checks/builds/install.
       - run: pnpm check
-      - name: Deliver exact existing theme
+      - name: Pull current store theme
+        id: pull
         env:
           DEPLOY_ENVIRONMENT: ${{ needs.prepare.outputs.environment }}
-          ALLOW_LIVE: ${{ needs.prepare.outputs.allow_live }}
           SHOPIFY_STORE: ${{ vars.SHOPIFY_STORE }}
           SHOPIFY_THEME_ID: ${{ vars.SHOPIFY_THEME_ID }}
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
@@ -94,27 +99,79 @@ jobs:
           : "${SHOPIFY_THEME_ID:?Missing Environment variable SHOPIFY_THEME_ID}"
           : "${SHOPIFY_CLI_THEME_TOKEN:?Missing Environment secret SHOPIFY_CLI_THEME_TOKEN}"
           : "${DEPLOY_ENVIRONMENT:?Missing mapped Shopify environment}"
-          case "$GITHUB_EVENT_NAME" in
-            push)
-              args=(theme push --store "$SHOPIFY_STORE" --theme "$SHOPIFY_THEME_ID"
-                --path "$GITHUB_WORKSPACE/apps/liquid"
-                --ignore config/settings_data.json)
-              if [[ "$ALLOW_LIVE" == "true" ]]; then
-                args+=(--allow-live)
-              fi
-              pnpm --filter @2digits/liquid exec shopify "${args[@]}"
-              ;;
-            workflow_dispatch)
-              snapshot="$GITHUB_WORKSPACE/.shopify-pull/$DEPLOY_ENVIRONMENT/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-              mkdir -p "$(dirname "$snapshot")"
-              mkdir "$snapshot"
-              pnpm --filter @2digits/liquid exec shopify theme pull \
-                --store "$SHOPIFY_STORE" --theme "$SHOPIFY_THEME_ID" --path "$snapshot"
-              ;;
-            *) exit 1 ;;
-          esac
-      - name: Upload manual pull snapshot
-        if: github.event_name == 'workflow_dispatch'
+          snapshot="$GITHUB_WORKSPACE/.shopify-pull/$DEPLOY_ENVIRONMENT/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$(dirname "$snapshot")"
+          mkdir "$snapshot"
+          echo "snapshot=$snapshot" >> "$GITHUB_OUTPUT"
+          pnpm --filter @tupak/liquid exec shopify theme pull \
+            --store "$SHOPIFY_STORE" --theme "$SHOPIFY_THEME_ID" --path "$snapshot"
+      # Fails loudly when the store has editor/admin changes the repository has not incorporated.
+      - name: Check store theme drift
+        id: drift
+        if: github.event_name == 'push'
+        env:
+          SNAPSHOT: ${{ steps.pull.outputs.snapshot }}
+        run: |
+          # Baseline: the commit recorded by the last delivery; an unmarked theme must match this commit.
+          baseline="$GITHUB_SHA"
+          marker="$SNAPSHOT/snippets/tupak-deployment.liquid"
+          if [[ -f "$marker" ]]; then
+            baseline=$(grep -oE 'sha=[0-9a-f]{40}' "$marker" | cut -d= -f2 || true)
+            [[ -n "$baseline" ]] || { echo "::error title=Theme drift::Store marker records no delivered commit."; exit 1; }
+            git cat-file -e "$baseline^{commit}" || { echo "::error title=Theme drift::Delivered commit $baseline is not in history."; exit 1; }
+          fi
+          # Overlay the store theme on the baseline and let git report what changed (ignored files stay out).
+          base="$RUNNER_TEMP/drift-base"
+          git worktree add --quiet --detach "$base" "$baseline"
+          cd "$base"
+          for folder in assets blocks config layout locales sections snippets templates listings; do
+            rm -rf "apps/liquid/$folder"
+            if [[ -d "$SNAPSHOT/$folder" ]]; then cp -R "$SNAPSHOT/$folder" apps/liquid/; fi
+          done
+          git add -A -- apps/liquid
+          drift=()
+          while IFS= read -r -d '' path; do
+            # Whitespace-only differences (Shopify reformats JSON) and changes already in this commit pass.
+            git diff --cached --quiet -w "$baseline" -- "$path" && continue
+            git diff --cached --quiet -w "$GITHUB_SHA" -- "$path" && continue
+            drift+=("$path")
+          done < <(git diff --cached --name-only -z "$baseline" -- apps/liquid \
+            ':!apps/liquid/config/settings_data.json' ':!apps/liquid/snippets/tupak-deployment.liquid')
+          if (( ${#drift[@]} )); then
+            {
+              echo '## Theme drift: delivery blocked'
+              echo
+              echo 'The store has theme changes that are not in this commit; pushing would overwrite or delete them:'
+              echo
+              printf -- '- `%s`\n' "${drift[@]}"
+              echo
+              echo 'Download the theme snapshot artifact from this run, incorporate these files in a pull request, then merge to deliver again.'
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error title=Theme drift::${#drift[@]} store theme file(s) changed outside the repository; see the job summary."
+            exit 1
+          fi
+      - name: Deliver exact existing theme
+        if: github.event_name == 'push'
+        env:
+          ALLOW_LIVE: ${{ needs.prepare.outputs.allow_live }}
+          SHOPIFY_STORE: ${{ vars.SHOPIFY_STORE }}
+          SHOPIFY_THEME_ID: ${{ vars.SHOPIFY_THEME_ID }}
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+        run: |
+          # Records this commit as the delivered baseline for the next drift check.
+          printf '{%%- comment -%%}\n  Managed by CI delivery; records the last delivered commit for drift checks. Do not edit.\n  tupak-deployment sha=%s\n{%%- endcomment -%%}\n' \
+            "$GITHUB_SHA" > apps/liquid/snippets/tupak-deployment.liquid
+          args=(theme push --store "$SHOPIFY_STORE" --theme "$SHOPIFY_THEME_ID"
+            --path "$GITHUB_WORKSPACE/apps/liquid"
+            --ignore config/settings_data.json)
+          if [[ "$ALLOW_LIVE" == "true" ]]; then
+            args+=(--allow-live)
+          fi
+          pnpm --filter @tupak/liquid exec shopify "${args[@]}"
+      - name: Upload store theme snapshot
+        if: >-
+          always() && steps.pull.outcome == 'success' &&
+          (github.event_name == 'workflow_dispatch' || steps.drift.outcome == 'failure')
         uses: actions/upload-artifact@v4
         with:
           name: shopify-pull-${{ needs.prepare.outputs.environment }}-${{ github.run_id }}-${{ github.run_attempt }}
