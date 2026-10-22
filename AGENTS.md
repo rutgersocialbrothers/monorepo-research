@@ -59,10 +59,13 @@ Public `tokens.css` is asset-neutral: consumers own font delivery, Tailwind engi
 - Component CSS in `{% stylesheet %}`; only shared above-the-fold primitives in `assets/critical.css`. The gift-card template does not load Tailwind.
 - No custom JS by default. When HTML/CSS can't do it, add small dependency-free plain JS in `{% javascript %}`, without globals. No browser TypeScript, Vite or bundler in Liquid.
 - Use complete Tailwind class names; never build classes from fragments.
+- Third-party scripts and assets: register the host with an owner and reason in `apps/liquid/third-party.json` before the include ([rule](docs/quality-guardrails.md#third-party-scripts-and-assets)).
 
 ## Checks
 
 - `pnpm check` runs root script types + Vitest, the Liquid CSS build + Theme Check, and the workbench gate (format → Astro types → lint → demo build → browser tests). Stop dev writers first.
+- After theme edits, run `pnpm --filter @tupak/liquid check`, clear every offense (warnings included) in the files you changed, and hand-review what Theme Check misses per [checks for changed files](docs/quality-guardrails.md#checks-for-changed-files).
+- Preview reviews of home, collection, product, account and content pages use the targets and accessibility checklist in [quality guardrails](docs/quality-guardrails.md); record results with `docs/templates/quality-review.md`.
 - The workbench class lint enables exactly `better-tailwindcss/no-unknown-classes` and `better-tailwindcss/no-concatenated-classes`.
 - `pnpm build` is build-only. Narrow workbench commands: `dev:`, `build:`, `check:`, `test:`, `preview:design-system`.
 - Tooling is erasable `.ts` run by Node 24, type-checked with the `typescript-native` (TS 7) alias; Astro checking uses package-scoped TS 6. No Varlock.
