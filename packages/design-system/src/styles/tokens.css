@@ -1,6 +1,8 @@
 /* Candidate foundations manually adapted from JPPACQ/tupak-design-system,
-   main afd9c66 (tokens.css). Blue/kraft/forest and Instrument Sans remain
-   design trials, not approved production branding. Font delivery is consumer-owned. */
+   main afd9c66 (tokens.css), updated for the 6f9c7e2 delta: sentence-case
+   headings settled (value unchanged) and the box-drawing tokens. Blue/kraft/
+   forest and Instrument Sans remain design trials, not approved production
+   branding. Font delivery is consumer-owned. */
 @layer components {
   :root {
     color-scheme: light;
@@ -214,6 +216,13 @@
   --palette-warm-800: #784d34;
   --palette-warm-900: #62402c;
   --palette-warm-950: #342016;
+  /* Illustration-only kraft samples for the size-finder box drawing (source
+     --color-kraft-*). Not the warm surface ramp; the source plans to merge them
+     once the warm ramp is confirmed. Exact source values. */
+  --palette-kraft-100: #e2d0b1;
+  --palette-kraft-200: #d9bd94;
+  --palette-kraft-400: #b3916a;
+  --palette-kraft-600: #947357;
   --palette-natural-50: #f6f9f4;
   --palette-natural-100: #e8f3e4;
   --palette-natural-200: #d2e7cb;
@@ -358,6 +367,18 @@
   --link-underline-offset: 0.25rem;
   --link-foreground: var(--foreground-link);
   --switch-thumb: var(--palette-white);
+  /* Box drawing (source 6f9c7e2). Faces, tape and label never re-point per
+     mode: a kraft box stays kraft. The silhouette inverts to light kraft in
+     dark mode. The cast shadow is one step below the drawing's light-kraft
+     field; in dark mode the source drops it to the page floor, which here is
+     the retained dark background value. */
+  --box-face-top: var(--palette-kraft-200);
+  --box-face-left: var(--palette-kraft-600);
+  --box-face-right: var(--palette-kraft-400);
+  --box-tape: var(--palette-kraft-100);
+  --box-label: var(--palette-neutral-100);
+  --box-edge: light-dark(var(--palette-kraft-600), var(--palette-kraft-100));
+  --box-ground: light-dark(var(--palette-warm-200), #121212);
 }
 
 @theme inline {

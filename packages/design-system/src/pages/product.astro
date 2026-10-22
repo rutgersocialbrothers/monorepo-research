@@ -1,0 +1,15 @@
+---
+import ReferencePageShell from "../sections/collection-reference/reference-page-shell.astro";
+import ProductPage from "../sections/product-reference/product-page.astro";
+import ProductRail from "../sections/product-rail/product-rail.astro";
+import ReviewRail from "../sections/review-rail/review-rail.astro";
+import Faq from "../sections/faq/faq.astro";
+import {prototypeFaq, prototypeReviews} from "../sections/homepage.example-data";
+import {relatedProducts} from "../sections/product-reference/product.data";
+---
+<ReferencePageShell title="Tupak · productpagina (candidate)" description="The Tupak prototype product page: buy box with quantity breaks, all sizes order matrix, specifications with the box drawing and the gallery/introduction divider trial. Example data and a simulated cart, not an active shop." notice="productpagina uit het prototype (6f9c7e2). Maten, prijzen, staffels, voorraad en score zijn verzonnen voorbeelden; er is geen winkelwagen en er wordt niets besteld. Open met ?variant=1548 voor een andere maat.">
+  <ProductPage reviewsHref="#reviews" />
+  <ProductRail title="Vaak samen besteld" eyebrow="Maak je zending compleet · prototypevoorbeelden" items={relatedProducts} />
+  <div id="reviews"><ReviewRail title="Ervaringen in beeld" eyebrow="Fictieve reviews · uitsluitend layoutvoorbeelden" note="Geen echte klantbeoordelingen. Namen, sterren en teksten hieronder zijn expliciete prototypevoorbeelden." items={prototypeReviews} /></div>
+  <Faq title="Snel antwoord op je vraag" eyebrow="Over dit prototype" text="Deze antwoorden beschrijven alleen de preview. Ze bevatten geen verkoop-, verzend- of retourvoorwaarden." items={prototypeFaq} />
+</ReferencePageShell>

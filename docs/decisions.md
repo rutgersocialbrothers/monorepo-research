@@ -6,9 +6,9 @@ Each entry records what was decided and why. Operational rules for agents live i
 
 **Decision.** The workspace (`@tupak/shopify-theme`) holds two independent packages under the `@tupak` scope:
 
-| Package | Path | Role |
-| --- | --- | --- |
-| `@tupak/liquid` | `apps/liquid` | Native Shopify theme root, authored directly in Shopify's folders |
+| Package                | Path                     | Role                                                                                       |
+| ---------------------- | ------------------------ | ------------------------------------------------------------------------------------------ |
+| `@tupak/liquid`        | `apps/liquid`            | Native Shopify theme root, authored directly in Shopify's folders                          |
 | `@tupak/design-system` | `packages/design-system` | Designer workbench: candidate tokens, framework-free contracts, canonical Astro references |
 
 The repository root is not a theme root; don't enable root-level Shopify GitHub sync. Shopify CLI uploads only supported theme folders, so package metadata and authored `styles/` stay local.
@@ -31,9 +31,11 @@ The repository root is not a theme root; don't enable root-level Shopify GitHub 
 
 ## 4. One candidate theme in the workbench
 
-**Decision.** The workbench has a single theme, `{ id: 'tupak', label: 'Tupak' }`, with retained `Theme` and `ColorMode` types and no tenant chooser, presets or aliases. Only the colour mode persists (`tupak-design-system-mode`). `src/styles/tokens.css` holds the values; `src/tokens/reference.ts` only describes them.
+**Decision.** The workbench has a single theme, `{ id: 'tupak', label: 'Tupak' }`, with retained `Theme` and `ColorMode` types and no tenant chooser, presets or aliases. Theme identity does not persist. The optional UI preferences are colour mode (`tupak-design-system-mode`), overview grid/list (`tupak-overview-view`) and collection columns/list (`tupak-collection-columns`); filters and sorting live in the URL, not local storage. `src/styles/tokens.css` holds the values; `src/tokens/reference.ts` only describes them.
 
-The light palette, Instrument Sans, sizing and treatments are manually adapted from `JPPACQ/tupak-design-system` `main` `afd9c66`. They are **candidates, not approved branding**. Button and Link use red for commitment actions, pale blue for support, and a shared navy `nav` variant; Product Card is the 22nd family. `/preview` composes the prototype's current `index.html` selection from reusable sections and local reference artwork (provenance in `src/sections/reference-assets.ts`). Asset rights remain unresolved.
+The light palette, Instrument Sans, sizing and treatments are manually adapted from `JPPACQ/tupak-design-system` `main` `afd9c66`. They are **candidates, not approved branding**. Button and Link use red for commitment actions, pale blue for support, and a shared navy `nav` variant; Product Card was the 22nd family, with Promo Card added by the subsequent reference update. `/preview` follows the prototype's `index.html` section selection: header-v2, hero, category-slider-v2, banner-pair, product-carousel v1, image-with-text, reviews, publication-feed, FAQ and footer-v3. The unresolved keuzehulp and framed/promo v2 rail remain on dedicated demo routes and in Sections, not on the homepage. Native composition is not pixel-identical; the [integration record](designer-workflow.md#native-adaptations-versus-upstream) records deliberate behavior and presentation differences. Asset provenance is in `src/sections/reference-assets.ts`; rights remain unresolved.
+
+The full subsequent prototype delta `afd9c66..6f9c7e2` is imported into Astro, including trial variants and local filtering/product simulations, rather than preselecting production behavior. `/overview` exposes those references; new imagery has a separate provenance manifest. Final/provisional distinctions, generated-image caveats and known animation/accessibility concerns stay explicit. No Liquid implementation, merchant settings or Shopify data is imported. Existing workbench `/` remains; `/prototype` provides the prototype-entry redirect.
 
 Light/dark mechanics (`light-dark()`, inherited `color-scheme`, pre-paint mode restoration, light default) are kept, with the prior dark colours preserved rather than redesigned. Whether Tupak ships dark mode is **TBD**.
 

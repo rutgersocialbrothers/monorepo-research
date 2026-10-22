@@ -1,0 +1,38 @@
+---
+import SectionDemoLayout from "../layouts/SectionDemoLayout.astro";
+import SizeFinder from "../sections/size-finder/size-finder.astro";
+---
+<SectionDemoLayout
+  title="Keuzehulp"
+  lede="Een ingang voor een inkoper die de maten van zijn product kent maar niet de naam van de doos: hij typt drie afmetingen en komt uit bij de passende verpakkingen."
+  meta={[
+    {term: "Figma", detail: "10-2269."},
+    {term: "Bron", detail: "blocks/hero-keuzehulp.html (v1, met productfoto) en blocks/hero-keuzehulp-v2.html (v2, met maatvoorbeeld) (6f9c7e2)."},
+    {term: "Astro", detail: "src/sections/size-finder/size-finder.astro: alleen v2. v1 is niet naar Astro vertaald en staat hier dus niet."},
+    {term: "Shopify · bronvoorstel", detail: "Eén bestand in blocks/. Voorgestelde instellingen: de kopregels, de categorielijst, de afbeelding en de bestemming. De daadwerkelijke editorruimte wordt apart met de developer bepaald."},
+    {term: "Status", detail: "Keuze open in de bron: v1 of v2. De keuzehulp staat niet op de homepage van de bron; daar staat de nieuwe hero. Daarom ook niet in de homepagepreview."},
+    {term: "Journey", detail: "A Nieuwe klant (voorstel, de user stories noemen geen journey)."},
+    {term: "User stories", detail: "GUID-1, GUID-2 en PAGE-1 (alle drie status: deels), volgens story-map.json van de bron."},
+  ]}
+  decided={[
+    {lead: "Een hero, geen widget.", text: "Dit is de enige plek op de site waar je de catalogus op maat binnenkomt in plaats van via een categorie."},
+    {lead: "Een gewoon formulier, geen app.", text: "Het verstuurt de maten naar de categoriepagina; daar worden het maatvelden met de maatklassen."},
+    {lead: "Een echte <select> voor de productgroep.", text: "Die geeft de native kiezer op mobiel, toetsenbordbediening en een toegankelijke naam, zonder eigen code."},
+    {lead: "De gloed in het paneel is CSS, geen geëxporteerde afbeelding.", text: "De kleur blijft zo op een token staan en beweegt mee met het thema."},
+    {lead: "v2 is geen nieuwe component.", text: "Het paneel is in beide bronversies identiek; alleen de mediaslot bevat iets anders."},
+    {lead: "De maattekening is een eigen component.", text: "Ze kent het formulier niet, zodat ze later ook op een productpagina kan staan."},
+  ]}
+  open={[
+    {lead: "v1 of v2:", text: "productfoto of live maattekening. Alleen v2 is vertaald; v1 bestaat in de bron maar is niet geïmporteerd en wordt hier niet nagebouwd."},
+    {lead: "Het accentvlak wacht op akkoord.", text: "Licht is het ontwerp; de donkere variant is een voorstel."},
+    {lead: "De knopkleur en knopradius", text: "wijken af van de tekening (punch/700, 8px); het prototype gebruikt de rusttoestand en de gewone knopradius."},
+    {lead: "De kraftkleuren van de tekening (v2)", text: "zijn bemonsterd uit de referentie-illustratie en moeten bevestigd of vervangen worden."},
+    {lead: "GUID-1 en GUID-2 beschrijven een keuzehulp met vragen,", text: "in een paar stappen, die uitlegt waarom een product past. Het prototype is een formulier met drie afmetingen. Welke van de twee het wordt, is niet beslist."},
+    {lead: "GUID-1 vraagt ook een ingang op de categoriepagina en boven de variantentabel,", text: "en dat je de keuzehulp in één klik kunt overslaan. De bron heeft alleen deze ingang."},
+  ]}
+>
+  <div>
+    <div class="container-page pt-8"><p class="text-xs font-semibold text-muted-foreground">v2 · met maatvoorbeeld. Bronkeuze tussen v1 en v2 onbeslist; v1 (met productfoto) is niet geïmporteerd. Verstuurt naar /collection, net als de bron.</p></div>
+    <div data-section-preview><SizeFinder action="/collection" /></div>
+  </div>
+</SectionDemoLayout>

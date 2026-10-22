@@ -1,0 +1,29 @@
+---
+import DesignSystemLayout from "../../layouts/DesignSystemLayout.astro";
+import SiteHeader from "../site-header/site-header.astro";
+import SiteFooter from "../site-footer/site-footer.astro";
+import {referenceAssets as media} from "../reference-assets";
+import {prototypeNavigation} from "../homepage.example-data";
+import {prototypeBranches, prototypeSale} from "../prototype-update.example-data";
+import {catalogue} from "./collection.data";
+interface Props {
+  title: string;
+  description: string;
+  /** Short visible statement of what this reference route is and is not. */
+  notice: string;
+}
+const {title, description, notice} = Astro.props;
+const catalogueLinks = catalogue.map(type => ({label: type.name, href: `/collection?${new URLSearchParams({categorie: type.name})}`}));
+---
+<!-- Shared frame of the collection and product reference routes: labelled candidate banner, the candidate header and footer. -->
+<DesignSystemLayout title={title} description={description}>
+  <a lang="nl" href="#reference-main" class="sr-only z-50 rounded-sm bg-background p-4 text-foreground focus:not-sr-only focus:fixed focus:top-4 focus:left-4">Ga naar de inhoud</a>
+  <div lang="nl" class="border-b border-border bg-surface-band px-6 py-3 text-center text-xs leading-relaxed text-foreground">
+    <strong>Tupak ontwerpkandidaat</strong> · {notice} <a href="/overview" class="underline underline-offset-2">Sectie-overzicht</a>
+  </div>
+  <div lang="nl">
+    <SiteHeader title="Tupak Packaging" homeHref="/preview" logo={{src: media.logo.src, alt: "Tupak Packaging"}} links={prototypeNavigation.map(link => ({...link, href: `/preview${link.href}`}))} catalogue={catalogueLinks} branches={prototypeBranches} branchIndexHref="/branches" sale={prototypeSale} saleMotion={true} action={{label: "Workbench", href: "/"}} />
+    <main id="reference-main"><slot /></main>
+    <SiteFooter title="Tupak Packaging" logoSrc={media.logo.src} logoAlt="Tupak Packaging" exploreTitle="Productvoorbeelden" exploreLinks={catalogueLinks.slice(0, 6)} actionTitle="Deze preview" actionLinks={[{label: "Homepagepreview", href: "/preview"}, {label: "Keuzehulp", href: "/section-keuzehulp"}, {label: "Sectie-overzicht", href: "/overview"}]} detailTitle="Ontwerp en onderdelen" detailText="Categorie- en productpagina uit het externe Tupak-prototype, handmatig vertaald naar Astro-referenties." detailLinks={[{label: "Design workbench", href: "/"}, {label: "Losse secties", href: "/#sections"}]} description="Een visuele kandidaat, geen actieve webshop of vastgesteld bedrijfsprofiel." note="Prototypevoorbeelden. Beeldrechten en ontwerp vragen nog productie-goedkeuring." />
+  </div>
+</DesignSystemLayout>

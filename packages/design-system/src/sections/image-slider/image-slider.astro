@@ -1,0 +1,116 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import Link from "../../components/link/link.astro";
+import type {ImageSlide} from "./image-slider.types";
+interface Props {
+  slides: ReadonlyArray<ImageSlide>;
+  /** Zero-based slide shown first, without a slide-in. Clamped to the available slides. */
+  startIndex?: number;
+  label?: string;
+}
+const {slides, startIndex = 0, label = "Uitgelicht"} = Astro.props;
+const start = Math.min(Math.max(0, Math.trunc(startIndex) || 0), Math.max(0, slides.length - 1));
+const viewportId = `image-slider-${crypto.randomUUID()}`;
+---
+{slides.length > 0 && <div class="py-10 md:py-14"><div class="container-page"><section data-image-slider data-start={start} aria-roledescription="carrousel" aria-label={label} class="relative overflow-hidden rounded-(--ds-radius-lg) bg-surface-inverse text-foreground-inverse">
+  <div id={viewportId} data-slider-viewport tabindex="0" class="grid auto-cols-[100%] grid-flow-col snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] outline-none focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ring motion-reduce:scroll-auto [&::-webkit-scrollbar]:hidden">
+    {slides.map((slide, index) => <div data-slide role="group" aria-roledescription="dia" aria-label={`${index + 1} van ${slides.length}`} class="relative isolate grid aspect-[4/5] snap-start place-items-center text-center sm:aspect-[12/5] sm:min-h-[30rem]">
+      <span class="absolute inset-0 -z-10 after:absolute after:inset-0 after:bg-surface-inverse/55 after:content-['']"><img src={slide.image.src} alt={slide.image.alt} loading={index === start ? "eager" : "lazy"} decoding="async" class="size-full object-cover" /></span>
+      <div class="grid max-w-[44rem] justify-items-center gap-4 px-6 pt-16 pb-20">
+        <div class="grid gap-4">
+          {slide.kicker && <p class="text-base font-bold">{slide.kicker}</p>}
+          <h2 class="mb-2 text-4xl break-words text-balance text-foreground-inverse sm:text-5xl">{slide.title}</h2>
+          {slide.description && <p class="text-base leading-relaxed">{slide.description}</p>}
+        </div>
+        {slide.action && <Link href={slide.action.href} appearance="button" variant="outline" class="max-w-full text-center !whitespace-normal">{slide.action.label}<Icon name="arrow-right" size={16} /></Link>}
+      </div>
+    </div>)}
+  </div>
+  {slides.length > 1 && <div data-slider-controls hidden class="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2">
+    <button type="button" data-slider-prev aria-label="Vorige dia" aria-controls={viewportId} class="grid size-[42px] cursor-pointer place-items-center rounded-full text-foreground-inverse outline-none hover:bg-surface-inverse focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"><Icon name="chevron-left" size={20} /></button>
+    <div class="flex items-center">{slides.map((slide, index) => <button type="button" data-slider-dot={index} aria-label={`Dia ${index + 1}: ${slide.kicker ?? slide.title}`} aria-controls={viewportId} class="grid h-6 min-w-6 cursor-pointer place-items-center px-1 text-foreground-inverse/50 outline-none before:size-2 before:rounded-full before:bg-current before:transition-[width] before:duration-200 before:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-[current=true]:text-foreground-inverse aria-[current=true]:before:w-8 motion-reduce:before:transition-none"></button>)}</div>
+    <button type="button" data-slider-next aria-label="Volgende dia" aria-controls={viewportId} class="grid size-[42px] cursor-pointer place-items-center rounded-full text-foreground-inverse outline-none hover:bg-surface-inverse focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"><Icon name="chevron-right" size={20} /></button>
+  </div>}
+</section></div></div>}
+<script>
+  /*
+   * One slide in view. Arrows step and wrap, a dot jumps to its slide, arrow keys step on the focused row,
+   * and a swipe or scroll is followed once it settles. Off-screen slides are inert. No autoplay.
+   */
+  for (const root of document.querySelectorAll<HTMLElement>("[data-image-slider]")) {
+    const viewport = root.querySelector<HTMLElement>("[data-slider-viewport]");
+    if (viewport) {
+      initializeSlider(root, viewport);
+    }
+  }
+
+  function initializeSlider(root: HTMLElement, viewport: HTMLElement) {
+    const slides = [...viewport.querySelectorAll<HTMLElement>("[data-slide]")];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>("[data-slider-dot]")];
+    const controls = root.querySelector<HTMLElement>("[data-slider-controls]");
+    let current = 0;
+    let settle: ReturnType<typeof setTimeout> | undefined;
+
+    function mark(index: number) {
+      current = index;
+      for (const [position, slide] of slides.entries()) {
+        slide.inert = position !== index;
+      }
+      for (const [position, dot] of dots.entries()) {
+        if (position === index) {
+          dot.setAttribute("aria-current", "true");
+        } else {
+          dot.removeAttribute("aria-current");
+        }
+      }
+    }
+    function go(index: number, instant = false) {
+      const target = (index + slides.length) % slides.length;
+      const reduced = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      viewport.scrollTo({left: target * viewport.clientWidth, behavior: instant || reduced ? "instant" : "smooth"});
+      mark(target);
+    }
+
+    root.querySelector("[data-slider-prev]")?.addEventListener("click", () => go(current - 1));
+    root.querySelector("[data-slider-next]")?.addEventListener("click", () => go(current + 1));
+    for (const [position, dot] of dots.entries()) {
+      dot.addEventListener("click", () => go(position));
+    }
+    viewport.addEventListener("keydown", event => {
+      if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") {
+        return;
+      }
+      // Native horizontal arrow scrolling would snap to a neighbour and make a focused slide action inert.
+      event.preventDefault();
+      // Only the focused row itself steps; arrows on the slide's own action leave slide and focus unchanged.
+      if (event.target !== viewport || slides.length < 2) {
+        return;
+      }
+      go(current + (event.key === "ArrowRight" ? 1 : -1));
+    });
+    viewport.addEventListener("scroll", () => {
+      clearTimeout(settle);
+      settle = setTimeout(() => {
+        const index = Math.round(viewport.scrollLeft / Math.max(1, viewport.clientWidth));
+        mark(Math.min(Math.max(0, index), slides.length - 1));
+      }, 80);
+    }, {passive: true});
+    let width = viewport.clientWidth;
+    new ResizeObserver(() => {
+      if (viewport.clientWidth !== width) {
+        width = viewport.clientWidth;
+        viewport.scrollTo({left: current * width, behavior: "instant"});
+      }
+    }).observe(viewport);
+
+    const start = Number(root.dataset.start) || 0;
+    if (start > 0) {
+      go(start, true);
+    } else {
+      mark(0);
+    }
+    if (controls) {
+      controls.hidden = false;
+    }
+  }
+</script>

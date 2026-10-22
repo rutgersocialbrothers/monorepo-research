@@ -16,6 +16,10 @@ import Faq from "../sections/faq/faq.astro";
 import Link from "../components/link/link.astro";
 import {referenceAssets as media} from "../sections/reference-assets";
 import {prototypeCategories, prototypeBanners, prototypeProducts, prototypeReviews, prototypePublications, prototypeFaq} from "../sections/homepage.example-data";
+import ImageSlider from "../sections/image-slider/image-slider.astro";
+import BranchNav from "../sections/branch-nav/branch-nav.astro";
+import SizeFinder from "../sections/size-finder/size-finder.astro";
+import {prototypeBranches, prototypeSlides, prototypePromo, prototypeSale} from "../sections/prototype-update.example-data";
 import Header from "./SectionHeader.astro";
 import Block from "./Block.astro";
 ---
@@ -29,9 +33,28 @@ import Block from "./Block.astro";
   <p class="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">A real Astro composition of the current external homepage: navy header and footer, split-color hero, contained category row, natural/kraft banner pair, product cards, image/text, reviews, publications and FAQ. All business and review examples are explicitly prototypes. Design and asset rights are not production-approved.</p>
   <Link href="/preview" appearance="button" variant="nav" class="mt-5">Open composed preview →</Link>
 </div>
+<Block title="Updated prototype routes" description="Complete 6f9c7e2 reference update. Trials remain visible; production choices and merchant controls are decided during Liquid adaptation.">
+  <nav class="flex flex-wrap gap-4 text-sm" aria-label="Updated reference examples">
+    <a href="/overview" class="underline underline-offset-2">Section overview</a>
+    <a href="/branches" class="underline underline-offset-2">Branches</a>
+    <a href="/collection" class="underline underline-offset-2">Navy collection and gradient trial</a>
+    <a href="/collection-v2" class="underline underline-offset-2">Light collection proposal</a>
+    <a href="/product" class="underline underline-offset-2">Product reference</a>
+    <a href="/section-image-slider" class="underline underline-offset-2">Image-slider variants</a>
+  </nav>
+</Block>
+<Block title="Image slider" description="Three source routes, optional media and actions, arrows/dots, snap scrolling and inactive-slide inert state. No autoplay; source starting-slide option preserved.">
+  <ImageSlider slides={prototypeSlides} startIndex={1} label="Prototype image slider" />
+</Block>
+<Block title="Branches" description="Six branch routes with candidate stand-in imagery. Not approved production photography or an active shop.">
+  <BranchNav items={prototypeBranches} />
+</Block>
+<Block title="Size finder" description="Prototype dimension handoff to the local collection example; class-based filtering is a reference simulation, not proof of Shopify data configuration.">
+  <SizeFinder action="/collection" />
+</Block>
 
 <Block title="Navy site header" description="Native disclosure navigation. Search is rendered only when a real search destination is supplied; this example has no fake account, cart or search outcome.">
-  <SiteHeader title="Tupak Packaging" logo={{src: media.logo.src, alt: "Tupak Packaging"}} homeHref="/preview" catalogue={prototypeCategories.map(item => ({label: item.title, href: "/preview#categorieen"}))} links={[{label: "Maatwerkvoorbeeld", href: "/preview#maatwerk"}, {label: "Prototypevragen", href: "/preview#vragen"}]} action={{label: "Preview", href: "/preview"}} />
+  <SiteHeader title="Tupak Packaging" logo={{src: media.logo.src, alt: "Tupak Packaging"}} homeHref="/preview" catalogue={prototypeCategories.map(item => ({label: item.title, href: "/preview#categorieen"}))} links={[{label: "Maatwerkvoorbeeld", href: "/preview#maatwerk"}, {label: "Prototypevragen", href: "/preview#vragen"}]} branches={prototypeBranches} branchIndexHref="/branches" sale={prototypeSale} saleMotion={true} action={{label: "Preview", href: "/preview"}} />
 </Block>
 
 <Block title="Homepage hero" description="The source's pale fading band, two-color heading, product assortment photograph and optional navigation. Explicit candidate content, not a service claim.">
@@ -47,7 +70,7 @@ import Block from "./Block.astro";
 </Block>
 
 <Block title="Product rail" description="Canonical ProductCard primitives. These static prototype products intentionally omit invented prices, tax treatment, stock, purchasing and product destinations.">
-  <ProductRail title="Productvoorbeelden" eyebrow="Prototype · geen actueel aanbod" items={prototypeProducts} />
+  <ProductRail title="Productvoorbeelden" eyebrow="Prototype · geen actueel aanbod" items={prototypeProducts} framed={true} promo={prototypePromo} />
 </Block>
 
 <Block title="Image and text" description="A real selected source image with a non-animated badge, optional points and a real preview destination. The composition also works without media.">

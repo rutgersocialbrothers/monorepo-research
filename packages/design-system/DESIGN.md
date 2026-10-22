@@ -102,6 +102,10 @@ colors:
   dark-info-subtle-foreground: '#c1dfe8'
   dark-border-strong: '#404040'
   dark-chart-4: '#97cbda'
+  kraft-100: '#e2d0b1'
+  kraft-200: '#d9bd94'
+  kraft-400: '#b3916a'
+  kraft-600: '#947357'
 typography:
   body:
     fontFamily: "'Instrument Sans Variable', 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif"
@@ -131,7 +135,7 @@ rounded:
 
 # Non-authoritative candidate detector snapshot
 
-This file is an **evaluation input, not a design specification or approval**. [src/styles/tokens.css](src/styles/tokens.css) remains the sole canonical CSS value authority. The blue/red/kraft/forest foundations and Instrument Sans are provisional candidates, manually adapted from `JPPACQ/tupak-design-system` at `afd9c66`. Retained dark values do not approve dark-mode branding or product support. No value here authorizes a visual change, production branding, platform behavior or merchant setting.
+This file is an **evaluation input, not a design specification or approval**. [src/styles/tokens.css](src/styles/tokens.css) remains the sole canonical CSS value authority. The blue/red/kraft/forest foundations and Instrument Sans originate at `JPPACQ/tupak-design-system` `afd9c66`; the full `6f9c7e2` reference update adds the source kraft drawing literals. Candidate and trial values are not production approvals. Retained dark values do not approve dark-mode branding or product support. No value here authorizes merchant settings or a Liquid implementation.
 
 ## Scope and manual refresh
 

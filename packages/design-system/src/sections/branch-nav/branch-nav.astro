@@ -1,0 +1,41 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import Link from "../../components/link/link.astro";
+import type {SectionLink} from "../homepage.contract";
+import type {BranchItem} from "./branch-nav.types";
+interface Props {
+  items: ReadonlyArray<BranchItem>;
+  title?: string;
+  description?: string;
+  kicker?: string;
+  action?: SectionLink;
+  /** Accessible name of the horizontally scrollable row. */
+  label?: string;
+  emptyText?: string;
+}
+const {items, title, description, kicker, action, label = "Branches", emptyText = "Geen branches om te tonen."} = Astro.props;
+const titleId = `branch-nav-${crypto.randomUUID()}`;
+const hasHeader = Boolean(title || kicker || description || action);
+---
+<section aria-labelledby={title ? titleId : undefined} aria-label={title ? undefined : label} class="py-10 md:py-14">
+  <div class="container-page">
+    {hasHeader && <div class="mb-4 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+      <div class="min-w-0">
+        {kicker && <p class="mb-2 text-xs font-bold text-foreground-link">{kicker}</p>}
+        {title && <h2 id={titleId} class="text-3xl md:text-4xl">{title}</h2>}
+        {description && <p class="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground">{description}</p>}
+      </div>
+      {action && <Link href={action.href} appearance="button" variant="ghost">{action.label}<Icon name="arrow-right" size={16} /></Link>}
+    </div>}
+    {items.length > 0 ? <div tabindex="0" role="group" aria-label={label} class="-m-2 snap-x snap-mandatory scroll-px-2 overflow-x-auto p-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <ul class="grid auto-cols-[minmax(128px,1fr)] grid-flow-col gap-4 min-[900px]:auto-cols-[calc((100%-5rem)/6)]">
+        {items.map(item => <li class="min-w-0"><a href={item.href} class="group grid min-w-0 snap-start justify-items-center gap-3 rounded-(--ds-radius-md) p-2 text-foreground no-underline outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+          <span class="grid aspect-square w-full max-w-44 place-items-center overflow-hidden rounded-full bg-surface-sunken transition-colors duration-[120ms] group-hover:bg-surface-brand group-focus-visible:bg-surface-brand motion-reduce:transition-none">
+            {item.image ? <img src={item.image.src} alt={item.image.alt} loading="lazy" decoding="async" class="size-[82%] object-contain" /> : <Icon name="image" size={32} />}
+          </span>
+          <span class="text-center text-sm text-balance underline-offset-3 group-hover:underline">{item.label}</span>
+        </a></li>)}
+      </ul>
+    </div> : <p class="rounded-(--ds-radius-lg) bg-surface-sunken p-6 text-muted-foreground">{emptyText}</p>}
+  </div>
+</section>

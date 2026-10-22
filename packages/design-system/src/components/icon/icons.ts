@@ -1,12 +1,17 @@
 import icon4 from '@iconify-icons/lucide/arrow-right';
+import arrowUpRight from '@iconify-icons/lucide/arrow-up-right';
 import icon11 from '@iconify-icons/lucide/bell';
 import icon19 from '@iconify-icons/lucide/bookmark';
 import icon15 from '@iconify-icons/lucide/calendar';
 import icon0 from '@iconify-icons/lucide/check';
 import icon1 from '@iconify-icons/lucide/chevron-down';
+import chevronLeft from '@iconify-icons/lucide/chevron-left';
+import chevronRight from '@iconify-icons/lucide/chevron-right';
 import icon2 from '@iconify-icons/lucide/chevron-up';
 import icon16 from '@iconify-icons/lucide/clock';
 import icon41 from '@iconify-icons/lucide/cloud';
+import columns3 from '@iconify-icons/lucide/columns-3';
+import columns4 from '@iconify-icons/lucide/columns-4';
 import icon51 from '@iconify-icons/lucide/compass';
 import icon25 from '@iconify-icons/lucide/copy';
 import icon43 from '@iconify-icons/lucide/credit-card';
@@ -23,6 +28,7 @@ import icon5 from '@iconify-icons/lucide/home';
 import icon38 from '@iconify-icons/lucide/image';
 import icon46 from '@iconify-icons/lucide/info';
 import icon21 from '@iconify-icons/lucide/link';
+import list from '@iconify-icons/lucide/list';
 import icon3 from '@iconify-icons/lucide/loader-circle';
 import icon34 from '@iconify-icons/lucide/lock';
 import icon35 from '@iconify-icons/lucide/log-out';
@@ -36,6 +42,7 @@ import icon26 from '@iconify-icons/lucide/pencil';
 import icon14 from '@iconify-icons/lucide/phone';
 import icon28 from '@iconify-icons/lucide/plus';
 import icon48 from '@iconify-icons/lucide/printer';
+import ruler from '@iconify-icons/lucide/ruler';
 import icon6 from '@iconify-icons/lucide/search';
 import icon22 from '@iconify-icons/lucide/send';
 import icon8 from '@iconify-icons/lucide/settings';
@@ -107,4 +114,11 @@ export const icons = {
   printer: icon48,
   sun: icon49,
   moon: icon50,
+  'chevron-left': chevronLeft,
+  'chevron-right': chevronRight,
+  'columns-3': columns3,
+  list,
+  ruler,
+  'columns-4': columns4,
+  'arrow-up-right': arrowUpRight,
 } as const;

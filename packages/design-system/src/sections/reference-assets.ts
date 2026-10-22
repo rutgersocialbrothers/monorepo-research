@@ -3,7 +3,8 @@
  * are byte-preserved except the logo's root currentColor is explicitly white for the navy presentation. Paths are
  * relative to the upstream assets/ folder. These are candidate reference assets, not production-cleared artwork. The
  * upstream prototype attributes category/product imagery to the client and publication imagery to tupak.com; that
- * attribution is not a license grant. No payment marks, policy content, archive or prototype runtime is copied.
+ * attribution is not a license grant. No payment marks, policy content, archive or prototype runtime is copied. The
+ * complete 6f9c7e2 update's added imagery is separately recorded in prototype-update-assets.ts.
  */
 export const referenceAssets = {
   logo: { src: '/tupak-reference/tupak-logo.svg', source: 'brand/tupak-logo.svg' },

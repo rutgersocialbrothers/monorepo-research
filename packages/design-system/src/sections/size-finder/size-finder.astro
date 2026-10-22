@@ -1,0 +1,108 @@
+---
+import Button from "../../components/button/button.astro";
+import Icon from "../../components/icon/icon.astro";
+import BoxPreview from "./box-preview.astro";
+import MeasureField from "./measure-field.astro";
+import {keuzehulpCategories} from "./size-finder.data";
+interface Props {
+  /** Collection destination receiving `categorie`, `lengte`, `breedte`, `hoogte` (centimetres) as GET parameters. */
+  action?: string;
+}
+const {action = "/collection"} = Astro.props;
+const uid = crypto.randomUUID().slice(0, 8);
+const titleId = `keuzehulp-title-${uid}`;
+---
+<!--
+  Keuzehulp hero v2 (blocks/hero-keuzehulp-v2.html, 6f9c7e2): the rose panel with a live isometric drawing in the media
+  slot. A plain GET form, so it also submits without script; the script validates first, announces the dimensions to
+  the drawing and hands over centimetres exactly as the source does. The collection page turns them into millimetre
+  size fields. Category values are the source's slugs; they are not names in the prototype menu (see report).
+-->
+<section aria-labelledby={titleId} class="py-10 md:py-14">
+  <div class="container-page grid grid-cols-[minmax(0,1fr)] items-stretch gap-8 min-[901px]:grid-cols-[minmax(0,7fr)_minmax(0,12fr)] min-[901px]:gap-12">
+    <div class="relative flex min-w-0 flex-col justify-center gap-6 rounded-(--ds-radius-xl) bg-surface-accent p-8 text-foreground-heading min-[901px]:p-12">
+      <span aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"><span class="absolute top-[96%] left-[14%] size-96 -translate-1/2 rounded-full bg-(--palette-action-300) blur-[164px]"></span></span>
+      <span aria-hidden="true" class="absolute top-[65%] right-0 hidden size-8 translate-x-1/2 -translate-y-1/2 rotate-45 rounded-(--ds-radius-sm) bg-surface-accent min-[901px]:block"></span>
+      <h2 id={titleId} class="relative m-0 text-4xl leading-tight font-normal text-balance text-foreground-heading"><b class="block font-bold">Jij de inhoud</b>Wij de verpakking</h2>
+      <form data-keuzehulp action={action} method="get" novalidate class="relative flex min-w-0 flex-col gap-5">
+        <p class="relative m-0 inline-flex min-h-11 max-w-full min-w-0 items-center self-start">
+          <label class="sr-only" for={`keuzehulp-categorie-${uid}`}>Productgroep</label>
+          <select id={`keuzehulp-categorie-${uid}`} name="categorie" class="max-w-full min-w-0 cursor-pointer appearance-none truncate border-0 bg-transparent py-2 pr-6 text-base font-bold text-foreground-heading">
+            {keuzehulpCategories.map(category => <option value={category.value} selected={category.selected}>{category.label}</option>)}
+          </select>
+          <Icon name="chevron-down" size={16} class="pointer-events-none absolute right-0" />
+        </p>
+        <fieldset class="m-0 flex min-w-0 flex-col gap-3 border-0 p-0">
+          <legend class="sr-only">Afmetingen van jouw product</legend>
+          <MeasureField id={`keuzehulp-lengte-${uid}`} name="lengte" label="Lengte" description=" in centimeters" unit="cm" step="0.1" required />
+          <MeasureField id={`keuzehulp-breedte-${uid}`} name="breedte" label="Breedte" description=" in centimeters" unit="cm" step="0.1" required />
+          <MeasureField id={`keuzehulp-hoogte-${uid}`} name="hoogte" label="Hoogte" description=" in centimeters" unit="cm" step="0.1" required />
+        </fieldset>
+        <p data-keuzehulp-feedback aria-live="polite" class="m-0 text-sm text-foreground-heading empty:hidden data-error:font-bold"></p>
+        <Button type="submit" size="lg" class="w-full max-w-full min-w-0 [&>span:first-child]:min-w-0 [&>span:first-child]:flex-1 [&>span:first-child]:text-left [&>span:first-child]:whitespace-normal">Toon beschikbare verpakkingen<Icon slot="trailingIcon" name="arrow-up-right" size={16} /></Button>
+      </form>
+    </div>
+    <div class="order-first min-w-0 min-[901px]:order-none">
+      <BoxPreview class="grid h-full items-center" />
+    </div>
+  </div>
+</section>
+<script>
+  import {dimensions, formatCentimetres, type Dimension} from "./box-geometry";
+
+  for (const form of document.querySelectorAll<HTMLFormElement>("form[data-keuzehulp]")) {
+    bindKeuzehulp(form);
+  }
+
+  function bindKeuzehulp(form: HTMLFormElement) {
+    const feedback = form.querySelector<HTMLElement>("[data-keuzehulp-feedback]");
+    function field(name: Dimension) {
+      return form.elements.namedItem(name) as HTMLInputElement;
+    }
+    function say(message: string, error = false) {
+      if (feedback) {
+        feedback.textContent = message;
+        feedback.toggleAttribute("data-error", error);
+      }
+    }
+    function valueOf(name: Dimension) {
+      const value = Number.parseFloat(field(name).value.replace(",", "."));
+      return Number.isFinite(value) && value > 0 ? value : undefined;
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      let firstEmpty: HTMLInputElement | undefined;
+      for (const name of dimensions) {
+        const ok = valueOf(name) !== undefined;
+        field(name).setAttribute("aria-invalid", ok ? "false" : "true");
+        if (!ok) {
+          firstEmpty ??= field(name);
+        }
+      }
+      if (firstEmpty) {
+        say("Vul lengte, breedte en hoogte in om verder te gaan.", true);
+        firstEmpty.focus();
+        return;
+      }
+      const categorie = (form.elements.namedItem("categorie") as HTMLSelectElement).value;
+      const params = new URLSearchParams({categorie, ...Object.fromEntries(dimensions.map(name => [name, String(valueOf(name))]))});
+      say(`We zoeken verpakkingen voor ${dimensions.map(name => formatCentimetres(valueOf(name) ?? 0)).join(" × ")} cm…`);
+      globalThis.location.href = `${form.getAttribute("action") ?? ""}?${params}`;
+    });
+
+    // Anything reacting to the dimensions listens for this event instead of reaching into the form.
+    function announce() {
+      form.dispatchEvent(new CustomEvent("keuzehulp:dimensions", {bubbles: true, detail: Object.fromEntries(dimensions.map(name => [name, valueOf(name)]))}));
+    }
+    form.addEventListener("input", event => {
+      announce();
+      const input = event.target as HTMLElement;
+      if (input.getAttribute("aria-invalid") === "true") {
+        input.setAttribute("aria-invalid", "false");
+        say("");
+      }
+    });
+    announce();
+  }
+</script>

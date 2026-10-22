@@ -1,0 +1,110 @@
+---
+import ProductCard from "../../components/product-card/product-card.astro";
+import Icon from "../../components/icon/icon.astro";
+import {buttonBaseClass, buttonSizeClass, buttonVariantClass} from "../../components/button/button.styles";
+import {listingProducts, sortOptions, type ListingProduct} from "./collection.data";
+function formatSize(size: {lengte: number; breedte: number; hoogte: number}): string {
+  return `${size.lengte} × ${size.breedte} × ${size.hoogte} mm`;
+}
+const views = [
+  {value: "3", label: "3 kolommen", icon: "columns-3"},
+  {value: "4", label: "4 kolommen", icon: "columns-4"},
+  {value: "list", label: "Lijst", icon: "list"},
+] as const;
+/* Source list view: the row layout, the size stat shown (first, fixed width) and the variants stat dropped. Four
+   columns drop the variants stat too; grid cards never show the size stat. Selectors reach ProductCard's stat list. */
+const listCard = [
+  "[&_dl>div:nth-child(4)]:hidden min-[1200px]:group-data-[columns=4]/listing:[&_dl>div:first-child:not(:only-child)]:hidden",
+  "min-[1200px]:group-data-[columns=list]/listing:flex-row min-[1200px]:group-data-[columns=list]/listing:items-stretch min-[1200px]:group-data-[columns=list]/listing:[&>div:first-child]:w-32 min-[1200px]:group-data-[columns=list]/listing:[&>div:first-child]:shrink-0 min-[1200px]:group-data-[columns=list]/listing:[&>div:first-child]:p-3 min-[1200px]:group-data-[columns=list]/listing:[&>span:last-child]:min-w-40 min-[1200px]:group-data-[columns=list]/listing:[&>span:last-child]:justify-center",
+  "min-[1200px]:group-data-[columns=list]/listing:[&_dl>div:first-child:not(:only-child)]:hidden min-[1200px]:group-data-[columns=list]/listing:[&_dl>div:nth-child(4)]:block min-[1200px]:group-data-[columns=list]/listing:[&_dl>div:nth-child(4)]:order-first",
+];
+function statsOf(product: ListingProduct): Array<{label: string; value: string}> {
+  const {size, variants, minafname, priceLabel} = product;
+  if (size === undefined || variants === undefined || minafname === undefined) {
+    return [{label: "prijs", value: priceLabel}];
+  }
+  return [
+    {label: "varianten", value: String(variants)},
+    {label: "vanaf · p/s", value: priceLabel},
+    {label: "min. afname", value: `${minafname} stuks`},
+    {label: "binnenmaat", value: formatSize(size)},
+  ];
+}
+---
+<!--
+  Product listing (snippets/product-listing.html, 6f9c7e2): count, sort, the 3/4/list view switch, the grid and pages.
+  The nine cards are the source's invented examples on the shared ProductCard (stats, stock, "Bekijk product"); the
+  source's terms line rides in the description. Each item carries the data the filters read, standing in for the
+  metafields, option and availability. Only the first source card had a real destination (the product page).
+-->
+<section aria-labelledby="product-listing-title" data-product-listing class="grid gap-6">
+  <h2 id="product-listing-title" class="sr-only">Producten</h2>
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <p data-product-count aria-live="polite" class="m-0 text-sm text-muted-foreground tabular-nums">{listingProducts.length} producten</p>
+    <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
+      <label class="inline-flex items-center gap-3 text-sm text-muted-foreground">
+        <span>Sorteer op</span>
+        <span class="relative inline-flex items-center">
+          <select name="sort_by" data-product-sort class="min-h-(--input-height-sm) cursor-pointer appearance-none rounded-(--input-radius) border border-input bg-surface-raised py-1 pr-9 pl-3 text-sm text-foreground">
+            {sortOptions.map(option => <option value={option.value}>{option.label}</option>)}
+          </select>
+          <Icon name="chevron-down" size={16} class="pointer-events-none absolute right-3" />
+        </span>
+      </label>
+      <div role="group" aria-label="Weergave" data-view-switch class="hidden min-[1200px]:inline-flex">
+        {views.map((view, index) => (
+          <button type="button" data-columns={view.value} aria-label={view.label} aria-pressed={index === 0 ? "true" : "false"} class="-ml-px inline-grid size-10 cursor-pointer place-items-center border border-border-strong bg-surface-raised text-foreground first:ml-0 first:rounded-l-(--ds-radius-sm) last:rounded-r-(--ds-radius-sm) hover:bg-surface-sunken aria-pressed:relative aria-pressed:border-nav aria-pressed:bg-nav aria-pressed:text-nav-foreground">
+            <Icon name={view.icon} size={16} />
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <ul data-product-grid data-columns="3" class="group/listing m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-5 p-0 min-[1200px]:data-[columns=3]:grid-cols-3 min-[1200px]:data-[columns=4]:grid-cols-4 min-[1200px]:data-[columns=4]:gap-4 min-[1200px]:data-[columns=list]:grid-cols-1 min-[1200px]:data-[columns=list]:gap-3">
+    {listingProducts.map(product => (
+      <li
+        class="flex"
+        data-title={product.title}
+        data-price={product.priceCents ?? ""}
+        data-created={product.created}
+        data-rank={product.rank}
+        data-custom={product.size === undefined ? "" : undefined}
+        data-materiaal={product.materiaal}
+        data-bundelgrootte={product.bundelgrootte}
+        data-minafname={product.minafname}
+        data-kleur={product.kleur}
+        data-stock={product.stock}
+        data-lengte={product.size?.lengte}
+        data-breedte={product.size?.breedte}
+        data-hoogte={product.size?.hoogte}
+      >
+        <ProductCard
+          class:list={["flex-1", listCard]}
+          title={product.title}
+          href={product.href}
+          image={product.image}
+          description={`${product.meta} · ${product.terms}`}
+          stats={statsOf(product)}
+          stock={{label: product.stockLabel, tone: product.stock ?? "lead"}}
+          actionLabel={product.href ? "Bekijk product" : undefined}
+        />
+      </li>
+    ))}
+  </ul>
+
+  <div data-product-empty hidden class="grid justify-items-start gap-3 rounded-(--ds-radius-lg) border border-dashed border-border px-6 py-10">
+    <h3 class="text-xl">Geen producten gevonden</h3>
+    <p class="m-0 text-muted-foreground">Met deze filters blijft er niets over. Maak een bereik ruimer of wis de filters.</p>
+    <button type="reset" form="collection-filters" class:list={[buttonBaseClass, buttonVariantClass.secondary, buttonSizeClass.md]}>Wis alle filters</button>
+  </div>
+
+  <!-- The source's pages 2–3 were placeholder `#` links. This reference has one page of examples, so it shows only the
+       current page and disabled steps rather than links that go nowhere. -->
+  <nav aria-label="Pagina's" data-pagination class="flex flex-wrap items-center gap-2 text-sm">
+    <span aria-disabled="true" class="inline-flex min-h-11 items-center gap-1 px-3 text-muted-foreground opacity-60"><Icon name="chevron-left" size={16} />Vorige</span>
+    <ol class="m-0 flex list-none gap-1 p-0"><li><span aria-current="page" class="inline-grid min-h-11 min-w-11 place-items-center rounded-(--ds-radius-sm) bg-nav font-bold text-nav-foreground"><span class="sr-only">Pagina </span>1</span></li></ol>
+    <span aria-disabled="true" class="inline-flex min-h-11 items-center gap-1 px-3 text-muted-foreground opacity-60">Volgende<Icon name="chevron-right" size={16} /></span>
+    <span class="text-xs text-muted-foreground">Prototype: alle voorbeeldproducten op één pagina.</span>
+  </nav>
+</section>

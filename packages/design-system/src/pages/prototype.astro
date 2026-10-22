@@ -1,0 +1,20 @@
+---
+/*
+ * Mirrors the source's temporary root redirect (vercel.json: / → /prototype/index.html) without replacing the
+ * workbench at /. A static meta refresh keeps this working in the static build and on any static host.
+ */
+---
+<!doctype html>
+<html lang="nl" data-theme="tupak" class="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width" />
+<meta http-equiv="refresh" content="0; url=/preview" />
+<meta name="robots" content="noindex" />
+<link rel="canonical" href="/preview" />
+<title>Tupak · doorverwijzing naar de preview</title>
+</head>
+<body>
+<p>De prototypehomepage staat op <a href="/preview">/preview</a>.</p>
+</body>
+</html>

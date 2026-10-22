@@ -1,0 +1,24 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import type {Dimension} from "./box-geometry";
+interface Props {
+  id: string;
+  name: Dimension;
+  label: string;
+  /** Visually hidden completion of the accessible name, e.g. ", minimale binnenmaat in millimeter". */
+  description: string;
+  unit: "cm" | "mm";
+  step: string;
+  required?: boolean;
+  /** Marks a collection size-finder field (`data-size-input`). */
+  sizeInput?: boolean;
+}
+const {id, name, label, description, unit, step, required = false, sizeInput = false} = Astro.props;
+---
+<!-- A measurement pill (source .field): the label stays visible beside the value; the ring sits on the pill. -->
+<div class="grid min-h-12 min-w-0 grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-2 rounded-full border border-border-strong bg-surface-raised px-4 text-sm text-foreground transition-[border-color,box-shadow] duration-(--ds-duration-fast) focus-within:border-ring focus-within:ring-2 focus-within:ring-ring has-[[aria-invalid=true]]:border-destructive motion-reduce:transition-none">
+  <Icon name="ruler" size={16} class="text-muted-foreground" />
+  <label for={id} class="cursor-pointer text-muted-foreground">{label}<span class="sr-only">{description}</span></label>
+  <input id={id} name={name} type="number" inputmode="numeric" min="1" max="9999" step={step} autocomplete="off" required={required} data-size-input={sizeInput ? name : undefined} class="w-full min-w-0 [appearance:textfield] border-0 bg-transparent py-2 text-right text-foreground tabular-nums outline-none focus-visible:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
+  <span aria-hidden="true" class="text-muted-foreground tabular-nums">{unit}</span>
+</div>

@@ -1,0 +1,37 @@
+---
+import type {RangeFilter} from "./collection.data";
+interface Props extends RangeFilter {
+  lowName: string;
+  highName: string;
+}
+const {title, key, min, max, step, scale, decimals, prefix = "", unit = "", scaleMarks, lowName, highName, lowLabel, highLabel} = Astro.props;
+function show(value: number): string {
+  return `${prefix}${value.toLocaleString("nl-NL", {minimumFractionDigits: decimals, maximumFractionDigits: decimals})}`;
+}
+const inputs = [{name: lowName, value: min, label: lowLabel}, {name: highName, value: max, label: highLabel}];
+---
+<!--
+  Dual-thumb range (source .range-field): two stacked native range inputs; only the thumbs take the pointer. The script
+  keeps minimum ≤ maximum, moves the fill and rewrites the readout. Not screen-reader tested in the source (open item).
+-->
+<div data-range-field data-range-key={key} data-scale={scale} data-decimals={decimals} data-prefix={prefix} data-unit={unit} class="flex flex-col gap-2">
+  <span class="sr-only">{title}</span>
+  <span data-range-value class="text-sm text-muted-foreground [&_b]:font-bold [&_b]:text-foreground"><b>{show(min)}</b> – <b>{show(max)}</b>{unit && ` ${unit}`}</span>
+  <div data-range-slider class="relative h-6 [--hi:100%] [--lo:0%]">
+    <span class="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-border"></span>
+    <span class="absolute top-1/2 right-[calc(100%-var(--hi))] left-(--lo) h-1 -translate-y-1/2 rounded-full bg-ring"></span>
+    {inputs.map(input => (
+      <input
+        type="range"
+        name={input.name}
+        min={min}
+        max={max}
+        step={step}
+        value={input.value}
+        aria-label={input.label}
+        class="pointer-events-none absolute inset-x-0 top-0 m-0 h-6 w-full appearance-none bg-transparent focus-visible:outline-none [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:size-[18px] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-ring [&::-moz-range-thumb]:bg-surface-raised [&::-moz-range-thumb]:shadow-(--ds-shadow-sm) [&::-moz-range-track]:h-6 [&::-moz-range-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-6 [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:mt-[3px] [&::-webkit-slider-thumb]:size-[18px] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-ring [&::-webkit-slider-thumb]:bg-surface-raised [&::-webkit-slider-thumb]:shadow-(--ds-shadow-sm) focus-visible:[&::-moz-range-thumb]:outline-2 focus-visible:[&::-moz-range-thumb]:outline-offset-2 focus-visible:[&::-moz-range-thumb]:outline-ring focus-visible:[&::-webkit-slider-thumb]:outline-2 focus-visible:[&::-webkit-slider-thumb]:outline-offset-2 focus-visible:[&::-webkit-slider-thumb]:outline-ring"
+      />
+    ))}
+  </div>
+  <div aria-hidden="true" class="flex justify-between text-xs text-muted-foreground">{scaleMarks.map(mark => <span>{mark}</span>)}</div>
+</div>

@@ -1,0 +1,75 @@
+---
+import DesignSystemLayout from "./DesignSystemLayout.astro";
+import Icon from "../components/icon/icon.astro";
+interface DocPoint { lead: string; text: string; }
+interface Props {
+  /** Visible section name, e.g. "Beeldslider". */
+  title: string;
+  lede: string;
+  meta: ReadonlyArray<{term: string; detail: string}>;
+  decided?: ReadonlyArray<DocPoint>;
+  open?: ReadonlyArray<DocPoint>;
+}
+const {title, lede, meta, decided = [], open = []} = Astro.props;
+const folds = [{heading: "Besluiten", points: decided}, {heading: "Nog open", points: open}].filter(fold => fold.points.length > 0);
+---
+<DesignSystemLayout title={`Tupak · sectie: ${title}`} description={`Native Astro reference of the Tupak prototype section ${title}. Candidate design and prototype content, not production-approved.`}>
+  <a lang="nl" href="#section-demo-main" class="sr-only z-50 rounded-sm bg-background p-4 text-foreground focus:not-sr-only focus:fixed focus:top-4 focus:left-4">Ga naar de inhoud</a>
+  <div lang="nl" class="border-b border-border bg-surface-band px-6 py-3 text-center text-xs leading-relaxed text-foreground">
+    <strong>Tupak ontwerpkandidaat</strong> · prototypesectie uit JPPACQ/tupak-design-system 6f9c7e2, handmatig naar Astro vertaald. Voorlopige beelden en prototypetekst, niet productie-goedgekeurd. <a href="/overview" class="underline underline-offset-2">Sectie-overzicht</a> · <a href="/preview" class="underline underline-offset-2">Preview</a>
+  </div>
+  <main id="section-demo-main" lang="nl">
+    <div class="container-page pt-10 md:pt-14">
+      <p class="text-xs font-bold text-foreground-link">Sectie</p>
+      <h1 class="mt-2 text-4xl md:text-5xl">{title}</h1>
+    </div>
+    <slot />
+    <div class="container-page pb-16"><div class="grid max-w-[68ch] gap-6">
+      <p class="text-lg leading-relaxed">{lede}</p>
+      <dl class="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-[max-content_1fr]">
+        {meta.map(item => <><dt class="font-semibold">{item.term}</dt><dd class="text-muted-foreground">{item.detail}</dd></>)}
+      </dl>
+      {folds.map(fold => <details class="group rounded-(--ds-radius-md) border border-border">
+        <summary class="flex cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
+          <h2 class="text-xl">{fold.heading}</h2>
+          <span class="rounded-full bg-surface-sunken px-2 py-0.5 text-xs font-semibold">{fold.points.length}</span>
+          <span class="ml-auto transition-transform group-open:rotate-180 motion-reduce:transition-none"><Icon name="chevron-down" size={20} /></span>
+        </summary>
+        <ul class="grid list-disc gap-3 px-4 pb-4 pl-9 text-sm leading-relaxed">
+          {fold.points.map(point => <li><b>{point.lead}</b> {point.text}</li>)}
+        </ul>
+      </details>)}
+    </div></div>
+  </main>
+</DesignSystemLayout>
+<script>
+  // Render-only capture mode mirroring the source overview tooling: ?thumb=1 shows only the first
+  // [data-section-preview] at 1200×800, ?thumb=2 the second, ?thumb=all every preview without page chrome.
+  const requested = new URLSearchParams(location.search).get("thumb");
+  const previews = [...document.querySelectorAll<HTMLElement>("[data-section-preview]")];
+  if (requested && previews.length > 0) {
+    const all = requested === "all";
+    const selected = Math.min(Math.max(1, Math.trunc(Number(requested)) || 1), previews.length) - 1;
+    document.documentElement.dataset.sectionThumbnail = all ? "all" : "true";
+    for (const [index, preview] of previews.entries()) {
+      preview.hidden = !all && index !== selected;
+      if (!all) {
+        preview.style.cssText = "width:1200px;height:800px;overflow:hidden";
+      }
+    }
+    for (const preview of previews) {
+      for (let node: HTMLElement | null = preview; node && node !== document.body; node = node.parentElement) {
+        for (const sibling of node.parentElement?.children ?? []) {
+          if (sibling instanceof HTMLElement && sibling.tagName !== "SCRIPT" && !previews.some(item => sibling.contains(item))) {
+            sibling.hidden = true;
+          }
+        }
+      }
+    }
+    if (!all) {
+      for (const element of [document.documentElement, document.body]) {
+        element.style.cssText = "width:1200px;min-width:1200px;height:800px;margin:0;overflow:hidden";
+      }
+    }
+  }
+</script>

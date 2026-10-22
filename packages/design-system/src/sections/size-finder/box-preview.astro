@@ -1,0 +1,112 @@
+---
+import {boxDefault, boxView, dimensions, drawBox} from "./box-geometry";
+interface Props {
+  /** Label unit. The drawing always receives centimetres through `keuzehulp:dimensions`; `mm` only changes the labels. */
+  unit?: "cm" | "mm";
+  class?: string;
+}
+const {unit = "cm", class: className} = Astro.props;
+const drawing = drawBox(boxDefault);
+const clipId = `box-clip-${crypto.randomUUID()}`;
+---
+<!--
+  Box preview, after snippets/box-preview.html (6f9c7e2): a flat-vector isometric box on the light kraft field
+  (--surface-warm-subtle, cast shadow --box-ground). Rendered at the neutral 30 × 20 × 15 default; the script morphs it
+  when the nearest keuzehulp, size finder or buy box sends `keuzehulp:dimensions` (centimetres). Hidden from assistive
+  technology: every value it shows is in a form field.
+-->
+<div data-box-preview data-label-unit={unit} class:list={["relative m-0 rounded-(--ds-radius-xl) bg-surface-warm-subtle", className]}>
+  <svg class="block h-auto w-full" viewBox={`0 0 ${boxView.w} ${boxView.h}`} aria-hidden="true" focusable="false">
+    <defs><clipPath id={clipId}><path data-part="clip" d={drawing.paths.clip} /></clipPath></defs>
+    <path data-part="ground" d={drawing.paths.ground} class="fill-(--box-ground)" />
+    <g clip-path={`url(#${clipId})`}>
+      <path data-part="left" d={drawing.paths.left} class="fill-(--box-face-left)" />
+      <path data-part="right" d={drawing.paths.right} class="fill-(--box-face-right)" />
+      <path data-part="top" d={drawing.paths.top} class="fill-(--box-face-top)" />
+      <path data-part="tape" d={drawing.paths.tape} class="fill-(--box-tape)" />
+      <path data-part="sticker" d={drawing.paths.sticker} class="fill-(--box-label)" />
+      <!-- The A of the Tupak lockup in the logo's own two colours: brand artwork, deliberately not theme tokens (source note). -->
+      <g data-part="brandmark" transform={drawing.mark}>
+        <path fill="#A4A8A5" d="M108.965 30.3539C106.592 23.1469 99.838 17.9297 91.8944 17.9297C83.9507 17.9297 77.338 23.1539 75 30.3539H83.0282C84.8944 27.3867 88.162 25.4039 91.8944 25.4039C95.6268 25.4039 98.8944 27.3797 100.761 30.3539H108.965Z" />
+        <path fill="#E32119" d="M95.8029 0L83.0283 30.4313H74.7959L87.986 0H95.8029Z" />
+      </g>
+    </g>
+    <path data-part="outline" d={drawing.paths.outline} class="fill-none stroke-(--box-edge) [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:0.75]" />
+    {dimensions.map(name => <path data-rule={name} d={drawing.rules[name].d} class="fill-none stroke-border-strong opacity-0 transition-opacity duration-150 [stroke-linecap:round] [stroke-width:1.5] motion-reduce:transition-none data-on:opacity-100" />)}
+  </svg>
+  {dimensions.map(name => <span data-label={name} aria-hidden="true" style={`--x:${drawing.rules[name].x}%;--y:${drawing.rules[name].y}%`} class="absolute top-(--y) left-(--x) -translate-1/2 bg-surface-warm-subtle px-1 text-sm font-bold whitespace-nowrap text-muted-foreground tabular-nums opacity-0 transition-opacity duration-150 motion-reduce:transition-none data-on:opacity-100"></span>)}
+</div>
+<script>
+  import {boxDefault, dimensions, drawBox, formatCentimetres, type BoxSize, type Dimension} from "./box-geometry";
+
+  for (const preview of document.querySelectorAll<HTMLElement>("[data-box-preview]")) {
+    bindPreview(preview);
+  }
+
+  function bindPreview(preview: HTMLElement) {
+    const unit = preview.dataset.labelUnit;
+    const current: BoxSize = {...boxDefault};
+    const target: BoxSize = {...boxDefault};
+    const given: Record<Dimension, boolean> = {lengte: false, breedte: false, hoogte: false};
+    const reduced = globalThis.matchMedia("(prefers-reduced-motion: reduce)");
+    let frame: number | undefined;
+
+    function draw() {
+      const drawing = drawBox(current);
+      for (const [part, d] of Object.entries(drawing.paths)) {
+        preview.querySelector(`[data-part="${part}"]`)?.setAttribute("d", d);
+      }
+      preview.querySelector("[data-part=brandmark]")?.setAttribute("transform", drawing.mark);
+      for (const name of dimensions) {
+        const rule = preview.querySelector(`[data-rule="${name}"]`);
+        const label = preview.querySelector<HTMLElement>(`[data-label="${name}"]`);
+        if (!rule || !label) {
+          continue;
+        }
+        rule.setAttribute("d", drawing.rules[name].d);
+        rule.toggleAttribute("data-on", given[name]);
+        label.toggleAttribute("data-on", given[name]);
+        label.textContent = given[name] ? (unit === "mm" ? `${Math.round(target[name] * 10)} mm` : `${formatCentimetres(target[name])} cm`) : "";
+        label.style.setProperty("--x", `${drawing.rules[name].x}%`);
+        label.style.setProperty("--y", `${drawing.rules[name].y}%`);
+      }
+    }
+
+    // Interpolating the three dimensions, not the polygon points, is what makes the morph read as one box changing shape.
+    function settle() {
+      let moving = false;
+      for (const name of dimensions) {
+        const delta = target[name] - current[name];
+        if (Math.abs(delta) > 0.05) {
+          current[name] += delta * 0.18;
+          moving = true;
+        } else {
+          current[name] = target[name];
+        }
+      }
+      draw();
+      frame = moving ? requestAnimationFrame(settle) : undefined;
+    }
+
+    function apply(detail: Partial<Record<Dimension, number | undefined>>) {
+      for (const name of dimensions) {
+        const value = detail[name];
+        given[name] = typeof value === "number";
+        target[name] = typeof value === "number" ? value : boxDefault[name];
+      }
+      if (reduced.matches) {
+        Object.assign(current, target);
+        draw();
+        return;
+      }
+      frame ??= requestAnimationFrame(settle);
+    }
+
+    // The nearest ancestor holding a source keeps two keuzehulpen on one page from driving each other's drawing.
+    let scope = preview.parentElement;
+    while (scope && !scope.querySelector("[data-keuzehulp], [data-size-finder], [data-buy-box]")) {
+      scope = scope.parentElement;
+    }
+    (scope ?? document).addEventListener("keuzehulp:dimensions", event => apply((event as CustomEvent<Partial<Record<Dimension, number | undefined>>>).detail));
+  }
+</script>

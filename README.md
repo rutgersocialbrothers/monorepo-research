@@ -31,7 +31,9 @@ pnpm dev:liquid:local # Rebuild CSS on theme/style input changes; no browser or 
 pnpm dev:design-system # Astro reference workbench, normally http://localhost:4321
 ```
 
-The workbench includes tokens, typography, the single Tupak theme in light/dark modes, 22 canonical component families/contracts and editorial sections with optional media. `/preview` composes the current external `main` homepage selection as an explicitly labelled candidate, not a live shop. Reference artwork is local, with provenance in `src/sections/reference-assets.ts`; production rights and design approval remain separate. Instrument Sans is bundled privately with Fontsource, while the public token CSS stays asset-neutral and leaves font delivery to consumers. There is no tenant chooser, CMS, database, credentials or upload dependency. Astro rendering is not proof of Liquid or merchant-editor parity.
+The workbench includes tokens, typography, the single Tupak theme in light/dark modes, canonical component contracts and editorial sections with optional media. `/preview` is the candidate homepage; `/overview` indexes the imported references, including branches, image-slider variants, collection alternatives and product/size-filter simulations. The reference includes the full external `afd9c66..6f9c7e2` update, including labelled trials, not a live shop. Artwork provenance lives in `src/sections/reference-assets.ts` and `src/sections/prototype-update-assets.ts`; production rights and design approval remain separate. Fonts stay privately bundled, public token CSS asset-neutral, and Astro evidence does not establish Liquid/editor parity.
+
+Optional local UI preferences use `tupak-design-system-mode` (colour mode), `tupak-overview-view` (overview grid/list) and `tupak-collection-columns` (collection columns/list). Filters and sorting stay in the URL. `/preview` retains the source homepage selection; compare the unresolved alternatives on `/section-keuzehulp` and `/section-product-carousel`. The [integration record](docs/designer-workflow.md#native-adaptations-versus-upstream) lists deliberate native departures.
 
 **Liquid preview — authenticated, upload-capable:**
 
@@ -70,18 +72,18 @@ Commit authored source only. `apps/liquid/assets/tailwind.css` is compiled and G
 
 Turbo build inputs/outputs describe the finite CSS task; standard watch mode operates at package level. Generated CSS, environment files and Shopify state are Git-ignored so they do not create rebuild feedback. Some non-theme app-file changes also compile CSS. Shopify CLI owns native theme synchronization, including source edits and deletions; there is no second theme copy or custom validation framework. Environment files, Turbo output and private pull snapshots stay ignored.
 
-| Command                               | Result                                                                                                |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `pnpm build:liquid`                   | Compile app styles to `apps/liquid/assets/tailwind.css`                                               |
+| Command                             | Result                                                                                                |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `pnpm build:liquid`                 | Compile app styles to `apps/liquid/assets/tailwind.css`                                               |
 | `pnpm --filter @tupak/liquid check` | Native Theme Check against `apps/liquid`                                                              |
-| `pnpm check`                          | Root script types/tests, Liquid CSS build/check and the canonical package's five ordered check leaves |
-| `pnpm typecheck:scripts`              | Root script/test TypeScript checking                                                                  |
-| `pnpm test` / `test:watch`            | Run / watch root Vitest tests                                                                         |
-| `pnpm dev:design-system`              | Upload-free canonical Astro workbench                                                                 |
-| `pnpm build:design-system`            | Static workbench in `packages/design-system/dist`; no generated library                               |
-| `pnpm check:design-system`            | All five ordered canonical check leaves; requires Chromium                                            |
-| `pnpm test:design-system`             | Canonical Playwright tests; owned Astro server on port 4322                                           |
-| `pnpm preview:design-system`          | Preview the built static workbench                                                                    |
+| `pnpm check`                        | Root script types/tests, Liquid CSS build/check and the canonical package's five ordered check leaves |
+| `pnpm typecheck:scripts`            | Root script/test TypeScript checking                                                                  |
+| `pnpm test` / `test:watch`          | Run / watch root Vitest tests                                                                         |
+| `pnpm dev:design-system`            | Upload-free canonical Astro workbench                                                                 |
+| `pnpm build:design-system`          | Static workbench in `packages/design-system/dist`; no generated library                               |
+| `pnpm check:design-system`          | All five ordered canonical check leaves; requires Chromium                                            |
+| `pnpm test:design-system`           | Canonical Playwright tests; owned Astro server on port 4322                                           |
+| `pnpm preview:design-system`        | Preview the built static workbench                                                                    |
 
 Turbo sequences prerequisites and checks without concurrent CSS writers. Liquid CSS builds are uncached; `mise.toml` pins affect hashes. Shopify delivery stays outside Turbo and uses the native pinned CLI against `apps/liquid`. Node 24 runs `.ts` scripts directly and loads local preview configuration natively. Root uses TypeScript 7.0.2 (`typescript-native`); root Vitest covers local configuration preservation.
 
@@ -95,7 +97,7 @@ Liquid stays close to Shopify's component model: small plain-JavaScript enhancem
 
 ### Designer integration and manual Liquid adaptation
 
-Start with `pnpm dev:design-system`; review the workbench at `/` and composed candidate homepage at `/preview`. Edit `packages/design-system/src/styles/tokens.css` for shared values, `src/tokens/reference.ts` for descriptions, component families for canonical states/behavior and sections for editorial compositions. CSS is the value authority; metadata is not a second token store. The current candidate follows external `main` at `afd9c66`, not the older `index-v2.html` trial. Review light and dark independently: the port retains prior effective dark colors without deciding dark-mode product support. Source trials and local implementation are not design approval.
+Start with `pnpm dev:design-system`; review `/`, `/preview` and `/overview`. Edit `packages/design-system/src/styles/tokens.css` for shared values, `src/tokens/reference.ts` for descriptions, component families for contracts/states and sections for compositions. CSS remains the value authority. The reference follows external `main` through `6f9c7e2`, retaining final/provisional distinctions and known issues rather than filtering out trials. Review light/dark independently; final production choices and merchant controls are decided during Liquid adaptation, not by importing this prototype.
 
 Use the [package guide](packages/design-system/README.md) for the actual source exports and five ordered check gates. There is no shadcn dependency, component configuration or lint plugin; retain native Better Tailwind class validation. This workspace has no React/UI adaptation package, Storybook or generated renderer pipeline.
 

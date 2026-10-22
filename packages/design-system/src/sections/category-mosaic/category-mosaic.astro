@@ -1,0 +1,38 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import Panel from "./category-mosaic-panel.astro";
+import type {MosaicPanel, MosaicTile} from "./category-mosaic.types";
+interface Props {
+  /** Visually hidden section heading. */
+  title: string;
+  tiles: ReadonlyArray<MosaicTile>;
+  /** Navy panel after the first three tiles. */
+  contact?: MosaicPanel;
+  /** Pale brand panel spanning two rows on wide screens. */
+  story?: MosaicPanel;
+  /** Light kraft band under the tiles. */
+  banner?: MosaicPanel;
+  emptyText?: string;
+}
+const {title, tiles, contact, story, banner, emptyText = "Geen categorieën om te tonen."} = Astro.props;
+const titleId = `category-mosaic-${crypto.randomUUID()}`;
+// Placement is DOM order plus two span rules, so a seventh tile needs no new layout.
+const groups = [tiles.slice(0, 3), tiles.slice(3)];
+const tileClass = "group relative flex min-h-64 flex-col items-center overflow-hidden rounded-(--ds-radius-xl) bg-surface-sunken px-4 py-6 no-underline transition-colors duration-[120ms] outline-none hover:bg-secondary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none";
+---
+<section aria-labelledby={titleId} class="py-10 md:py-14">
+  <div class="container-page">
+    <h2 id={titleId} class="sr-only">{title}</h2>
+    {tiles.length === 0 && !contact && !story && !banner ? <p class="rounded-(--ds-radius-lg) bg-surface-sunken p-6 text-muted-foreground">{emptyText}</p> : <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 min-[1081px]:grid-cols-[repeat(3,minmax(0,263fr))_minmax(0,455fr)]">
+      {groups.map((group, index) => <>
+        {group.map(tile => <a href={tile.href} class={tileClass}>
+          <span class="relative flex min-h-12 w-full max-w-[211px] items-center justify-between gap-4 rounded-(--ds-radius-md) border-2 border-current bg-surface-raised px-5 text-base leading-none font-bold text-foreground-heading">{tile.title}<Icon name="arrow-right" size={16} /></span>
+          <span class="pointer-events-none absolute inset-x-5 top-[calc(1.5rem+48px+1rem)] bottom-5 grid place-items-center">{tile.image ? <img src={tile.image.src} alt={tile.image.alt} loading="lazy" decoding="async" class="absolute inset-0 size-full object-contain [mix-blend-mode:var(--media-blend-mode)]" /> : <Icon name="image" size={32} />}</span>
+        </a>)}
+        {index === 0 && contact && <Panel panel={contact} tone="inverse" defaultVariant="outline" class="sm:col-span-2 min-[1081px]:col-span-1" />}
+      </>)}
+      {story && <Panel panel={story} tone="tint" stacked={true} defaultVariant="nav" class="sm:col-span-2 min-[1081px]:col-span-1 min-[1081px]:row-span-2" />}
+      {banner && <Panel panel={banner} tone="warm" layout="banner" defaultVariant="primary" class="sm:col-span-2 min-[1081px]:col-span-3" />}
+    </div>}
+  </div>
+</section>

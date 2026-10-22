@@ -1,0 +1,30 @@
+---
+import SectionDemoLayout from "../layouts/SectionDemoLayout.astro";
+import BranchNav from "../sections/branch-nav/branch-nav.astro";
+import {prototypeBranches} from "../sections/prototype-update.example-data";
+const sourceHeader = {kicker: "Voor elke branche", title: "Verpakkingen voor jouw branche", action: {label: "Bekijk alle branches", href: "/collection"}};
+const withoutArtwork = prototypeBranches.slice(0, 3).map(({label, href}) => ({label, href}));
+---
+<SectionDemoLayout
+  title="Branches"
+  lede="De zes branche-routes uit de navigatie als een rij vrijstaande verpakkingsbeelden in ronde, rustige tegels. Op smallere schermen blijft de rij horizontaal veegbaar."
+  meta={[
+    {term: "Bron", detail: "blocks/branch-nav.html, met .branch-nav in components.css (6f9c7e2)."},
+    {term: "Astro", detail: "src/sections/branch-nav/branch-nav.astro; dezelfde zes routes staan als beeldmenu in de header."},
+    {term: "Beeld", detail: "Zes transparante, gegenereerde prototype-assets uit assets/branches/; te vervangen door goedgekeurde merkfotografie zodra die beschikbaar is."},
+    {term: "Shopify", detail: "Eén sectieblok met herhaalbare branche-items: afbeelding, titel en link. De zes huidige branches komen uit de hoofdnav."},
+    {term: "Status", detail: "Nieuwe richting, klaar om visueel te beoordelen. De zes branches zijn voorbeelden; Tupak levert de lijst (zes tot acht volgens de designrichting)."},
+  ]}
+>
+  <div>
+    <div class="container-page pt-8"><p class="text-xs font-semibold text-muted-foreground">Variant 1 · bron: kop, link naar alle branches en zes uitsnedes</p></div>
+    <div data-section-preview><BranchNav items={prototypeBranches} {...sourceHeader} /></div>
+  </div>
+  <div>
+    <div class="container-page pt-8"><p class="text-xs font-semibold text-muted-foreground">Randgeval · zonder kop, zonder beeld en lege rij</p></div>
+    <div data-section-preview>
+      <BranchNav items={withoutArtwork} label="Branches zonder beeld" />
+      <BranchNav items={[]} title="Branches" />
+    </div>
+  </div>
+</SectionDemoLayout>

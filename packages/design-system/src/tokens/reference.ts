@@ -673,7 +673,8 @@ export const tokenReference = [
   {
     name: '--heading-tracking',
     group: 'component',
-    description: '',
+    description:
+      'Heading letter spacing at natural tracking: sentence-case headings are settled upstream (client confirmed 2026-10-14), not the former uppercase +0.02em.',
   },
   {
     name: '--focus-ring-width',
@@ -851,6 +852,19 @@ export const tokenReference = [
   { name: '--palette-warm-800', group: 'color', description: '' },
   { name: '--palette-warm-900', group: 'color', description: '' },
   { name: '--palette-warm-950', group: 'color', description: '' },
+  {
+    name: '--palette-kraft-100',
+    group: 'color',
+    description:
+      'Illustration-only kraft sample for the size-finder box drawing; not the warm surface ramp. Candidate.',
+  },
+  { name: '--palette-kraft-200', group: 'color', description: 'Illustration-only kraft sample (box lid).' },
+  { name: '--palette-kraft-400', group: 'color', description: 'Illustration-only kraft sample (box right face).' },
+  {
+    name: '--palette-kraft-600',
+    group: 'color',
+    description: 'Illustration-only kraft sample (box left face and edge).',
+  },
   {
     name: '--palette-natural-50',
     group: 'color',
@@ -1400,5 +1414,25 @@ export const tokenReference = [
     group: 'component',
     description:
       'Studio-image compositing follows the nearest explicit light or dark mode, not the operating-system preference.',
+  },
+  { name: '--box-face-top', group: 'component', description: 'Box drawing lid face; fixed kraft in every mode.' },
+  { name: '--box-face-left', group: 'component', description: 'Box drawing darkest face; fixed kraft in every mode.' },
+  { name: '--box-face-right', group: 'component', description: 'Box drawing middle face; fixed kraft in every mode.' },
+  { name: '--box-tape', group: 'component', description: 'Box drawing tape strip, lighter than the lid it crosses.' },
+  {
+    name: '--box-label',
+    group: 'component',
+    description: 'Box drawing shipping label: paper, the one non-kraft part.',
+  },
+  {
+    name: '--box-edge',
+    group: 'component',
+    description: 'Box silhouette outline only, no internal linework; inverts to light kraft in dark mode.',
+  },
+  {
+    name: '--box-ground',
+    group: 'component',
+    description:
+      'Box cast shadow, one step below the light-kraft drawing field (was pale blue before 6f9c7e2); the page floor in dark mode.',
   },
 ] as const;

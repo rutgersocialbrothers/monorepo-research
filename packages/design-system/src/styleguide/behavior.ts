@@ -190,7 +190,6 @@ export function initStyleguide(): void {
   function preferences(): void {
     root.dataset.theme = 'tupak';
     const dark = root.classList.contains('dark');
-    document.title = 'Tupak styleguide';
     const toggleLabel = dark ? 'Switch to light mode' : 'Switch to dark mode';
     modeToggle?.setAttribute('aria-label', toggleLabel);
     modeToggle?.setAttribute('title', toggleLabel);

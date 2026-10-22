@@ -2,7 +2,7 @@
 import ProductCard from './product-card.astro';
 ---
 
-<div class="grid max-w-3xl gap-6 sm:grid-cols-2">
+<div class="grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
   <ProductCard
     title="Vouwdoos — prototypefoto"
     href="/tupak-reference/amerikaanse-vouwdoos.webp"
@@ -15,5 +15,20 @@ import ProductCard from './product-card.astro';
     title="Verzendkoker — statische proef"
     image={{ src: '/tupak-reference/verzendkokers-deksel.webp', alt: 'Kartonnen verzendkokers met deksels uit het Tupak-prototype.' }}
     description="Zonder bestemming blijft deze kaart gewone inhoud. Er wordt geen prijs, voorraad of productbeleid verondersteld."
+  />
+  <ProductCard
+    title="Magneetdozen — omkaderde proef"
+    href="/tupak-reference/magneetdozen.webp"
+    image={{ src: '/tupak-reference/magneetdozen.webp', alt: '' }}
+    eyebrow="Kandidaat · productslider v2"
+    description="De omkaderde kaart uit de bron (6f9c7e2) met de exacte prototypewaarden, geen actueel aanbod. De knop is tekst binnen de ene link en opent alleen de referentiefoto."
+    stats={[
+      { label: 'varianten', value: '3' },
+      { label: 'vanaf · p/s', value: '€ 1,17' },
+      { label: 'min. afname', value: '25 stuks' },
+    ]}
+    stock={{ label: 'Op voorraad', tone: 'in' }}
+    actionLabel="Bekijk product"
+    framed
   />
 </div>

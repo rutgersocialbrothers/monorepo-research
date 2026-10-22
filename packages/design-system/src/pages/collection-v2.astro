@@ -1,0 +1,14 @@
+---
+import ReferencePageShell from "../sections/collection-reference/reference-page-shell.astro";
+import CollectionPage from "../sections/collection-reference/collection-page.astro";
+import Faq from "../sections/faq/faq.astro";
+import PublicationFeed from "../sections/publication-feed/publication-feed.astro";
+import ReviewRail from "../sections/review-rail/review-rail.astro";
+import {prototypeFaq, prototypePublications, prototypeReviews} from "../sections/homepage.example-data";
+---
+<ReferencePageShell title="Tupak · categoriepagina v2, lichte kop (candidate)" description="Proposal from the Tupak prototype: the category page with a light head (trail, title, round subcategory cut-outs) on the listing's band. Everything under the head matches the navy version. Example products, not an active shop." notice="categoriepagina v2 met lichte kop, een voorstel uit het prototype (6f9c7e2). Producten, prijzen en voorraad zijn verzonnen voorbeelden. De keuzehulp verwijst naar de standaardversie met navy kop, niet naar dit voorstel.">
+  <CollectionPage head="light" basePath="/collection-v2" keuzehulpHref="/section-keuzehulp" maatwerkHref="/preview#maatwerk" />
+  <Faq title="Snel antwoord op je vraag" eyebrow="Over dit prototype" text="Deze antwoorden beschrijven alleen de preview. Ze bevatten geen verkoop-, verzend- of retourvoorwaarden." items={prototypeFaq} />
+  <PublicationFeed title="De laatste publicaties" eyebrow="Voorbeeldpresentatie · links openen bronartikelen" items={prototypePublications} />
+  <ReviewRail title="Ervaringen in beeld" eyebrow="Fictieve reviews · uitsluitend layoutvoorbeelden" note="Geen echte klantbeoordelingen. Namen, sterren en teksten hieronder zijn expliciete prototypevoorbeelden." items={prototypeReviews} />
+</ReferencePageShell>
