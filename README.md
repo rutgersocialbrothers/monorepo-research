@@ -87,6 +87,8 @@ Turbo build inputs/outputs describe the finite CSS task; standard watch mode ope
 
 Turbo sequences prerequisites and checks without concurrent CSS writers. Liquid CSS builds are uncached; `mise.toml` pins affect hashes. Shopify delivery stays outside Turbo and uses the native pinned CLI against `apps/liquid`. Node 24 runs `.ts` scripts directly and loads local preview configuration natively. Root uses TypeScript 7.0.2 (`typescript-native`); root Vitest covers local configuration preservation.
 
+Theme changes follow the [quality guardrails](docs/quality-guardrails.md): which existing checks cover each changed file type, preview review targets, the accessibility checklist and the third-party rule.
+
 The canonical check attempts formatting → Astro types → authored-source/native-class lint → static workbench build → browser tests, with uncached ordered leaves and aggregate failure reporting. Install Chromium before checks (`--with-deps` also installs Linux runtime dependencies, as CI does). Astro uses package-scoped TypeScript 6; root tooling remains TypeScript 7. The native class lane enables only `better-tailwindcss/no-unknown-classes` and `better-tailwindcss/no-concatenated-classes`. Do not suppress findings, skip the lint lane or claim a green gate without observed results.
 
 Tailwind v4 configuration is CSS-first with explicit source discovery, not a legacy JS config. `apps/liquid/styles/tokens.css` is the current authored token authority; `styles/tailwind.css` imports it locally. Liquid keeps its reset without Preflight and maps semantic utilities to merchant CSS variables with fallbacks. There is no public token-JSON export or recipe generator.
@@ -139,6 +141,6 @@ Repository files define delivery behavior, not account rulesets, credentials, st
 ## Guides and license
 
 - [Liquid](apps/liquid/README.md)
-- [Delivery/safety](docs/shopify-deployment.md), [decisions](docs/decisions.md), [agent rules](AGENTS.md) (`CLAUDE.md` imports them)
+- [Delivery/safety](docs/shopify-deployment.md), [quality guardrails](docs/quality-guardrails.md), [decisions](docs/decisions.md), [agent rules](AGENTS.md) (`CLAUDE.md` imports them)
 
 The Liquid theme derives from [Shopify's Skeleton Theme](https://github.com/Shopify/skeleton-theme). Preserve `LICENSE.md` and its applicable terms. No new redistribution license is granted for newly authored workspace packages.

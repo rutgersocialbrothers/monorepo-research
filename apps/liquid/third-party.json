@@ -1,0 +1,4 @@
+{
+  "$comment": "Every non-Shopify host the theme loads scripts, styles, fonts, frames, media or connections from. Add an entry before the first include: { \"host\", \"owner\", \"reason\" }. Reviewers enforce this; rules: docs/quality-guardrails.md#third-party-scripts-and-assets",
+  "hosts": []
+}
