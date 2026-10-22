@@ -4,6 +4,9 @@
     "not_found": "Page not found.",
     "back_to_shopping": "Back to shopping"
   },
+  "accessibility": {
+    "skip_to_content": "Skip to content"
+  },
   "blog": {
     "article_comments": "Comments",
     "article_metadata_html": "{{ date }} by {{ author }}",
@@ -67,19 +70,29 @@
         "medium": "Medium",
         "large": "Large"
       },
-      "foundations_title": "Semantic foundations",
-      "foundations_description": "Colors, body typography, borders, and control corners use semantic utilities rather than component-specific values. Update the theme settings to see them change together.",
-      "surface": "Surface",
-      "surface_description": "The background token for content and secondary buttons.",
-      "ink": "Ink",
-      "ink_description": "The foreground token for text and primary buttons.",
-      "line": "Line",
-      "line_description": "The shared border token.",
-      "typography_title": "Body typography",
-      "typography_sample": "One type family, a clear reading hierarchy",
-      "typography_description": "The body font token follows the theme's primary font setting. Size and weight establish hierarchy without changing the family.",
-      "shape_title": "Borders and corners",
-      "shape_description": "This panel uses the line border and control-radius tokens. Control corners follow the theme's input corner setting.",
+      "foundations_title": "Global foundations",
+      "foundations_description": "Surfaces, text, borders, type and spacing come from the theme settings under Colors, Typography, Layout and Keyboard focus. Change a setting to see every consumer update together.",
+      "surfaces": {
+        "page": "Page",
+        "band": "Subtle band",
+        "brand": "Brand tint",
+        "warm": "Warm",
+        "natural": "Natural",
+        "inverse": "Brand surface"
+      },
+      "muted_sample": "Muted text and the border are derived from the text and page colors.",
+      "inverse_description": "Text, links, actions and the focus ring rebind for contrast on the brand color.",
+      "inverse_button": "Preview — no action",
+      "typography_title": "Typography",
+      "typography_display": "Display",
+      "typography_h1": "Heading 1",
+      "typography_h2": "Heading 2",
+      "typography_h3": "Heading 3",
+      "typography_description": "Body text uses the body font. Headings use the heading font and the Styleguide type scale.",
+      "typography_small": "Small text for supporting details.",
+      "typography_caption": "Caption",
+      "layout_title": "Page width and spacing",
+      "layout_description": "Every section aligns to the maximum page width and page margin settings. Section spacing sets the space above and below this demo.",
       "image_title": "Responsive Shopify image",
       "image_description": "A real Shopify image is rendered through the shared image snippet, using Shopify's image URL and image tag filters.",
       "image_empty": "Choose an example image in this section's theme-editor settings to preview the shared image component. No placeholder or external image is requested."

@@ -1,25 +1,26 @@
 {%- comment -%}
-  Authored shared button utilities. Merchant color, font, and radius mappings live
-  in apps/liquid/styles/tokens.css. Variant and size fall back independently.
+  Authored shared button utilities, bound to the Tupak `--tp-*` roles through
+  apps/liquid/styles/tokens.css. Keyboard focus comes from the global focus
+  ring in assets/critical.css. Variant and size fall back independently.
   Parameters: variant (primary/secondary), size (small/medium/large).
 {%- endcomment -%}
 {%- liquid
-  assign base_classes = 'inline-flex max-w-full items-center justify-center gap-2 rounded-control border font-body font-medium leading-none no-underline wrap-anywhere transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-button-focus disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
+  assign base_classes = 'inline-flex max-w-full items-center justify-center gap-2 rounded-sm border font-body font-bold leading-none no-underline wrap-anywhere transition-colors disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
 
   case variant
     when 'secondary'
-      assign variant_classes = 'border-button-secondary-border bg-button-secondary text-button-secondary-foreground not-disabled:hover:bg-button-secondary-hover'
+      assign variant_classes = 'border-secondary-border bg-secondary text-secondary-label not-disabled:hover:bg-secondary-hover not-disabled:active:bg-secondary-active'
     else
-      assign variant_classes = 'border-button-primary bg-button-primary text-button-primary-foreground not-disabled:hover:bg-button-primary-hover'
+      assign variant_classes = 'border-action bg-action text-action-label not-disabled:hover:border-action-hover not-disabled:hover:bg-action-hover not-disabled:active:border-action-active not-disabled:active:bg-action-active'
   endcase
 
   case size
     when 'small'
-      assign size_classes = 'min-h-9 px-3 py-2 text-sm'
+      assign size_classes = 'min-h-10.5 px-4 py-2 text-small'
     when 'large'
-      assign size_classes = 'min-h-13 px-7 py-4 text-lg'
+      assign size_classes = 'min-h-14 px-6 py-3 text-body'
     else
-      assign size_classes = 'min-h-11 px-5 py-3 text-base'
+      assign size_classes = 'min-h-12 px-5 py-3 text-body'
   endcase
 
   echo base_classes | append: ' ' | append: variant_classes | append: ' ' | append: size_classes

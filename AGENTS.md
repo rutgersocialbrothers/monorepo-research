@@ -34,7 +34,8 @@ Stop dev processes with Ctrl-C. Restart after env, dependency, lockfile/catalog 
 | Path | Owns |
 | --- | --- |
 | `apps/liquid` | Theme root: layouts, config, templates, merchant state, sections, blocks, snippets, locales |
-| `apps/liquid/styles/tailwind.css`, `styles/tokens.css` | Authored Liquid Tailwind entry and merchant-aware tokens (not uploaded) |
+| `apps/liquid/snippets/css-variables.liquid`, `assets/critical.css` | Theme-setting tokens (`--tp-palette-*`) and the global foundation: `--tp-*` roles, reset, typography, page layout, focus ring. Components bind to roles only |
+| `apps/liquid/styles/tailwind.css`, `styles/tokens.css` | Authored Tailwind entry and Tailwind names for the `--tp-*` roles (not uploaded) |
 | `apps/liquid/assets/tailwind.css` | Generated CSS — Git-ignored, compiled before preview/upload, never copied into source |
 | `apps/liquid/snippets/design-button-classes.liquid` | Authored button class selection |
 | `packages/design-system/src/styles/tokens.css` | Workbench token values and the public `@tupak/design-system/tokens.css` Tailwind 4 config |

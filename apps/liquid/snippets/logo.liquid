@@ -1,0 +1,35 @@
+{%- doc -%}
+  Renders the logo from theme settings, or the store name as text when no logo
+  is set. Owns no layout: the caller provides the link, size and placement.
+  The image is eager because the logo sits above the fold in the header.
+
+  @param {number} [width] - Display width in CSS pixels; defaults to 140
+  @param {string} [class] - Optional class for the image or text fallback
+
+  @example
+  <a href="{{ routes.root_url }}">{% render 'logo', width: 160 %}</a>
+{%- enddoc -%}
+
+{%- assign display_width = width | default: 140 -%}
+
+{%- if settings.logo != blank -%}
+  {%- liquid
+    assign width_2x = display_width | times: 2
+    assign width_3x = display_width | times: 3
+    assign logo_widths = display_width | append: ',' | append: width_2x | append: ',' | append: width_3x
+    assign logo_sizes = display_width | append: 'px'
+  -%}
+  {{
+    settings.logo
+    | image_url: width: width_3x
+    | image_tag:
+      width: display_width,
+      widths: logo_widths,
+      sizes: logo_sizes,
+      alt: shop.name,
+      class: class,
+      loading: 'eager'
+  }}
+{%- else -%}
+  <span{% if class != blank %} class="{{ class | escape }}"{% endif %}>{{ shop.name | escape }}</span>
+{%- endif -%}

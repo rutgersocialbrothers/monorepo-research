@@ -49,7 +49,7 @@ Light/dark mechanics (`light-dark()`, inherited `color-scheme`, pre-paint mode r
 
 ## 6. Manual Liquid adaptation, merchant authority
 
-**Decision.** `apps/liquid/styles/tokens.css` is the Liquid CSS authority, mapping merchant settings with fallbacks. Liquid never imports workbench CSS, depends on the workbench or uses token/recipe generators. `snippets/design-button-classes.liquid` selects complete utility strings for primary/secondary × small/medium/large, each defaulting independently. Liquid stays Shopify-native: `{% stylesheet %}`, small plain JS in `{% javascript %}`, Shopify bundling and CDN. `design-system-demo` and `page.design-system` are real editor surfaces.
+**Decision.** Liquid owns its tokens: merchant settings are published by `snippets/css-variables.liquid`, `assets/critical.css` binds them to the Tupak `--tp-*` roles (see 11), and `apps/liquid/styles/tokens.css` only maps Tailwind names to those roles. Liquid never imports workbench CSS, depends on the workbench or uses token/recipe generators. `snippets/design-button-classes.liquid` selects complete utility strings for primary/secondary × small/medium/large, each defaulting independently. Liquid stays Shopify-native: `{% stylesheet %}`, small plain JS in `{% javascript %}`, Shopify bundling and CDN. `design-system-demo` and `page.design-system` are real editor surfaces.
 
 **Why.** Merchant settings must keep precedence, and the storefront must not inherit unapproved candidate values automatically. Designers approve intent; developers accept behavior after an explicit [contract](templates/component-contract.md) and [handoff](templates/design-handoff.md) (see the [designer workflow](designer-workflow.md)). AI summaries and automated findings grant neither.
 
@@ -76,3 +76,20 @@ Light/dark mechanics (`light-dark()`, inherited `color-scheme`, pre-paint mode r
 ## 10. Evidence boundary
 
 **Decision.** Compilation, Theme Check and workbench browser tests do not certify visual correctness, full accessibility, checkout, or Shopify/editor parity, and they don't approve branding. Record current checks and exact authorized preview evidence (including failures and gaps) in the relevant handoff. Past results never stand in for a current run.
+
+## 11. Global theme foundation (GENE-3)
+
+**Decision.** One set of theme settings carries the brand baseline, and every consumer reads it through Tupak-owned `--tp-*` custom properties in two tiers, after the Styleguide's own tokens:
+
+1. **Merchant tier** (`snippets/css-variables.liquid`): `--tp-palette-*` colours, body/heading fonts, page width, page margin and section spacing (mobile/desktop), focus colours and width. Components never bind to `--tp-palette-*`.
+2. **Role tier** (`assets/critical.css`, layer `base`): semantic roles such as `--tp-color-text`, `--tp-color-action`, `--tp-color-border`, the type scale, radii, elevation, `--tp-page-margin` and `--tp-section-spacing`. Borders, muted text, subtle bands and hover/pressed shades are derived from the palette with `color-mix()`, so they follow setting changes. `.tp-on-inverse` rebinds the roles on brand (navy) surfaces, including the focus ring.
+
+Tailwind maps only these roles (its default colours, fonts, type sizes, radii and shadows are cleared). `critical.css` is the whole global foundation: reset, typography, tokens, page layout and the focus ring. It declares the Tailwind layer order and sits in `base`, so utilities and component stylesheets override it.
+
+Settings: logo, favicon and social sharing image; page background, text, brand, primary action, links/secondary actions, brand tint, warm and natural surfaces; body and heading fonts (Shopify font library, Instrument Sans); maximum page width; page margin and section spacing per breakpoint; focus colours and width. No colour schemes, presets or per-section overrides of global values. Skeleton's `max_page_width`, `min_page_margin` and `input_corner_radius` are replaced: the widths changed type, and radii are Styleguide tokens rather than merchant settings.
+
+Optional assets fall back without requests or empty wrappers: no logo renders the store name; no favicon emits `<link rel="icon" href="data:,">` so browsers skip `/favicon.ico`; the sharing image order is the page's own product/collection/article image, then the theme setting, then Online Store › Preferences (`page_image`), else no `og:image`.
+
+Default values come from the Styleguide at `JPPACQ/tupak-design-system` `main` `6f9c7e2` (`tokens.css`, `components.css` page gutter and band spacing), which is **in review**. They are provisional; GENE-3 cannot be Done before the Styleguide is approved. Header, footer and feature sections consume these settings and tokens; their own designs (HEAD-1, HEAD-3, footer) are out of scope.
+
+**Why.** Downstream sections (HEAD-1, HEAD-3, COLL-3, COLL-6, FAQS-3, PAGE-1) need one source for brand values instead of competing literals, and merchants need a small set of settings that visibly move every consumer. Deriving shades keeps the editor surface small; the cost is that derived shades approximate, rather than equal, the Styleguide's ramp steps.

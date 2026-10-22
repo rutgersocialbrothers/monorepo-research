@@ -1,18 +1,66 @@
+{%- doc -%}
+  Publishes the merchant-controlled theme settings as Tupak tier-1 custom
+  properties (`--tp-palette-*`, fonts, layout and focus values) and loads the
+  selected Shopify CDN fonts. assets/critical.css binds these to the semantic
+  `--tp-*` roles that components use; components never read settings directly.
+  Render once, early in the <head> of every layout.
+{%- enddoc -%}
+
+{%- liquid
+  assign body_font = settings.type_primary_font
+  assign body_font_bold = body_font | font_modify: 'weight', 'bold'
+  assign body_font_italic = body_font | font_modify: 'style', 'italic'
+  assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+  assign heading_font = settings.type_heading_font
+
+  assign body_font_url = body_font | font_url
+  assign heading_font_url = heading_font | font_url
+  assign body_font_bold_url = body_font_bold | font_url
+-%}
+
+{%- unless body_font.system? and heading_font.system? -%}
+  <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+{%- endunless -%}
+{%- unless body_font.system? -%}
+  {{ body_font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{%- endunless -%}
+{%- unless heading_font.system? or heading_font_url == body_font_url -%}
+  {{ heading_font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{%- endunless -%}
+
 {% style %}
-  {% # Loads all font variantions with display: swap %}
-  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ body_font | font_face: font_display: 'swap' }}
+  {%- if body_font_bold %}{{ body_font_bold | font_face: font_display: 'swap' }}{% endif -%}
+  {%- if body_font_italic %}{{ body_font_italic | font_face: font_display: 'swap' }}{% endif -%}
+  {%- if body_font_bold_italic %}{{ body_font_bold_italic | font_face: font_display: 'swap' }}{% endif -%}
+  {%- unless heading_font_url == body_font_url or heading_font_url == body_font_bold_url -%}
+    {{ heading_font | font_face: font_display: 'swap' }}
+  {%- endunless %}
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
-    --page-width: {{ settings.max_page_width }};
-    --page-margin: {{ settings.min_page_margin }}px;
-    --color-background: {{ settings.background_color }};
-    --color-foreground: {{ settings.foreground_color }};
-    --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+    --tp-font-body: {{ body_font.family }}, {{ body_font.fallback_families }};
+    --tp-font-body-weight: {{ body_font.weight }};
+    --tp-font-body-style: {{ body_font.style }};
+    --tp-font-heading: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+    --tp-font-heading-weight: {{ heading_font.weight }};
+    --tp-font-heading-style: {{ heading_font.style }};
+
+    --tp-palette-page: {{ settings.background_color }};
+    --tp-palette-ink: {{ settings.foreground_color }};
+    --tp-palette-brand: {{ settings.brand_color }};
+    --tp-palette-action: {{ settings.action_color }};
+    --tp-palette-link: {{ settings.link_color }};
+    --tp-palette-tint: {{ settings.tint_color }};
+    --tp-palette-warm: {{ settings.warm_color }};
+    --tp-palette-natural: {{ settings.natural_color }};
+    --tp-palette-focus: {{ settings.focus_color }};
+    --tp-palette-focus-inverse: {{ settings.focus_inverse_color }};
+
+    --tp-focus-width: {{ settings.focus_width }}px;
+    --tp-page-width: {{ settings.page_width }}px;
+    --tp-page-margin-mobile: {{ settings.page_margin_mobile }}px;
+    --tp-page-margin-desktop: {{ settings.page_margin_desktop }}px;
+    --tp-section-spacing-mobile: {{ settings.section_spacing_mobile }}px;
+    --tp-section-spacing-desktop: {{ settings.section_spacing_desktop }}px;
   }
 {% endstyle %}

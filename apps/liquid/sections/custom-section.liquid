@@ -1,7 +1,11 @@
 <div class="custom-section full-width">
   {% if section.settings.background_image %}
     <div class="custom-section__background">
-      {{ section.settings.background_image | image_url: width: 2000 | image_tag }}
+      {{
+        section.settings.background_image
+        | image_url: width: 3840
+        | image_tag: widths: '750,1100,1500,2200,3000,3840', sizes: '100vw', alt: ''
+      }}
     </div>
   {% endif %}
 
@@ -33,7 +37,8 @@
   }
   .custom-section__content {
     display: grid;
-    grid-template-columns: var(--content-grid);
+    grid-template-columns: var(--tp-content-grid);
+    padding-block: var(--tp-section-spacing);
   }
   .custom-section__content > * {
     grid-column: 2;

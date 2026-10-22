@@ -1,4 +1,4 @@
-<footer>
+<footer class="site-footer">
   <div class="footer__copyright">
     &copy;
     {{ 'now' | date: '%Y' }}
@@ -21,17 +21,17 @@
 </footer>
 
 {% stylesheet %}
-  footer {
+  .site-footer {
     display: flex;
     justify-content: space-between;
-    margin-top: 2rem;
+    margin-top: var(--tp-section-spacing);
   }
-  footer a {
+  .site-footer a {
     text-decoration: none;
-    color: var(--color-foreground);
+    color: var(--tp-color-text);
   }
-  footer .footer__links,
-  footer .footer__payment {
+  .site-footer .footer__links,
+  .site-footer .footer__payment {
     display: flex;
     gap: 1rem;
   }
