@@ -1,0 +1,83 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import Breadcrumbs from "../collection-reference/breadcrumbs.astro";
+import BuyBox from "./buy-box.astro";
+import OrderMatrix from "./order-matrix.astro";
+import ProductGallery from "./product-gallery.astro";
+import ProductSpecs from "./product-specs.astro";
+import {defaultVariantSku, productRating, productUsps, productVariants} from "./product.data";
+import {amount, sizeLabel} from "./quantity";
+interface Props {
+  /** Anchor of the reviews block the score links to. */
+  reviewsHref: string;
+}
+const {reviewsHref} = Astro.props;
+const variant = productVariants.find(item => item.sku === defaultVariantSku) ?? productVariants[0];
+const stars = [1, 2, 3, 4, 5];
+const trail = [
+  {name: "Home", href: "/preview"},
+  {name: "Dozen", href: "/collection?categorie=Dozen"},
+  {name: "Verzenddozen", href: "/collection?categorie=Verzenddozen"},
+  {name: "Amerikaanse vouwdoos"},
+];
+const compact = "m-0 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] self-stretch text-sm [&>dd]:m-0 [&>dd]:border-b [&>dd]:border-border [&>dd]:py-2 [&>dt]:border-b [&>dt]:border-border [&>dt]:py-2 [&>dt]:text-muted-foreground";
+---
+<!--
+  Product page reference (prototype/product.html, 6f9c7e2; the client's "Route A" order): title and score across the
+  width, then gallery, introduction with selling points and the buy box; "Alle maten" on the grey band; full
+  specifications; related products; reviews and FAQ follow on the route. One example product in eight sizes; open with
+  ?variant=1548 for another size. Example data only — no cart, stock or price is real.
+-->
+{variant && (
+  <div data-product-page>
+    <article aria-labelledby="product-title">
+      <div class="container-page grid gap-3 pt-6">
+        <Breadcrumbs trail={trail} />
+        <h1 id="product-title" class="m-0 text-4xl">Amerikaanse vouwdoos, bruin</h1>
+        <p class="m-0 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          <a href={reviewsHref} class="inline-flex min-h-11 items-center gap-2 text-muted-foreground no-underline hover:underline">
+            <span class="relative inline-flex">
+              <span class="flex text-border-strong">{stars.map(() => <Icon name="star" size={16} />)}</span>
+              <span class="absolute inset-y-0 left-0 flex w-(--rating) overflow-hidden text-warning [&_path]:fill-current" style={`--rating:${(productRating.value / 5) * 100}%`}>{stars.map(() => <Icon name="star" size={16} class="shrink-0" />)}</span>
+              <span class="sr-only">{productRating.label}</span>
+            </span>
+            <span>{productRating.count}</span>
+          </a>
+          <span>Art.nr. <span data-variant-field="sku">{variant.sku}</span></span>
+        </p>
+      </div>
+
+      <div class="container-page pt-8 pb-10">
+        <div class="grid grid-cols-[minmax(0,1fr)] items-start gap-8 min-[900px]:grid-cols-2 min-[900px]:items-stretch min-[900px]:gap-x-12 min-[900px]:[grid-template-areas:'gallery_info'_'gallery_buy'] min-[1400px]:grid-cols-[minmax(0,5fr)_minmax(0,4fr)_minmax(0,4fr)] min-[1400px]:[grid-template-areas:'gallery_info_buy']">
+          <div class="min-[900px]:[grid-area:gallery] min-[900px]:max-[1399px]:sticky min-[900px]:max-[1399px]:top-4 min-[900px]:max-[1399px]:self-start"><ProductGallery /></div>
+          <!-- TRIAL: a thin vertical rule between gallery and introduction, centred in the gap and only as tall as the
+               introduction's text (the column keeps its own height). Decoration only. -->
+          <div data-product-info class="grid gap-5 min-[900px]:relative min-[900px]:self-start min-[900px]:[grid-area:info] min-[900px]:before:pointer-events-none min-[900px]:before:absolute min-[900px]:before:inset-y-0 min-[900px]:before:-left-6 min-[900px]:before:border-l min-[900px]:before:border-border min-[900px]:before:content-[''] min-[1400px]:pt-2">
+            <p class="m-0 text-xl leading-snug">Stevige verzenddoos van golfkarton, in acht maten uit voorraad.</p>
+            <ul class="m-0 grid list-none gap-3 p-0">{productUsps.map(usp => <li class="flex items-start gap-3"><span class="mt-0.5 text-success"><Icon name="check" size={16} /></span>{usp}</li>)}</ul>
+            <div class="mt-3 grid justify-items-start gap-2">
+              <h2 class="text-sm font-bold text-foreground">Specificaties</h2>
+              <dl class={compact}>
+                <dt>Binnenmaat L × B × H</dt><dd><span data-variant-field="maat">{sizeLabel(variant.size)}</span> mm</dd>
+                <dt>Kwaliteit</dt><dd data-variant-field="kwaliteit">{variant.kwaliteit}</dd>
+                <dt>Verpakt per</dt><dd><span data-variant-field="bundel">{amount(variant.step)}</span> stuks</dd>
+                <dt>Per pallet</dt><dd><span data-variant-field="pallet">{amount(variant.pallet)}</span> stuks</dd>
+              </dl>
+              <a href="#specificaties" class="inline-flex min-h-11 items-center gap-2 font-bold text-foreground-link underline underline-offset-2 hover:no-underline">Alle specificaties<Icon name="chevron-down" size={16} /></a>
+            </div>
+          </div>
+          <div class="grid content-start min-[900px]:[grid-area:buy]"><BuyBox /></div>
+        </div>
+      </div>
+    </article>
+
+    <div class="bg-surface-band py-10 md:py-14"><div class="container-page"><OrderMatrix /></div></div>
+    <div class="py-10 md:py-14"><div class="container-page"><ProductSpecs /></div></div>
+  </div>
+)}
+<script>
+  import {initProductPage} from "./product-page.client";
+  for (const page of document.querySelectorAll<HTMLElement>("[data-product-page]")) {
+    initProductPage(page);
+  }
+</script>

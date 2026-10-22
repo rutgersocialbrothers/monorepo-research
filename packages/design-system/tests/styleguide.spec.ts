@@ -43,27 +43,6 @@ for (const scheme of ['light', 'dark'] as const) {
   });
 }
 
-test('fonts, primary color and Button geometry preserve the provisional starter baseline', async ({ page }) => {
-  await page.goto('/#components');
-  await page.evaluate(() => document.fonts.ready);
-  const primary = page.locator('#panel-components').getByRole('button', { name: 'Primary', exact: true });
-  expect(
-    await primary.evaluate((node) => {
-      const style = getComputedStyle(node);
-      return {
-        color: style.backgroundColor,
-        height: node.getBoundingClientRect().height,
-        radius: style.borderRadius,
-        weight: style.fontWeight,
-      };
-    }),
-  ).toEqual({ color: 'rgb(255, 194, 14)', height: 44, radius: '10px', weight: '700' });
-  expect(await page.locator('body > section h1').evaluate((node) => getComputedStyle(node).fontFamily)).toContain(
-    'Lobster',
-  );
-  expect(await page.locator('body').evaluate((node) => getComputedStyle(node).fontFamily)).toContain('Nunito');
-});
-
 test('native controls and Select expose form values', async ({ page }) => {
   await page.goto('/#components');
   const form = page.locator('#controls-example');
@@ -108,14 +87,6 @@ test('semantic color tables align and preserve reference presentation in either 
       }
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
-    const primary = page.locator('[data-color-token="--primary"]');
-    await expect(primary.locator('[data-color-reference]')).toHaveText(['brand-400', 'brand-400']);
-    await expect(primary.locator('[data-css-value]')).toHaveText(['#ffc20e', '#ffc20e']);
-    await expect(primary.locator('[data-contrast-mode="light"]')).toHaveText('11.6 · AAA');
-    await expect(primary.locator('[data-contrast-mode="dark"]')).toHaveText('11.6 · AAA');
-    await expect(page.locator('[data-color-token="--primary-foreground"] [data-contrast-mode="light"]')).toHaveText(
-      '11.6 · AAA',
-    );
   }
 });
 
@@ -163,15 +134,30 @@ test('variable search, copy and mode updates use resolved CSS', async ({ page, c
   const row = page
     .locator('[data-token-row]')
     .filter({ has: page.getByRole('button', { name: '--foreground-heading', exact: true }) });
-  await expect(row.locator('[data-css-value]')).toHaveText('#745600');
+  async function resolvedHeadingColor() {
+    return page.evaluate(() => {
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--foreground-heading)';
+      document.body.append(probe);
+      const resolved = getComputedStyle(probe).color;
+      probe.remove();
+      const canvas = document.createElement('canvas').getContext('2d')!;
+      canvas.fillStyle = resolved;
+      return canvas.fillStyle;
+    });
+  }
+  const lightValue = await resolvedHeadingColor();
+  await expect(row.locator('[data-css-value]')).toHaveText(lightValue);
   await row.getByRole('button').click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('var(--foreground-heading)');
   await row.getByRole('button').click({ modifiers: ['Shift'] });
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('#745600');
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(lightValue);
   await mode(page, 'dark');
-  await expect(row.locator('[data-css-value]')).toHaveText('#ffd068');
+  const darkValue = await resolvedHeadingColor();
+  await expect(row.locator('[data-css-value]')).toHaveText(darkValue);
+  expect(darkValue).not.toBe(lightValue);
   await row.getByRole('button').click({ modifiers: ['Shift'] });
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('#ffd068');
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(darkValue);
   await page.locator('#token-query').fill('no-such-design-token');
   await expect(page.locator('#token-count')).toHaveText('0 tokens');
   await expect(page.locator('#token-empty')).toBeVisible();
@@ -213,10 +199,7 @@ test('Tupak component examples have no WCAG A/AA violations in light and dark', 
   }
 });
 
-test('starter ramps agree across swatches, hero, copy and variables in both modes without changing feedback', async ({
-  page,
-  context,
-}) => {
+test('palette swatches, hero, copy and variables stay consistent across modes', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.goto('/#colors');
   const ramp = page.locator('#panel-colors [data-css-value^="--palette-brand-"]');
@@ -225,19 +208,9 @@ test('starter ramps agree across swatches, hero, copy and variables in both mode
     '#panel-colors [data-css-value^="--palette-success-"], #panel-colors [data-css-value^="--palette-info-"]',
   );
   const feedbackBaseline = await feedback.allTextContents();
-  expect(baseline).toEqual([
-    '#fffaf1',
-    '#fff1d4',
-    '#ffe3a7',
-    '#ffd068',
-    '#ffc20e',
-    '#e1aa00',
-    '#ba8c00',
-    '#916d00',
-    '#745600',
-    '#604700',
-    '#352600',
-  ]);
+  const copiedToken = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue('--palette-brand-400').trim(),
+  );
   for (const scheme of ['light', 'dark'] as const) {
     await mode(page, scheme);
     await expect(ramp).toHaveText(baseline);
@@ -253,9 +226,9 @@ test('starter ramps agree across swatches, hero, copy and variables in both mode
       .locator('[data-copy-token="--palette-brand-400"]')
       .first()
       .click({ modifiers: ['Shift'] });
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('#ffc20e');
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(copiedToken);
     await page.locator('[data-ds-tab="variables"]').click();
-    await expect(page.locator('#panel-variables [data-css-value="--palette-brand-400"]')).toHaveText('#ffc20e');
+    await expect(page.locator('#panel-variables [data-css-value="--palette-brand-400"]')).toHaveText(copiedToken);
     await page.locator('[data-ds-tab="colors"]').click();
   }
 });

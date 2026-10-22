@@ -3,8 +3,8 @@ import type { CheckboxProps } from "./checkbox.contract";
 interface Props extends CheckboxProps { id?: string; name?: string; value?: string; label: string; describedBy?: string; required?: boolean; }
 const { id, name, value="on", label, checked=false, disabled=false, invalid=false, indeterminate=false, describedBy, required=false } = Astro.props;
 ---
-<label class="inline-flex items-center gap-2 text-(length:--ds-text-sm-size) has-[:disabled]:opacity-(--ds-opacity-disabled)">
- <input type="checkbox" id={id} name={name} value={value} checked={checked} disabled={disabled} required={required} aria-invalid={invalid || undefined} aria-describedby={describedBy} data-mixed={indeterminate || undefined} class="size-4 accent-primary aria-[invalid=true]:outline-1 aria-[invalid=true]:outline-destructive aria-[invalid=true]:outline-offset-2" />
+<label class="inline-flex min-h-11 cursor-pointer items-center gap-3 text-(length:--ds-text-sm-size) text-foreground has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-(--ds-opacity-disabled)">
+ <input type="checkbox" id={id} name={name} value={value} checked={checked} disabled={disabled} required={required} aria-invalid={invalid || undefined} aria-describedby={describedBy} data-mixed={indeterminate || undefined} class="size-5 shrink-0 accent-nav focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-[invalid=true]:outline-1 aria-[invalid=true]:outline-destructive aria-[invalid=true]:outline-offset-2" />
  <span>{label}</span>
 </label>
 <script>

@@ -1,0 +1,43 @@
+---
+import BoxPreview from "../size-finder/box-preview.astro";
+import {defaultVariantSku, productSpecRows, productVariants} from "./product.data";
+import {amount, sizeLabel} from "./quantity";
+const variant = productVariants.find(item => item.sku === defaultVariantSku) ?? productVariants[0];
+const listClass = "m-0 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] text-sm [&>dd]:m-0 [&>dd]:border-b [&>dd]:border-border [&>dd]:py-2 [&>dt]:border-b [&>dt]:border-border [&>dt]:py-2 [&>dt]:text-muted-foreground";
+---
+<!--
+  Specifications (PROD-1, snippets/product-specs.html 6f9c7e2): description, the rows of the CHOSEN size
+  ([data-variant-field], rewritten by the buy box) and product rows, the four SUST-1 sustainability rows last, the box
+  drawing at the chosen size with millimetre labels, downloads. PLACEHOLDER CONTENT; [between brackets] is a fact Tupak
+  has to supply. The source's download links were `#` placeholders, so they are listed without a destination.
+-->
+{variant && (
+  <section id="specificaties" aria-labelledby="specs-title" class="grid scroll-mt-6 gap-10 min-[901px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+    <div class="grid content-start gap-5">
+      <h2 id="specs-title" class="text-3xl">Specificaties</h2>
+      <p class="m-0 text-muted-foreground">De Amerikaanse vouwdoos is de standaard verzenddoos: vier kleppen boven, vier onder, dicht met tape. De kleinere maten zijn van enkelgolf karton, de grotere van dubbelgolf voor zwaardere inhoud en stapelen op een pallet.</p>
+      <dl class={listClass}>
+        <dt>Artikelnummer</dt><dd data-variant-field="sku">{variant.sku}</dd>
+        <dt>Binnenmaat L × B × H</dt><dd><span data-variant-field="maat">{sizeLabel(variant.size)}</span> mm</dd>
+        <dt>Kwaliteit</dt><dd data-variant-field="kwaliteit">{variant.kwaliteit}</dd>
+        <dt>Verpakt per</dt><dd><span data-variant-field="bundel">{amount(variant.step)}</span> stuks</dd>
+        <dt>Minimale afname</dt><dd><span data-variant-field="moq">{amount(variant.moq)}</span> stuks</dd>
+        <dt>Per pallet</dt><dd><span data-variant-field="pallet">{amount(variant.pallet)}</span> stuks</dd>
+        <dt>Model</dt><dd>{productSpecRows.model}</dd>
+        <dt>Kleur</dt><dd>{productSpecRows.kleur}</dd>
+        <dt>Materiaal</dt><dd>{productSpecRows.materiaal}</dd>
+        <dt>Gewicht</dt><dd><span data-variant-field="gewicht">{amount(variant.gewicht)}</span> gram per stuk</dd>
+        <dt>Gerecycled materiaal</dt><dd>{productSpecRows.gerecycled}</dd>
+        <dt>Recyclebaar</dt><dd>{productSpecRows.recyclebaar}</dd>
+      </dl>
+    </div>
+    <div class="grid content-start gap-4">
+      <BoxPreview unit="mm" />
+      <h3 class="mt-4 text-xl">Downloads</h3>
+      <ul class="m-0 grid list-none gap-2 p-0 text-sm">
+        <li class="text-muted-foreground">Productblad <span class="text-xs uppercase">pdf</span> · voorbeeld, nog geen bestand</li>
+        <li class="text-muted-foreground">Palletschema <span class="text-xs uppercase">pdf</span> · voorbeeld, nog geen bestand</li>
+      </ul>
+    </div>
+  </section>
+)}

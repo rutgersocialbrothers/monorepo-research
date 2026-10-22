@@ -1,0 +1,29 @@
+---
+interface Props {
+  /** Where the copy's "keuzehulp" link leads; the source linked its keuzehulp section page. */
+  keuzehulpHref: string;
+  /** Where the copy's "maatwerk" link leads; the source had a placeholder `#`. */
+  maatwerkHref: string;
+}
+const {keuzehulpHref, maatwerkHref} = Astro.props;
+---
+<!--
+  The category's long text (COLL-3, snippets/rich-text.html), under the grid in the listing column. PLACEHOLDER CONTENT
+  written by the source for layout; Tupak supplies the real text per category. Editors get H2 and H3 only.
+-->
+<section aria-labelledby="rich-text-title" class="grid max-w-prose gap-4 text-base leading-relaxed [&_a]:text-foreground-link [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:no-underline [&_h2]:mt-4 [&_h2]:text-2xl [&_h3]:mt-2 [&_h3]:text-xl [&_p]:m-0 [&_ul]:m-0 [&_ul]:grid [&_ul]:list-disc [&_ul]:gap-2 [&_ul]:pl-6">
+  <h2 id="rich-text-title" class="mt-0!">Verzenddozen voor elk formaat en gewicht</h2>
+  <p>Een verzenddoos moet twee dingen doen: je product heel afleveren en niet meer kosten dan nodig. Welke doos daarbij past, hangt af van het gewicht, de afmetingen en de manier van verzenden. Hieronder lees je waar je op let.</p>
+  <h3>De juiste maat kiezen</h3>
+  <p>Meet de lengte, breedte en hoogte van wat je verstuurt en tel er aan elke kant ruimte voor opvulmateriaal bij. Een doos die te groot is kost meer aan verzending en opvulling; een doos die te klein is beschermt niet. Weet je de maten al? Vul ze in bij de <a href={keuzehulpHref}>keuzehulp</a>.</p>
+  <h3>Enkelgolf of dubbelgolf</h3>
+  <p>De dikte van het karton bepaalt hoeveel de doos kan hebben.</p>
+  <ul>
+    <li><b>Enkelgolf</b> is geschikt voor lichte en middelzware producten tot ongeveer 20 kilo.</li>
+    <li><b>Dubbelgolf</b> gebruik je voor zware of breekbare producten en voor dozen die gestapeld worden.</li>
+  </ul>
+  <h2>Bestellen en leveren</h2>
+  <p>Alle prijzen zijn per stuk en exclusief btw. Bij grotere aantallen daalt de prijs per stuk; de staffel zie je op de productpagina.</p>
+  <h3>Minimale afname</h3>
+  <p>De minimale afname verschilt per artikel en staat op elke productkaart. Heb je een maat nodig die er niet tussen staat, of wil je de dozen laten bedrukken? Vraag dan <a href={maatwerkHref}>maatwerk</a> aan.</p>
+</section>

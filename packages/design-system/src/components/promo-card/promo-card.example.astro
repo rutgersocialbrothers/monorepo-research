@@ -1,0 +1,20 @@
+---
+import PromoCard from './promo-card.astro';
+---
+
+<!-- Exact source fixture copy (6f9c7e2 product slider v2), labelled prototype; the link opens only the reference photo. -->
+<div class="grid max-w-3xl gap-6 sm:grid-cols-2">
+  <div class="h-120">
+    <PromoCard
+      kicker="Maatwerk"
+      title="Een verpakking die alleen van jou is"
+      image={{ src: '/tupak-reference/maatwerk-postdoos.jpg', alt: '' }}
+      action={{ label: 'Vraag een offerte aan', href: '/tupak-reference/maatwerk-postdoos.jpg' }}
+    />
+  </div>
+  <PromoCard
+    kicker="Prototype · zonder foto"
+    title="Statische promokaart"
+    description="Zonder actie blijft de kaart gewone inhoud, zonder knop of linkgedrag."
+  />
+</div>

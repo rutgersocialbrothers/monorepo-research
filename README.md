@@ -1,6 +1,6 @@
 # Tupak Shopify workspace
 
-The Tupak workspace contains a native Liquid storefront and the independent `@tupak/design-system` Astro workbench. Designers integrate the Tupak design system in that workbench; developers manually adapt approved intent to Liquid. Its current palette and Nunito/Lobster fonts are provisional starter values, not approved Tupak branding. Light/dark mechanics and their existing values remain available for review; whether Tupak needs dark mode is **TBD**. No store credentials or project IDs are embedded.
+The Tupak workspace contains a native Liquid storefront and the independent `@tupak/design-system` Astro workbench. Its current visual candidate manually adapts blue/red/kraft/forest foundations and Instrument Sans from the external Tupak prototype, without claiming production design approval. Developers manually adapt approved intent to Liquid; this port leaves Liquid unchanged. Light/dark mechanics retain the prior effective dark colors; whether Tupak needs dark mode is **TBD**. No store credentials or project IDs are embedded.
 
 ## First-time setup
 
@@ -31,7 +31,9 @@ pnpm dev:liquid:local # Rebuild CSS on theme/style input changes; no browser or 
 pnpm dev:design-system # Astro reference workbench, normally http://localhost:4321
 ```
 
-The workbench includes tokens, typography, the single Tupak theme in light/dark modes, canonical components/contracts and generic editorial sections with optional media. There is no tenant chooser. Fontsource fonts are bundled locally; default examples contain no remote brand assets or business data. No CMS, database, credentials or upload dependency is required. This is reference rendering, not proof of Liquid or merchant-editor parity.
+The workbench includes tokens, typography, the single Tupak theme in light/dark modes, canonical component contracts and editorial sections with optional media. `/preview` is the candidate homepage; `/overview` indexes the imported references, including branches, image-slider variants, collection alternatives and product/size-filter simulations. The reference includes the full external `afd9c66..6f9c7e2` update, including labelled trials, not a live shop. Artwork provenance lives in `src/sections/reference-assets.ts` and `src/sections/prototype-update-assets.ts`; production rights and design approval remain separate. Fonts stay privately bundled, public token CSS asset-neutral, and Astro evidence does not establish Liquid/editor parity.
+
+Optional local UI preferences use `tupak-design-system-mode` (colour mode), `tupak-overview-view` (overview grid/list) and `tupak-collection-columns` (collection columns/list). Filters and sorting stay in the URL. `/preview` retains the source homepage selection; compare the unresolved alternatives on `/section-keuzehulp` and `/section-product-carousel`. The [change ledger](design_system_changes.md#intentional-native-adaptations-and-known-fidelity-gaps) records deliberate native departures and unresolved fidelity gaps.
 
 **Liquid preview — authenticated, upload-capable:**
 
@@ -59,29 +61,29 @@ Turbo's standard package watcher reruns the finite Liquid CSS build after nonign
 
 ## Sources and commands
 
-| Path | Owner |
-| --- | --- |
-| `apps/liquid` | Native Shopify theme root: layouts, config, templates, merchant state, snippets, blocks, sections and locales |
-| `apps/liquid/styles/tokens.css` | Current authored CSS token authority and merchant-variable mappings |
-| `packages/design-system` | Private `@tupak/design-system`: Tupak workbench, provisional tokens, framework-free contracts and canonical Astro components |
-| `scripts`, `deployments` | Local configuration pull and native CI branch-to-Environment mappings |
+| Path                            | Owner                                                                                                                                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/liquid`                   | Native Shopify theme root: layouts, config, templates, merchant state, snippets, blocks, sections and locales                                                |
+| `apps/liquid/styles/tokens.css` | Current authored CSS token authority and merchant-variable mappings                                                                                          |
+| `packages/design-system`        | Private `@tupak/design-system`: candidate Tupak foundations, reusable public Tailwind configuration, framework-free contracts and canonical Astro references |
+| `scripts`, `deployments`        | Local configuration pull and native CI branch-to-Environment mappings                                                                                        |
 
 Commit authored source only. `apps/liquid/assets/tailwind.css` is compiled and Git-ignored, but must be built before previews or uploads. All other theme files are authored directly in `apps/liquid`; Shopify CLI filters its supported theme folders, so app metadata and `styles/` are not uploaded. The repository root is not a theme root. Do not enable repository-root Shopify GitHub synchronization.
 
 Turbo build inputs/outputs describe the finite CSS task; standard watch mode operates at package level. Generated CSS, environment files and Shopify state are Git-ignored so they do not create rebuild feedback. Some non-theme app-file changes also compile CSS. Shopify CLI owns native theme synchronization, including source edits and deletions; there is no second theme copy or custom validation framework. Environment files, Turbo output and private pull snapshots stay ignored.
 
-| Command | Result |
-| --- | --- |
-| `pnpm build:liquid` | Compile app styles to `apps/liquid/assets/tailwind.css` |
-| `pnpm --filter @2digits/liquid check` | Native Theme Check against `apps/liquid` |
-| `pnpm check` | Root script types/tests, Liquid CSS build/check and the canonical package's five ordered check leaves |
-| `pnpm typecheck:scripts` | Root script/test TypeScript checking |
-| `pnpm test` / `test:watch` | Run / watch root Vitest tests |
-| `pnpm dev:design-system` | Upload-free canonical Astro workbench |
-| `pnpm build:design-system` | Static workbench in `packages/design-system/dist`; no generated library |
-| `pnpm check:design-system` | All five ordered canonical check leaves; requires Chromium |
-| `pnpm test:design-system` | Canonical Playwright tests; owned Astro server on port 4322 |
-| `pnpm preview:design-system` | Preview the built static workbench |
+| Command                             | Result                                                                                                |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `pnpm build:liquid`                 | Compile app styles to `apps/liquid/assets/tailwind.css`                                               |
+| `pnpm --filter @tupak/liquid check` | Native Theme Check against `apps/liquid`                                                              |
+| `pnpm check`                        | Root script types/tests, Liquid CSS build/check and the canonical package's five ordered check leaves |
+| `pnpm typecheck:scripts`            | Root script/test TypeScript checking                                                                  |
+| `pnpm test` / `test:watch`          | Run / watch root Vitest tests                                                                         |
+| `pnpm dev:design-system`            | Upload-free canonical Astro workbench                                                                 |
+| `pnpm build:design-system`          | Static workbench in `packages/design-system/dist`; no generated library                               |
+| `pnpm check:design-system`          | All five ordered canonical check leaves; requires Chromium                                            |
+| `pnpm test:design-system`           | Canonical Playwright tests; owned Astro server on port 4322                                           |
+| `pnpm preview:design-system`        | Preview the built static workbench                                                                    |
 
 Turbo sequences prerequisites and checks without concurrent CSS writers. Liquid CSS builds are uncached; `mise.toml` pins affect hashes. Shopify delivery stays outside Turbo and uses the native pinned CLI against `apps/liquid`. Node 24 runs `.ts` scripts directly and loads local preview configuration natively. Root uses TypeScript 7.0.2 (`typescript-native`); root Vitest covers local configuration preservation.
 
@@ -95,7 +97,7 @@ Liquid stays close to Shopify's component model: small plain-JavaScript enhancem
 
 ### Designer integration and manual Liquid adaptation
 
-Start with `pnpm dev:design-system`. Edit `packages/design-system/src/styles/tokens.css` for approved shared values, `src/tokens/reference.ts` for descriptions, component families for canonical states/behavior and sections for editorial compositions. CSS is the value authority; metadata is not a second token store. Review light and dark independently, even while dark-mode product support remains undecided. Keep the existing baseline unless an approved design brief changes it.
+Start with `pnpm dev:design-system`; review `/`, `/preview` and `/overview`. Edit `packages/design-system/src/styles/tokens.css` for shared values, `src/tokens/reference.ts` for descriptions, component families for contracts/states and sections for compositions. CSS remains the value authority. The reference follows external `main` through `6f9c7e2`, retaining final/provisional distinctions and known issues rather than filtering out trials. Review light/dark independently; final production choices and merchant controls are decided during Liquid adaptation, not by importing this prototype.
 
 Use the [package guide](packages/design-system/README.md) for the actual source exports and five ordered check gates. There is no shadcn dependency, component configuration or lint plugin; retain native Better Tailwind class validation. This workspace has no React/UI adaptation package, Storybook or generated renderer pipeline.
 
@@ -105,16 +107,22 @@ Review actual Liquid views through an authorized Shopify preview. The homepage u
 
 Use the [designer workflow](docs/designer-workflow.md), [component contract template](docs/templates/component-contract.md) and [handoff template](docs/templates/design-handoff.md). Designers own visual/interaction decisions; developers accept implementation contracts and platform behavior.
 
+For AI-assisted adaptation, use the project [Astro-to-Liquid skill](.agents/skills/adapt-astro-reference-to-liquid/SKILL.md): agree the plan and editor controls before implementation, separate contract corrections from the stacked Liquid implementation PR, and verify actual storefront/editor behavior. Supporting Tailwind, interface-detail, accessibility and browser-operation skills are loaded only for relevant work; see the [loading rules](.agents/skills/adapt-astro-reference-to-liquid/SKILL.md#supporting-skills-load-at-the-relevant-stage).
+
+Optional Impeccable evaluation: `pnpm detect:design-system` scans canonical authored source against a labelled candidate snapshot. It is not part of `pnpm check` and does not automatically fix findings. Read the [Astro evaluation guide](packages/design-system/README.md) before interpreting results; use [impeccable-review](.agents/skills/impeccable-review/SKILL.md) only when UX critique is requested.
+
+`pnpm detect:liquid` separately scans authored native-theme sources without a fixed palette baseline; see the [Liquid evaluation guide](apps/liquid/README.md#optional-design-detector-evaluation). Neither command starts a Shopify preview, uploads a theme or establishes storefront/editor correctness.
+
 ## Deployment and project identity
 
 GitHub Actions validates pushes/PRs without deployment secrets. Automated Liquid delivery uses the native Shopify CLI after validation and explicit activation, from exact protected branches:
 
-| Branch | GitHub Environment | Intended target | May update an already-live theme? |
-| --- | --- | --- | --- |
-| `main` | `production` | Production | Yes |
-| `acceptance` | `acceptance` | Non-active preview | No |
-| `test` | `test` | Separate non-active preview | No |
-| `develop` | `development` | Development/client-transfer target | No |
+| Branch       | GitHub Environment | Intended target                    | May update an already-live theme? |
+| ------------ | ------------------ | ---------------------------------- | --------------------------------- |
+| `main`       | `production`       | Production                         | Yes                               |
+| `acceptance` | `acceptance`       | Non-active preview                 | No                                |
+| `test`       | `test`             | Separate non-active preview        | No                                |
+| `develop`    | `development`      | Development/client-transfer target | No                                |
 
 Environment variables hold store domains and explicit existing theme IDs; targets may share stores, but must not share the same store/theme pair across Environments. CI does not provision or publish themes; the production mapping alone adds `--allow-live`. Pushes exclude `config/settings_data.json`. Manual mapped-branch runs pull private review artifacts, never overwrite source or commit. Shopify CLI validates target formats and permissions; developers are responsible for correct configuration. Raw local CLI push/pull remains technically available, but this repository does not authorize it.
 
@@ -131,6 +139,6 @@ Repository files define delivery behavior, not account rulesets, credentials, st
 ## Guides and license
 
 - [Liquid](apps/liquid/README.md)
-- [Delivery/safety](docs/shopify-deployment.md), [decisions/history](docs/decisions.md), [agent rules](AGENTS.md) (`CLAUDE.md` imports them)
+- [Delivery/safety](docs/shopify-deployment.md), [decisions](docs/decisions.md), [agent rules](AGENTS.md) (`CLAUDE.md` imports them)
 
 The Liquid theme derives from [Shopify's Skeleton Theme](https://github.com/Shopify/skeleton-theme). Preserve `LICENSE.md` and its applicable terms. No new redistribution license is granted for newly authored workspace packages.

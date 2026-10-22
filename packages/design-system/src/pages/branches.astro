@@ -1,0 +1,33 @@
+---
+import DesignSystemLayout from "../layouts/DesignSystemLayout.astro";
+import SiteHeader from "../sections/site-header/site-header.astro";
+import BranchNav from "../sections/branch-nav/branch-nav.astro";
+import ImageSlider from "../sections/image-slider/image-slider.astro";
+import SiteFooter from "../sections/site-footer/site-footer.astro";
+import {referenceAssets as media} from "../sections/reference-assets";
+import {prototypeCategories, prototypeNavigation, prototypePoints} from "../sections/homepage.example-data";
+import {prototypeBranches, prototypeSale, prototypeSlides, prototypeSlideStartIndex} from "../sections/prototype-update.example-data";
+const catalogue = prototypeCategories.map(item => ({label: item.title, href: "/preview#categorieen"}));
+---
+<DesignSystemLayout title="Tupak · branches (candidate)" description="The Branches landing route of the Tupak prototype: the branch row and the image slider. Candidate artwork and example branches, not an active shop.">
+  <a lang="nl" href="#branches-main" class="sr-only z-50 rounded-sm bg-background p-4 text-foreground focus:not-sr-only focus:fixed focus:top-4 focus:left-4">Ga naar de inhoud</a>
+  <div lang="nl" class="border-b border-border bg-surface-band px-6 py-3 text-center text-xs leading-relaxed text-foreground">
+    <strong>Tupak ontwerpkandidaat</strong> · branchespagina uit het prototype. De zes branches zijn voorbeelden; Tupak levert de lijst. Branches staat nog niet in de user stories of de IA. <a href="/overview" class="underline underline-offset-2">Sectie-overzicht</a>
+  </div>
+  <div lang="nl">
+    <SiteHeader title="Tupak Packaging" homeHref="/preview" logo={{src: media.logo.src, alt: "Tupak Packaging"}} links={prototypeNavigation.map(link => ({...link, href: `/preview${link.href}`}))} catalogue={catalogue} branches={prototypeBranches} branchIndexHref="/branches" sale={prototypeSale} saleMotion={true} action={{label: "Workbench", href: "/"}} />
+    <main id="branches-main">
+      <div class="container-page pt-6 pb-2">
+        <nav aria-label="Kruimelpad"><ol class="flex flex-wrap items-center gap-2 text-sm">
+          <li><a href="/preview" class="underline underline-offset-2">Home</a></li>
+          <li aria-hidden="true" class="text-muted-foreground">/</li>
+          <li><span aria-current="page">Branches</span></li>
+        </ol></nav>
+        <h1 class="sr-only">Branches</h1>
+      </div>
+      <BranchNav items={prototypeBranches} kicker="Voor elke branche" title="Verpakkingen voor jouw branche" action={{label: "Bekijk alle branches", href: "/collection"}} />
+      <ImageSlider slides={prototypeSlides} startIndex={prototypeSlideStartIndex} />
+    </main>
+    <SiteFooter title="Tupak Packaging" logoSrc={media.logo.src} logoAlt="Tupak Packaging" exploreTitle="Branches" exploreLinks={prototypeBranches.map(({label, href}) => ({label, href}))} actionTitle="Deze preview" actionLinks={[{label: "Homepagepreview", href: "/preview"}, {label: "Assortiment", href: "/collection"}, {label: "Sectie-overzicht", href: "/overview"}]} detailTitle="Ontwerp en onderdelen" detailText="De branchespagina van het externe Tupak-prototype, handmatig vertaald naar herbruikbare Astro-secties." detailLinks={[{label: "Design workbench", href: "/"}, {label: "Losse secties", href: "/#sections"}]} description="Een visuele kandidaat, geen actieve webshop of vastgesteld bedrijfsprofiel." note="Prototypevoorbeelden. Beeldrechten en ontwerp vragen nog productie-goedkeuring." services={prototypePoints} legalNote="Tupak design workbench · Geen adres-, betaal-, leverings- of juridische gegevens geïmpliceerd." />
+  </div>
+</DesignSystemLayout>

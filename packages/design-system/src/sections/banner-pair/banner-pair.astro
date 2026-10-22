@@ -1,0 +1,16 @@
+---
+import Link from "../../components/link/link.astro";
+import type {BannerItem} from "../homepage.contract";
+interface Props {title: string; items: ReadonlyArray<BannerItem>; emptyText?: string;}
+const {title, items, emptyText = "Geen banners om te tonen."} = Astro.props;
+const tones: Record<NonNullable<BannerItem["tone"]>, string> = {natural: "bg-surface-natural", warm: "bg-surface-warm", band: "bg-surface-band"};
+const banners = items.map(item => ({...item, toneClass: tones[item.tone ?? "band"]}));
+---
+<section class="py-6 md:py-10" aria-label={title}>
+  <div class="container-page grid gap-6 lg:grid-cols-2">
+    {banners.length > 0 ? banners.map(item => <article class:list={["grid min-w-0 overflow-hidden rounded-(--ds-radius-lg) p-6 text-foreground sm:grid-cols-[1.1fr_1fr] sm:items-center sm:gap-4 md:p-8", item.toneClass]}>
+      <div class="min-w-0"><h2 class="break-words text-3xl">{item.title}</h2>{item.text && <p class="mt-4 text-sm leading-relaxed">{item.text}</p>}{item.action && <Link href={item.action.href} appearance="button" variant={item.tone === "warm" ? "outline" : "nav"} class="mt-6">{item.action.label} →</Link>}</div>
+      {item.image && <img src={item.image.src} alt={item.image.alt} width="816" height="816" loading="lazy" decoding="async" class:list={["mt-5 aspect-square w-full rounded-(--ds-radius-md) sm:mt-0", item.photo ? "object-cover" : "object-contain [mix-blend-mode:var(--media-blend-mode)]"]} />}
+    </article>) : <p class="text-muted-foreground">{emptyText}</p>}
+  </div>
+</section>

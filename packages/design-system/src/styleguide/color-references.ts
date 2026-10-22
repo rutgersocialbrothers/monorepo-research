@@ -23,7 +23,7 @@ export function colorReferences(name: string, mode: 'light' | 'dark'): Record<st
       const modes = /^light-dark\((var\([^)]+\)|#[\da-f]+),\s*(var\([^)]+\)|#[\da-f]+)\)$/iu.exec(value);
       const selected = modes ? (modes[mode === 'light' ? 1 : 2] ?? '') : value;
       const reference = /^var\(--(?:palette-)?([\w-]+)\)$/u.exec(selected)?.[1];
-      return [id, reference ?? (selected.startsWith('color-mix(') ? 'color mix' : 'starter value')];
+      return [id, reference ?? (selected.startsWith('color-mix(') ? 'color mix' : 'authored color')];
     }),
   );
 }

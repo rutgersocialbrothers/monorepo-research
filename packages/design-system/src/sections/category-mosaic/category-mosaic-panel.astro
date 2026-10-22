@@ -1,0 +1,48 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import Link from "../../components/link/link.astro";
+import type {ButtonVariant} from "../../components/button/button.contract";
+import type {MosaicPanel} from "./category-mosaic.types";
+interface Props {
+  panel: MosaicPanel;
+  /** Fill: inverse is the navy contact panel, tint the pale brand story panel, warm the light kraft custom-work band. */
+  tone: "inverse" | "tint" | "warm";
+  /** The banner layout puts the heading left and a single action right from the sm breakpoint. */
+  layout?: "stack" | "banner";
+  stacked?: boolean;
+  defaultVariant: ButtonVariant;
+  class?: string;
+}
+const {panel, tone, layout = "stack", stacked = false, defaultVariant, class: className} = Astro.props;
+const headingId = `mosaic-panel-${crypto.randomUUID()}`;
+const inverse = tone === "inverse";
+const actions = panel.actions ?? [];
+---
+<section aria-labelledby={headingId} class:list={[
+  "flex flex-col items-start gap-6 rounded-(--ds-radius-xl) p-8 sm:p-12",
+  layout === "banner" && "sm:flex-row sm:items-end sm:justify-between sm:gap-8",
+  tone === "inverse" && "bg-surface-inverse text-foreground-inverse",
+  tone === "tint" && "bg-surface-brand text-foreground-heading",
+  tone === "warm" && "bg-surface-warm-subtle text-foreground-heading",
+  className,
+]}>
+  <div class="grid gap-2">
+    {panel.eyebrow && <p class:list={["text-xs font-bold", inverse ? "text-foreground-inverse/80" : "text-muted-foreground"]}>{panel.eyebrow}</p>}
+    <h3 id={headingId} class:list={["text-3xl leading-tight font-normal text-balance md:text-4xl", inverse ? "text-foreground-inverse" : "text-foreground-heading"]}><b class="block font-bold">{panel.claim}</b> {panel.title}</h3>
+  </div>
+  {panel.body && <p class:list={["max-w-[48ch] text-sm leading-relaxed", inverse ? "text-foreground-inverse/80" : "text-muted-foreground"]}>{panel.body}</p>}
+  {actions.length > 0 && <div class:list={[
+    "grid gap-2",
+    layout === "banner" ? "w-auto" : "mt-auto w-full",
+    stacked || layout === "banner" ? "grid-cols-1" : "grid-cols-[repeat(auto-fit,minmax(160px,1fr))]",
+  ]}>
+    {actions.map(action => {
+      const icon = action.icon && <Icon name={action.icon} size={16} />;
+      const end = action.iconPosition === "end";
+      return action.href
+        ? <Link href={action.href} appearance="button" variant={action.variant ?? defaultVariant} class={action.block ? "min-w-0 justify-between text-left !whitespace-normal" : "min-w-0 text-left !whitespace-normal"}>{!end && icon}{action.label}{end && icon}</Link>
+        : <span class:list={["inline-flex min-h-(--button-height-md) items-center justify-center gap-2 rounded-(--button-radius) border border-dashed px-(--button-padding-x-md) text-base font-medium", inverse ? "border-foreground-inverse/60" : "border-border-strong"]}>{icon}{action.label}</span>;
+    })}
+  </div>}
+  {panel.note && <p class:list={["text-xs leading-relaxed", inverse ? "text-foreground-inverse/80" : "text-muted-foreground"]}>{panel.note}</p>}
+</section>

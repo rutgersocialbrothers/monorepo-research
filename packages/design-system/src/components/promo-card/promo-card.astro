@@ -1,0 +1,36 @@
+---
+import type { PromoCardProps } from './promo-card.contract';
+import Icon from '../icon/icon.astro';
+
+interface Props extends PromoCardProps {
+  class?: string;
+}
+
+const { title, kicker, description, image, action, heading: Heading = 'h3', class: className } = Astro.props;
+const Element = action ? 'a' : 'article';
+const actionClass =
+  'flex min-h-11 items-center justify-center gap-2 rounded-(--button-radius) bg-nav px-4 text-sm font-button text-nav-foreground transition-colors duration-(--ds-duration-fast) motion-reduce:transition-none group-hover:bg-nav-hover';
+---
+
+<!-- Candidate source 6f9c7e2 .card-promo. Copy, imagery and destination are caller-owned. -->
+<Element
+  href={action?.href}
+  class:list={[
+    'group relative flex h-full min-w-0 flex-col overflow-hidden rounded-(--card-radius) bg-surface-inverse text-foreground-inverse no-underline',
+    action && 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+    className,
+  ]}
+>
+  <div class="grid gap-2 px-6 pt-6 pb-5">
+    {kicker && <p class="text-sm font-bold">{kicker}</p>}
+    <Heading class:list={['text-3xl font-bold text-balance text-foreground-inverse', action && 'group-hover:underline group-hover:underline-offset-4']}>{title}</Heading>
+    {description && <p class="text-sm leading-relaxed">{description}</p>}
+    {action && !image && <span class:list={[actionClass, 'mt-4']}>{action.label}<Icon name="arrow-right" size={16} /></span>}
+  </div>
+  {image && (
+    <div class="relative min-h-48 flex-1">
+      <img src={image.src} alt={image.alt} loading="lazy" decoding="async" width="816" height="816" class="absolute inset-0 size-full object-cover object-[60%_50%]" />
+      {action && <span class:list={[actionClass, 'absolute inset-x-5 bottom-5']}>{action.label}<Icon name="arrow-right" size={16} /></span>}
+    </div>
+  )}
+</Element>

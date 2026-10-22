@@ -8,48 +8,25 @@
     "theme_support_url": "https://2digits.nl/contact"
   },
   {
-    "name": "t:general.typography",
+    "name": "t:general.brand_assets",
     "settings": [
       {
-        "type": "header",
-        "content": "t:general.fonts"
+        "type": "image_picker",
+        "id": "logo",
+        "label": "t:labels.logo",
+        "info": "t:info.logo"
       },
       {
-        "type": "font_picker",
-        "id": "type_primary_font",
-        "default": "work_sans_n4",
-        "label": "t:general.primary"
-      }
-    ]
-  },
-  {
-    "name": "t:general.layout",
-    "settings": [
-      {
-        "type": "select",
-        "id": "max_page_width",
-        "label": "t:labels.page_width",
-        "options": [
-          {
-            "value": "90rem",
-            "label": "t:options.page_width.narrow"
-          },
-          {
-            "value": "110rem",
-            "label": "t:options.page_width.wide"
-          }
-        ],
-        "default": "90rem"
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "t:labels.favicon",
+        "info": "t:info.favicon"
       },
       {
-        "type": "range",
-        "id": "min_page_margin",
-        "min": 10,
-        "max": 100,
-        "step": 1,
-        "unit": "px",
-        "label": "t:labels.page_margin",
-        "default": 20
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "t:labels.share_image",
+        "info": "t:info.share_image"
       }
     ]
   },
@@ -57,26 +34,172 @@
     "name": "t:general.colors",
     "settings": [
       {
+        "type": "paragraph",
+        "content": "t:info.colors"
+      },
+      {
         "type": "color",
         "id": "background_color",
-        "default": "#FFFFFF",
-        "label": "t:labels.background"
+        "label": "t:labels.background",
+        "default": "#FFFFFF"
       },
       {
         "type": "color",
         "id": "foreground_color",
-        "default": "#333333",
-        "label": "t:labels.foreground"
+        "label": "t:labels.foreground",
+        "default": "#09090B"
+      },
+      {
+        "type": "color",
+        "id": "brand_color",
+        "label": "t:labels.brand_color",
+        "info": "t:info.brand_color",
+        "default": "#101B3A"
+      },
+      {
+        "type": "color",
+        "id": "action_color",
+        "label": "t:labels.action_color",
+        "info": "t:info.action_color",
+        "default": "#E12621"
+      },
+      {
+        "type": "color",
+        "id": "link_color",
+        "label": "t:labels.link_color",
+        "info": "t:info.link_color",
+        "default": "#1E45AF"
+      },
+      {
+        "type": "color",
+        "id": "tint_color",
+        "label": "t:labels.tint_color",
+        "info": "t:info.tint_color",
+        "default": "#EFF7FF"
+      },
+      {
+        "type": "color",
+        "id": "warm_color",
+        "label": "t:labels.warm_color",
+        "default": "#E7D7B8"
+      },
+      {
+        "type": "color",
+        "id": "natural_color",
+        "label": "t:labels.natural_color",
+        "default": "#E8F3E4"
+      }
+    ]
+  },
+  {
+    "name": "t:general.typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "type_primary_font",
+        "label": "t:labels.body_font",
+        "default": "instrument_sans_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "label": "t:labels.heading_font",
+        "default": "instrument_sans_n7"
+      }
+    ]
+  },
+  {
+    "name": "t:general.layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "label": "t:labels.page_width",
+        "info": "t:info.page_width",
+        "min": 1200,
+        "max": 1920,
+        "step": 20,
+        "unit": "px",
+        "default": 1600
+      },
+      {
+        "type": "header",
+        "content": "t:general.page_margin"
       },
       {
         "type": "range",
-        "id": "input_corner_radius",
+        "id": "page_margin_mobile",
+        "label": "t:labels.mobile",
+        "min": 12,
+        "max": 48,
+        "step": 2,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "page_margin_desktop",
+        "label": "t:labels.desktop",
+        "min": 24,
+        "max": 96,
+        "step": 4,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "header",
+        "content": "t:general.section_spacing"
+      },
+      {
+        "type": "range",
+        "id": "section_spacing_mobile",
+        "label": "t:labels.mobile",
         "min": 0,
-        "max": 10,
+        "max": 96,
+        "step": 4,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "range",
+        "id": "section_spacing_desktop",
+        "label": "t:labels.desktop",
+        "min": 0,
+        "max": 160,
+        "step": 4,
+        "unit": "px",
+        "default": 80
+      }
+    ]
+  },
+  {
+    "name": "t:general.focus",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:info.focus"
+      },
+      {
+        "type": "color",
+        "id": "focus_color",
+        "label": "t:labels.focus_color",
+        "default": "#1D54D8"
+      },
+      {
+        "type": "color",
+        "id": "focus_inverse_color",
+        "label": "t:labels.focus_inverse_color",
+        "default": "#93C8FD"
+      },
+      {
+        "type": "range",
+        "id": "focus_width",
+        "label": "t:labels.focus_width",
+        "min": 2,
+        "max": 4,
         "step": 1,
         "unit": "px",
-        "label": "t:labels.input_corner_radius",
-        "default": 4
+        "default": 2
       }
     ]
   }

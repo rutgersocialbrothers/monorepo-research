@@ -1,0 +1,27 @@
+---
+import ProductCard from "../../components/product-card/product-card.astro";
+import type {ProductCardProps} from "../../components/product-card/product-card.contract";
+import PromoCard from "../../components/promo-card/promo-card.astro";
+import type {PromoCardProps} from "../../components/promo-card/promo-card.contract";
+import Link from "../../components/link/link.astro";
+import ScrollRail from "../scroll-rail/scroll-rail.astro";
+import type {SectionLink} from "../homepage.contract";
+interface Props {
+  title: string;
+  eyebrow?: string;
+  items: ReadonlyArray<ProductCardProps>;
+  action?: SectionLink;
+  emptyText?: string;
+  /** Candidate product slider v2 (source 6f9c7e2): frames every card unless an item sets its own `framed`. */
+  framed?: boolean;
+  /** Candidate banner card in the first rail slot (source maatwerk card). Scrolls and aligns with the product cards; rendered only beside products. */
+  promo?: Omit<PromoCardProps, "heading">;
+}
+const {title, eyebrow, items, action, emptyText = "Geen producten om te tonen.", framed = false, promo} = Astro.props;
+---
+<section class="py-10 md:py-14" aria-label={title}>
+  <div class="container-page">
+    <div class="mb-7 flex flex-wrap items-center justify-between gap-4"><div>{eyebrow && <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-foreground-link">{eyebrow}</p>}<h2 class="text-3xl md:text-4xl">{title}</h2></div>{action && <Link href={action.href}>{action.label} →</Link>}</div>
+    {items.length > 0 ? <ScrollRail label={title}>{promo && <PromoCard {...promo} />}{items.map(item => <ProductCard {...item} framed={item.framed ?? framed} />)}</ScrollRail> : <p class="rounded-(--ds-radius-lg) bg-surface-sunken p-6 text-muted-foreground">{emptyText}</p>}
+  </div>
+</section>

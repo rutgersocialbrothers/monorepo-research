@@ -1,11 +1,12 @@
 {
-  "name": "@2digits/liquid",
+  "name": "@tupak/liquid",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "tailwindcss -i styles/tailwind.css -o assets/tailwind.css --minify",
-    "dev": "node --env-file-if-exists=.env.local node_modules/@shopify/cli/bin/run.js theme dev --path .",
-    "check": "shopify theme check --path . --config .theme-check.yml"
+    "check": "shopify theme check --path . --config .theme-check.yml",
+    "design:detect": "impeccable detect --no-design-system blocks layout sections snippets styles assets/critical.css",
+    "dev": "node --env-file-if-exists=.env.local node_modules/@shopify/cli/bin/run.js theme dev --path ."
   },
   "devDependencies": {
     "@shopify/cli": "4.8.3",

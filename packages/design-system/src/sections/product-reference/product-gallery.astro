@@ -1,0 +1,26 @@
+---
+import {productGallery} from "./product.data";
+const [main] = productGallery;
+---
+<!--
+  Product gallery (snippets/product-gallery.html 6f9c7e2): one large square picture and small ones under it. The small
+  ones are buttons (they change what this page shows); aria-current marks the one in the frame. A product cut-out is
+  shown whole; a photograph that fills the frame is covered. Nothing moves by itself. PLACEHOLDER PICTURES: one product
+  photograph and two category photographs standing in for further views.
+-->
+{main && (
+  <div data-gallery class="grid gap-3 min-[1400px]:h-full min-[1400px]:grid-rows-[1fr_auto]">
+    <figure class="m-0 grid aspect-square place-items-center overflow-hidden rounded-(--ds-radius-lg) min-[1400px]:aspect-auto min-[1400px]:min-h-80">
+      <img src={main.image.src} alt={main.image.alt} width="800" height="800" data-gallery-main data-cover={main.cover ? "" : undefined} decoding="async" class="size-full object-contain data-cover:object-cover" />
+    </figure>
+    <ul class="m-0 flex list-none gap-2 p-0">
+      {productGallery.map((photo, index) => (
+        <li>
+          <button type="button" data-gallery-thumb data-src={photo.image.src} data-alt={photo.image.alt} data-cover={photo.cover ? "" : undefined} aria-label={photo.label} aria-current={index === 0 ? "true" : undefined} class="block size-18 cursor-pointer overflow-hidden rounded-(--ds-radius-md) border-2 border-border bg-surface-raised p-0 hover:border-border-strong aria-[current=true]:border-nav">
+            <img src={photo.image.src} alt="" loading="lazy" decoding="async" width="72" height="72" class:list={["size-full", photo.cover ? "object-cover" : "object-contain"]} />
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}

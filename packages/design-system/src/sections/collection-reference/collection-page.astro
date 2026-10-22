@@ -1,0 +1,93 @@
+---
+import Breadcrumbs from "./breadcrumbs.astro";
+import CategoryNav from "./category-nav.astro";
+import CollectionText from "./collection-text.astro";
+import FilterSidebar from "./filter-sidebar.astro";
+import ProductListing from "./product-listing.astro";
+import SubcategoryRows from "./subcategory-rows.astro";
+interface Props {
+  /** `panel`: collection.html — compact navy head, trail outside it, red-gradient trial selectable. `light`: collection-v2.html proposal. */
+  head: "panel" | "light";
+  basePath: string;
+  keuzehulpHref: string;
+  maatwerkHref: string;
+}
+const {head, basePath, keuzehulpHref, maatwerkHref} = Astro.props;
+const trail = [{name: "Home", href: "/preview"}, {name: "Alle producten"}];
+---
+<!--
+  Category page reference (prototype/collection.html and collection-v2.html, 6f9c7e2). Frame order per COLL-1: trail,
+  title, subcategories, then the sidebar (category navigation above the filters) beside the listing, the category text
+  under the listing. The category is ?categorie=<menu name>, resolved in the browser because this workbench is static.
+-->
+<div data-collection-page data-base-path={basePath}>
+  {head === "panel" ? (
+    <div class="bg-surface-band pt-6 pb-10">
+      <div class="container-page">
+        <fieldset data-head-surface class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-(--ds-radius-md) border border-dashed border-border-strong px-4 py-2 text-xs text-muted-foreground">
+          <legend class="sr-only">Kopvariant van de categoriepagina</legend>
+          <span aria-hidden="true" class="font-bold">Referentie · kopvariant</span>
+          <label class="inline-flex min-h-11 cursor-pointer items-center gap-2"><input type="radio" name="kop" value="gradient" checked class="accent-nav" />Navy naar rood verloop (trial, klantverzoek)</label>
+          <label class="inline-flex min-h-11 cursor-pointer items-center gap-2"><input type="radio" name="kop" value="navy" class="accent-nav" />Navy zonder verloop</label>
+        </fieldset>
+        <div class="mb-4"><Breadcrumbs trail={trail} dynamic /></div>
+        <!-- TRIAL (client request): navy running into the action red behind the title. Against two client rules (no
+             gradients; red never a large fill) and borrowing the action colour rather than a surface token, so it needs a
+             tier-2 token and designer sign-off if it stays. The intro under the title was removed upstream for a more
+             compact head; COLL-1 still asks for one (open). -->
+        <section aria-labelledby="collection-title" data-panel data-surface="gradient" class="group/panel relative isolate px-6 pt-8 [--panel-overlap:6.5rem] has-[[data-rail-controls]:not([hidden])]:[--panel-controls:3.75rem] min-[641px]:px-12 min-[641px]:pt-10">
+          <span aria-hidden="true" class="absolute inset-x-0 top-0 bottom-[calc(var(--panel-overlap)+var(--panel-controls,0px))] -z-10 rounded-(--ds-radius-xl) bg-surface-inverse group-data-[surface=gradient]/panel:bg-[linear-gradient(100deg,var(--surface-inverse)_45%,var(--primary))]"></span>
+          <span aria-hidden="true" class="absolute top-0 right-12 bottom-[calc(var(--panel-overlap)+var(--panel-controls,0px))] -z-10 hidden aspect-[21/30.4] bg-primary [clip-path:polygon(62.8%_0,100%_0,39.2%_100%,0_100%)] min-[901px]:block"></span>
+          <div class="grid gap-2 min-[901px]:max-w-[min(640px,50%)]">
+            <h1 id="collection-title" data-collection-title class="m-0 text-4xl text-foreground-inverse">Beschikbare verpakkingen</h1>
+          </div>
+          <div class="mt-6 min-w-0"><SubcategoryRows basePath={basePath} appearance="panel" /></div>
+        </section>
+      </div>
+    </div>
+  ) : (
+    <div class="bg-surface-band pt-6">
+      <div class="container-page">
+        <!-- V2 HEAD, a proposal: no navy panel (it felt heavy to the client). Trail, title and the subcategories as round
+             cut-outs on the same band as the listing, so head and listing read as one field. -->
+        <section aria-labelledby="collection-title" class="grid gap-4">
+          <Breadcrumbs trail={trail} dynamic />
+          <h1 id="collection-title" data-collection-title class="m-0 text-4xl">Beschikbare verpakkingen</h1>
+          <div class="mt-2 min-w-0"><SubcategoryRows basePath={basePath} appearance="circles" /></div>
+        </section>
+      </div>
+    </div>
+  )}
+
+  <div class="bg-surface-band pt-10 pb-14">
+    <div class="container-page">
+      <div class="grid grid-cols-[minmax(0,1fr)] items-start gap-x-12 gap-y-8 min-[901px]:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
+        <aside aria-label="Categorieën en filters" class="grid min-w-0 content-start gap-8 min-[901px]:col-start-1 min-[901px]:row-start-1 min-[901px]:self-stretch">
+          <CategoryNav basePath={basePath} />
+          <FilterSidebar />
+        </aside>
+        <div class="grid min-w-0 gap-6 min-[901px]:col-start-2 min-[901px]:row-start-1">
+          <!-- Navigation state handed to this page that the prototype has no logic for (branche, lijst, an unknown
+               categorie) is shown, never silently dropped or turned into invented filtering. -->
+          <aside data-handoff hidden aria-labelledby="handoff-title" class="rounded-(--ds-radius-md) border border-dashed border-border-strong bg-surface-raised px-4 py-3 text-sm">
+            <h2 id="handoff-title" class="text-sm font-bold">Doorgegeven aan deze pagina · prototype</h2>
+            <dl data-handoff-list class="m-0 mt-2 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 [&_dd]:m-0 [&_dt]:text-muted-foreground"></dl>
+            <p class="m-0 mt-2 text-xs text-muted-foreground">Het prototype heeft hiervoor nog geen filterlogica; de lijst toont de voorbeeldproducten met alleen de filters hiernaast.</p>
+          </aside>
+          <ProductListing />
+          <dl data-query-echo hidden class="m-0 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm [&_dd]:m-0">
+            <dt class="col-span-2 text-xs font-bold text-muted-foreground uppercase">Doorgegeven door het zoekveld</dt>
+            <dt>Zoekterm</dt><dd data-query-term></dd>
+          </dl>
+        </div>
+        <div class="border-t border-border pt-12 min-[901px]:col-start-2 min-[901px]:row-start-2"><CollectionText keuzehulpHref={keuzehulpHref} maatwerkHref={maatwerkHref} /></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  import {initCollectionPage} from "./collection-page.client";
+  for (const page of document.querySelectorAll<HTMLElement>("[data-collection-page]")) {
+    initCollectionPage(page);
+  }
+</script>

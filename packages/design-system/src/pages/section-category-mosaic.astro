@@ -1,0 +1,37 @@
+---
+import SectionDemoLayout from "../layouts/SectionDemoLayout.astro";
+import CategoryMosaic from "../sections/category-mosaic/category-mosaic.astro";
+import {prototypeMosaic} from "../sections/prototype-update.example-data";
+---
+<SectionDemoLayout
+  title="Categoriemozaïek"
+  lede="Het catalogusraster van de homepage: zes categorietegels en drie promopanelen in één grid."
+  meta={[
+    {term: "Figma", detail: "11-2777"},
+    {term: "Bron", detail: "blocks/category-mosaic.html (6f9c7e2)."},
+    {term: "Astro", detail: "src/sections/category-mosaic/category-mosaic.astro."},
+    {term: "Shopify", detail: "Het grid is één blok. De tegels komen uit een collectielijst; elk paneel is een child block met vulling, kop en maximaal twee links als instelling."},
+    {term: "Status", detail: "Eén versie."},
+    {term: "Journey", detail: "A Nieuwe klant, C Maatwerkaanvraag. C via de panelen “Producten op maat” en “Grote aantallen of advies nodig?” (voorstel, de user stories noemen geen journey)."},
+    {term: "User stories", detail: "PAGE-1 (status: deels), volgens story-map.json van de bron."},
+    {term: "Inhoud", detail: "Prototypetekst en voorlopige beelden. Contactgegevens en paneelbestemmingen zijn niet vastgesteld en worden niet als actieve link getoond."},
+  ]}
+  decided={[
+    {lead: "Plaatsing is DOM-volgorde plus twee span-regels.", text: "Een zevende tegel vraagt dus geen nieuwe layout."},
+    {lead: "De hele tegel is de link.", text: "De pil is een aanwijzing, geen tweede knop: een knop in een link geeft twee tabstops voor één bestemming en wordt dubbel voorgelezen."},
+    {lead: "De op-maat-band is een tint, geen rood vlak.", text: "Het ontwerp vult hem met accentrood, maar accentrood is alleen voor CTA's. De band gebruikt hetzelfde vlak als het keuzehulppaneel; het enige rode is de knop."},
+    {lead: "Panelen met een donkere vulling krijgen de witte contrastknop.", text: "Eén behandeling voor één rol, op beide panelen."},
+    {lead: "De tegelfoto's staan op multiply.", text: "De witte studioachtergrond valt weg in de grijze tegel, zonder dat elke foto vrijstaand gemaakt hoeft te worden."},
+    {lead: "De foto staat helemaal in beeld,", text: "onder het label en met ruimte rondom. In het ontwerp liep hij achter het label door en onder uit de tegel; nu is het product compleet te zien, zoals op de product- en categoriekaarten."},
+  ]}
+  open={[
+    {lead: "De knop op het blauwe paneel is navy in het ontwerp.", text: "Is dat bewust, dan heeft de nav-knop een donker-op-donker-stap nodig."},
+    {lead: "Twee tegelfoto's zijn 200×200", text: "(pakketten, grootverpakking). Hogere resolutie en webp opvragen bij Tupak."},
+    {lead: "Het accentvlak wacht op akkoord,", text: "net als bij de keuzehulp."},
+  ]}
+>
+  <div>
+    <div class="container-page pt-8"><p class="text-xs font-semibold text-muted-foreground">Variant 1 · bron: zes tegels, contactpaneel, verhaalpaneel en maatwerkband</p></div>
+    <div data-section-preview><CategoryMosaic {...prototypeMosaic} /></div>
+  </div>
+</SectionDemoLayout>

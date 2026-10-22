@@ -1,0 +1,105 @@
+---
+import type { ProductCardProps } from './product-card.contract';
+import Badge from '../badge/badge.astro';
+import Icon from '../icon/icon.astro';
+
+interface Props extends ProductCardProps {
+  class?: string;
+}
+
+const {
+  title,
+  href,
+  image,
+  eyebrow,
+  description,
+  price,
+  badge,
+  stats = [],
+  stock,
+  actionLabel,
+  framed = false,
+  heading: Heading = 'h3',
+  class: className,
+} = Astro.props;
+const Element = href ? 'a' : 'article';
+const action = href && actionLabel ? actionLabel : undefined;
+const showFooter = Boolean(price || stock || (href && !action));
+const stockDotClass =
+  stock?.tone === 'in'
+    ? 'size-2 shrink-0 rounded-full bg-success'
+    : stock?.tone === 'lead'
+      ? 'size-2 shrink-0 rounded-full bg-warning'
+      : 'size-2 shrink-0 rounded-full bg-border-strong';
+---
+
+<!-- Candidate presentation adapted from the external Tupak prototype; content and media rights remain caller-owned.
+     framed: source 6f9c7e2 .card-product--framed (client Paper design). Its card line #D3DCE1 maps to --border,
+     the picture field #ECF4F8 to --surface-brand and the 6px button corner to --button-radius, as the source notes. -->
+<Element
+  href={href || undefined}
+  data-framed={framed ? '' : undefined}
+  class:list={[
+    'group flex h-full min-w-0 flex-col overflow-hidden rounded-(--card-radius) border border-border bg-card text-card-foreground no-underline',
+    framed ? 'p-3 shadow-none' : 'shadow-(--card-shadow)',
+    href && 'transition-colors duration-(--ds-duration-fast) motion-reduce:transition-none hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+    href && !framed && 'hover:shadow-(--ds-shadow-lg)',
+    className,
+  ]}
+>
+  {image && (
+    <div class:list={['relative overflow-hidden', framed ? 'aspect-7/6 bg-surface-brand p-4' : 'aspect-square bg-muted p-6']}>
+      <img
+        src={image.src}
+        alt={image.alt}
+        loading="lazy"
+        decoding="async"
+        width="480"
+        height="480"
+        class:list={['h-full w-full object-contain', framed && '[mix-blend-mode:var(--media-blend-mode)]']}
+      />
+      {badge && <Badge class="absolute top-4 left-4">{badge}</Badge>}
+    </div>
+  )}
+  <div class:list={['flex flex-1 flex-col gap-3', framed ? 'p-4' : 'p-(--card-padding)']}>
+    {!image && badge && <Badge>{badge}</Badge>}
+    {eyebrow && <p class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{eyebrow}</p>}
+    <Heading class:list={['font-heading text-xl leading-tight font-bold text-foreground-heading', href && 'group-hover:underline group-hover:underline-offset-4']}>{title}</Heading>
+    {description && <p class="text-sm leading-relaxed text-muted-foreground">{description}</p>}
+    {(stats.length > 0 || showFooter) && (
+      <div class="mt-auto grid gap-3">
+        {stats.length > 0 && (
+          <dl class:list={['flex text-center', framed ? 'gap-2' : 'gap-1']}>
+            {stats.map((stat) => (
+              <div class:list={['min-w-0 flex-1 px-1 py-3', framed && 'rounded-sm bg-muted shadow-[inset_0_0_0_1px_var(--border)]']}>
+                <dt class="text-xs whitespace-nowrap text-muted-foreground">{stat.label}</dt>
+                <dd class="text-base font-bold whitespace-nowrap text-foreground">{stat.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        {showFooter && (
+          <div class="flex items-end justify-between gap-3 border-t border-border pt-4">
+            {(price || stock) && (
+              <div class="grid min-w-0 gap-2">
+                {price && <p class="text-xl font-bold text-foreground-heading">{price}</p>}
+                {stock && (
+                  <p class="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                    <span aria-hidden="true" class={stockDotClass}></span>
+                    {stock.label}
+                  </p>
+                )}
+              </div>
+            )}
+            {href && !action && <Icon name="arrow-right" size={16} class="ml-auto text-foreground-link" />}
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+  {action && (framed ? (
+    <span class="mt-1 flex min-h-11 items-center justify-center rounded-(--button-radius) border-2 border-nav bg-surface-raised px-4 text-sm font-button text-foreground-heading transition-colors duration-(--ds-duration-fast) motion-reduce:transition-none group-hover:bg-secondary">{action}</span>
+  ) : (
+    <span class="flex min-h-11 items-center justify-end gap-2 bg-nav px-4 text-sm font-button text-nav-foreground transition-colors duration-(--ds-duration-fast) motion-reduce:transition-none group-hover:bg-nav-hover group-active:bg-nav-active">{action}<Icon name="arrow-right" size={16} /></span>
+  ))}
+</Element>

@@ -1,16 +1,18 @@
 {% liquid
   assign variants = 'primary,secondary' | split: ','
   assign sizes = 'small,medium,large' | split: ','
+  assign surfaces = 'page,band,brand,warm,natural' | split: ','
+  assign inverse_label = 'liquid_components.design_system.inverse_button' | t
 %}
 
-<div class="design-system-demo font-body bg-surface text-ink">
+<div class="design-system-demo">
   <header class="design-system-demo__intro">
-    <h1 class="text-4xl font-bold">{{ 'liquid_components.design_system.title' | t | escape }}</h1>
+    <h1>{{ 'liquid_components.design_system.title' | t | escape }}</h1>
     <p>{{ 'liquid_components.design_system.description' | t | escape }}</p>
   </header>
 
   <div class="design-system-demo__topic">
-    <h2 class="text-2xl font-bold">{{ 'liquid_components.design_system.buttons_title' | t | escape }}</h2>
+    <h2>{{ 'liquid_components.design_system.buttons_title' | t | escape }}</h2>
     <p>{{ 'liquid_components.design_system.buttons_description' | t | escape }}</p>
     <div class="design-system-demo__grid">
       {% for variant in variants %}
@@ -25,8 +27,8 @@
             assign enabled_label = 'liquid_components.design_system.enabled_label' | t: variant: variant_label, size: size_label
             assign disabled_label = 'liquid_components.design_system.disabled_label' | t: variant: variant_label, size: size_label
           %}
-          <div class="design-system-demo__card border border-line rounded-control">
-            <h3 class="font-semibold">{{ 'liquid_components.design_system.combination' | t: variant: variant_label, size: size_label | escape }}</h3>
+          <div class="design-system-demo__card rounded-md border border-border">
+            <h3>{{ 'liquid_components.design_system.combination' | t: variant: variant_label, size: size_label | escape }}</h3>
             <div class="design-system-demo__buttons">
               {% render 'button', label: enabled_label, variant: variant, size: size, button_type: 'button' %}
               {% render 'button', label: disabled_label, variant: variant, size: size, button_type: 'button', disabled: true %}
@@ -38,42 +40,64 @@
   </div>
 
   <div class="design-system-demo__topic">
-    <h2 class="text-2xl font-bold">{{ 'liquid_components.design_system.foundations_title' | t | escape }}</h2>
+    <h2>{{ 'liquid_components.design_system.foundations_title' | t | escape }}</h2>
     <p>{{ 'liquid_components.design_system.foundations_description' | t | escape }}</p>
     <div class="design-system-demo__grid">
-      <div class="design-system-demo__card border border-line rounded-control bg-surface text-ink">
-        <h3 class="text-xl font-semibold">{{ 'liquid_components.design_system.surface' | t | escape }}</h3>
-        <p>{{ 'liquid_components.design_system.surface_description' | t | escape }}</p>
-      </div>
-      <div class="design-system-demo__card rounded-control bg-ink text-surface">
-        <h3 class="text-xl font-semibold">{{ 'liquid_components.design_system.ink' | t | escape }}</h3>
-        <p>{{ 'liquid_components.design_system.ink_description' | t | escape }}</p>
-      </div>
-      <div class="design-system-demo__card border-4 border-line rounded-control">
-        <h3 class="text-xl font-semibold">{{ 'liquid_components.design_system.line' | t | escape }}</h3>
-        <p>{{ 'liquid_components.design_system.line_description' | t | escape }}</p>
+      {% for surface in surfaces %}
+        {% liquid
+          case surface
+            when 'band'
+              assign surface_classes = 'bg-surface-band'
+            when 'brand'
+              assign surface_classes = 'bg-surface-brand'
+            when 'warm'
+              assign surface_classes = 'bg-surface-warm'
+            when 'natural'
+              assign surface_classes = 'bg-surface-natural'
+            else
+              assign surface_classes = 'bg-page'
+          endcase
+          assign surface_title_key = 'liquid_components.design_system.surfaces.' | append: surface
+        %}
+        <div class="design-system-demo__card rounded-md border border-border text-text {{ surface_classes }}">
+          <h3>{{ surface_title_key | t | escape }}</h3>
+          <p class="text-small text-text-muted">{{ 'liquid_components.design_system.muted_sample' | t | escape }}</p>
+        </div>
+      {% endfor %}
+      <div class="design-system-demo__card tp-on-inverse rounded-md">
+        <h3>{{ 'liquid_components.design_system.surfaces.inverse' | t | escape }}</h3>
+        <p class="text-small text-text-muted">{{ 'liquid_components.design_system.inverse_description' | t | escape }}</p>
+        <div class="design-system-demo__buttons">
+          {% render 'button', label: inverse_label, variant: 'primary', size: 'small', button_type: 'button' %}
+          {% render 'button', label: inverse_label, variant: 'secondary', size: 'small', button_type: 'button' %}
+        </div>
       </div>
     </div>
-    <div class="design-system-demo__card border border-line rounded-control font-body">
-      <h3 class="text-xl font-semibold">{{ 'liquid_components.design_system.typography_title' | t | escape }}</h3>
-      <p class="text-3xl font-bold">{{ 'liquid_components.design_system.typography_sample' | t | escape }}</p>
+    <div class="design-system-demo__card rounded-md border border-border">
+      <h3>{{ 'liquid_components.design_system.typography_title' | t | escape }}</h3>
+      <p class="design-system-demo__type-sample text-display">{{ 'liquid_components.design_system.typography_display' | t | escape }}</p>
+      <p class="design-system-demo__type-sample text-h1">{{ 'liquid_components.design_system.typography_h1' | t | escape }}</p>
+      <p class="design-system-demo__type-sample text-h2">{{ 'liquid_components.design_system.typography_h2' | t | escape }}</p>
+      <p class="design-system-demo__type-sample text-h3">{{ 'liquid_components.design_system.typography_h3' | t | escape }}</p>
       <p>{{ 'liquid_components.design_system.typography_description' | t | escape }}</p>
+      <p class="text-small">{{ 'liquid_components.design_system.typography_small' | t | escape }}</p>
+      <p class="text-caption tracking-caption">{{ 'liquid_components.design_system.typography_caption' | t | escape }}</p>
     </div>
-    <div class="design-system-demo__card border border-line rounded-control">
-      <h3 class="text-xl font-semibold">{{ 'liquid_components.design_system.shape_title' | t | escape }}</h3>
-      <p>{{ 'liquid_components.design_system.shape_description' | t | escape }}</p>
+    <div class="design-system-demo__card rounded-md border border-border">
+      <h3>{{ 'liquid_components.design_system.layout_title' | t | escape }}</h3>
+      <p>{{ 'liquid_components.design_system.layout_description' | t | escape }}</p>
     </div>
   </div>
 
   <div class="design-system-demo__topic">
-    <h2 class="text-2xl font-bold">{{ 'liquid_components.design_system.image_title' | t | escape }}</h2>
+    <h2>{{ 'liquid_components.design_system.image_title' | t | escape }}</h2>
     <p>{{ 'liquid_components.design_system.image_description' | t | escape }}</p>
     {% if section.settings.example_image != blank %}
       <div class="design-system-demo__image">
-        {% render 'image', image: section.settings.example_image, width: 1200 %}
+        {% render 'image', image: section.settings.example_image, width: 1200, sizes: '(min-width: 800px) 768px, 100vw' %}
       </div>
     {% else %}
-      <p class="design-system-demo__card border border-line rounded-control">{{ 'liquid_components.design_system.image_empty' | t | escape }}</p>
+      <p class="design-system-demo__card rounded-md border border-border">{{ 'liquid_components.design_system.image_empty' | t | escape }}</p>
     {% endif %}
   </div>
 </div>
@@ -82,7 +106,7 @@
   .design-system-demo {
     display: grid;
     gap: 3rem;
-    padding-block: 3rem;
+    padding-block: var(--tp-section-spacing);
     min-width: 0;
   }
 
@@ -105,6 +129,12 @@
     gap: 1rem;
     padding: 1.25rem;
     min-width: 0;
+  }
+
+  .design-system-demo__type-sample {
+    font-family: var(--tp-font-heading);
+    font-weight: var(--tp-font-heading-weight);
+    font-style: var(--tp-font-heading-style);
   }
 
   .design-system-demo__buttons {

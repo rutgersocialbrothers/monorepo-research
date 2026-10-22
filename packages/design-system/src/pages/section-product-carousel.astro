@@ -1,0 +1,45 @@
+---
+import SectionDemoLayout from "../layouts/SectionDemoLayout.astro";
+import ProductRail from "../sections/product-rail/product-rail.astro";
+import {prototypeProducts} from "../sections/homepage.example-data";
+import {prototypePromo} from "../sections/prototype-update.example-data";
+function title(version: string): string {
+  return `Veelgekozen verpakkingen · ${version}`;
+}
+const eyebrow = "Prototype productvoorbeelden · geen actueel aanbod";
+---
+<SectionDemoLayout
+  title="Productcarrousel"
+  lede="Een merchandisingrij: een kicker met kop en een scrollende rij productkaarten met prijs, voorraadregel en vervolgstap."
+  meta={[
+    {term: "Figma", detail: "11-2807."},
+    {term: "Bron", detail: "blocks/product-carousel.html (v1) en blocks/product-carousel-v2.html (v2, 6f9c7e2: omkaderde kaart en maatwerkkaart vooraan)."},
+    {term: "Astro", detail: "src/sections/product-rail/product-rail.astro met ProductCard en PromoCard. v2 is de optie framed met een promo; v1 is de rij zonder beide."},
+    {term: "Shopify · bronvoorstel", detail: "Eén blok in blocks/, met de collectie en de chiplijst als voorgestelde instelling. Elke kaart is snippets/card-product.liquid. De daadwerkelijke editorruimte wordt apart met de developer bepaald."},
+    {term: "Status", detail: "Twee versies. v1 staat op de homepage van de bron en in de homepagepreview; v2 is een voorstel en staat alleen hier."},
+    {term: "Journey", detail: "A Nieuwe klant (voorstel, de user stories noemen geen journey)."},
+    {term: "User stories", detail: "PAGE-1 (status: deels) en TAXX-4 (status: gebouwd), volgens story-map.json van de bron."},
+  ]}
+  decided={[
+    {lead: "Native scrollen, geen library.", text: "Touch, trackpad en toetsenbord werken zonder JavaScript; de pijlen zijn een extra."},
+    {lead: "Productkaart variant B,", text: "met de blauwe balk “Bekijk product”. Gekozen door de klant boven variant A."},
+    {lead: "De kaart zegt wat voor prijs het is", text: "(TAXX-4): een vanaf-prijs per stuk, exclusief btw, met staffelkorting."},
+    {lead: "v2 verandert alleen de presentatie:", text: "omkaderde kaarten en een maatwerkkaart in het eerste vak. Inhoud en volgorde van de producten blijven gelijk."},
+  ]}
+  open={[
+    {lead: "Kies v1 of v2.", text: "De verliezer gaat eruit."},
+    {lead: "De bronvormen zijn niet één op één vertaald:", text: "het kartonkleurige paneel met overhangende kaarten (v1), de rij die rechts uit het scherm loopt met acht kaarten (v2) en de collectiechips staan niet in deze Astro-referentie. Beide versies hier tonen dezelfde vijf voorbeeldproducten."},
+    {lead: "De kleur van de blauwe balk wacht op akkoord van design.", text: "In de bron zijn die actiekleuren door het systeem toegevoegd, niet door het merk aangeleverd."},
+    {lead: "De vanaf-prijs is een vast voorbeeldgetal;", text: "in Shopify is het de laagste stukprijs over alle varianten en staffels (TAXX-4)."},
+    {lead: "Kleurstalen op de kaart,", text: "die COLL-2 noemt “waar relevant”, zijn er niet."},
+  ]}
+>
+  <div>
+    <div class="container-page pt-8"><p class="text-xs font-semibold text-muted-foreground">v1 · standaardkaarten zonder promokaart, de versie op de homepage van de bron</p></div>
+    <div data-section-preview><ProductRail title={title("v1")} eyebrow={eyebrow} items={prototypeProducts} /></div>
+  </div>
+  <div>
+    <div class="container-page pt-8"><p class="text-xs font-semibold text-muted-foreground">v2 · voorstel: omkaderde kaarten met de maatwerkkaart vooraan, niet op de homepage</p></div>
+    <div data-section-preview><ProductRail title={title("v2")} eyebrow={eyebrow} items={prototypeProducts} framed={true} promo={prototypePromo} /></div>
+  </div>
+</SectionDemoLayout>

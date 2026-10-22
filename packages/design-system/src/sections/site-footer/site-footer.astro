@@ -1,9 +1,7 @@
 ---
-interface FooterLink {
-  label: string;
-  href: string;
-}
-
+import Icon from "../../components/icon/icon.astro";
+import type { SectionPoint } from "../homepage.contract";
+interface FooterLink { label: string; href: string; }
 interface Props {
   title?: string;
   description?: string;
@@ -16,66 +14,50 @@ interface Props {
   logoAlt?: string;
   exploreLinks?: ReadonlyArray<FooterLink>;
   actionLinks?: ReadonlyArray<FooterLink>;
+  detailLinks?: ReadonlyArray<FooterLink>;
+  services?: ReadonlyArray<SectionPoint>;
+  legalNote?: string;
   class?: string;
 }
-
 const {
   title = "Tupak design system",
-  description = "Een voorbeeldfooter met ruimte voor een introductie, navigatie en aanvullende informatie.",
-  note = "Voorbeeldinhoud, geen bedrijfsinformatie.",
+  description = "Een ontwerpvoorbeeld met ruimte voor navigatie en aanvullende informatie.",
+  note = "Prototypevoorbeelden, geen bedrijfsinformatie.",
   exploreTitle = "Verken de workbench",
   actionTitle = "Ontwerp en afspraken",
-  detailTitle = "Voorlopige basis",
-  detailText = "De huidige kleuren en lettertypen zijn startwaarden. De definitieve ontwerpwaarden worden door de designer aangeleverd.",
-  logoSrc,
-  logoAlt = title,
-  exploreLinks = [
-    { label: "Componenten", href: "#components" },
-    { label: "Secties", href: "#sections" },
-  ],
-  actionLinks = [
-    { label: "Ontwerpvariabelen", href: "#variables" },
-    { label: "Componentcontracten", href: "#contracts" },
-  ],
+  detailTitle = "Tupak ontwerpkandidaat",
+  detailText = "Visuele referentie naar het externe Tupak-prototype. Ontwerp, teksten en beeldrechten zijn niet productie-goedgekeurd.",
+  logoSrc, logoAlt = title,
+  exploreLinks = [{ label: "Componenten", href: "/#components" }, { label: "Secties", href: "/#sections" }],
+  actionLinks = [{ label: "Ontwerpvariabelen", href: "/#variables" }, { label: "Componentcontracten", href: "/#contracts" }],
+  detailLinks = [],
+  services = [],
+  legalNote,
   class: className,
 } = Astro.props;
+const id = `footer-${crypto.randomUUID()}`;
 ---
-
-<footer class:list={["bg-primary text-primary-foreground", className]}>
-  <div class="mx-auto grid w-full max-w-(--ds-container-page) gap-10 px-(--ds-grid-margin-sm) py-10 md:grid-cols-2 md:gap-x-12 md:gap-y-12 md:px-(--ds-grid-margin-md) lg:ds-footer-columns lg:gap-16 lg:px-(--ds-grid-margin-lg) lg:py-12">
+<footer class:list={["bg-surface-inverse text-foreground-inverse", className]}>
+  {services.length > 0 && <div class="border-b border-current/15"><ul class="container-page grid gap-5 py-6 sm:grid-cols-2 lg:grid-cols-4">{services.map(service => <li class="flex items-start gap-3"><span class="mt-0.5 shrink-0"><Icon name={service.icon ?? "check"} size={20} /></span><span class="text-sm"><strong class="font-semibold">{service.title}</strong>{service.text && <span class="mt-1 block text-xs text-foreground-inverse/70">{service.text}</span>}</span></li>)}</ul></div>}
+  <div class="container-page grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-16">
+    {exploreLinks.length > 0 && <nav aria-labelledby={`${id}-explore`}>
+      <h2 id={`${id}-explore`} class="text-base font-semibold text-inherit">{exploreTitle}</h2>
+      <ul class="mt-5 grid gap-3 text-sm text-foreground-inverse/75">{exploreLinks.map(link => <li><a href={link.href} class="rounded-sm outline-none hover:text-foreground-inverse hover:underline focus-visible:ring-2 focus-visible:ring-current">{link.label}</a></li>)}</ul>
+    </nav>}
+    {actionLinks.length > 0 && <nav aria-labelledby={`${id}-action`}>
+      <h2 id={`${id}-action`} class="text-base font-semibold text-inherit">{actionTitle}</h2>
+      <ul class="mt-5 grid gap-3 text-sm text-foreground-inverse/75">{actionLinks.map(link => <li><a href={link.href} class="rounded-sm outline-none hover:text-foreground-inverse hover:underline focus-visible:ring-2 focus-visible:ring-current">{link.label}</a></li>)}</ul>
+    </nav>}
+    {(detailText || detailLinks.length > 0) && <div>
+      <h2 class="text-base font-semibold text-inherit">{detailTitle}</h2>
+      {detailText && <p class="mt-5 text-sm leading-relaxed text-foreground-inverse/75">{detailText}</p>}
+      {detailLinks.length > 0 && <ul class="mt-5 grid gap-3 text-sm text-foreground-inverse/75">{detailLinks.map(link => <li><a href={link.href} class="rounded-sm outline-none hover:underline focus-visible:ring-2 focus-visible:ring-current">{link.label}</a></li>)}</ul>}
+    </div>}
     <div>
-      {logoSrc ? (
-        <img src={logoSrc} alt={logoAlt} class="h-auto w-28" loading="lazy" decoding="async" />
-      ) : (
-        <p class="!font-heading-content text-xl">{title}</p>
-      )}
-      <p class="mt-5 max-w-48 text-xs leading-relaxed text-primary-foreground/80">{description}</p>
-      {note && <p class="mt-5 text-xs italic text-primary-foreground/80">{note}</p>}
+      {logoSrc ? <img src={logoSrc} alt={logoAlt} width="175" height="58" class="h-auto w-40" loading="lazy" decoding="async" /> : <p class="text-xl font-semibold">{title}</p>}
+      <p class="mt-5 text-sm leading-relaxed text-foreground-inverse/75">{description}</p>
+      {note && <p class="mt-5 text-xs leading-relaxed text-foreground-inverse/60">{note}</p>}
     </div>
-
-    {exploreLinks.length > 0 && (
-      <nav aria-labelledby="footer-explore-title">
-        <h2 id="footer-explore-title" class="!font-heading-content text-xs">{exploreTitle}</h2>
-        <ul class="mt-5 grid gap-3 text-xs text-primary-foreground/80">
-          {exploreLinks.map((link) => <li><a href={link.href} class="transition-colors hover:text-primary-foreground hover:underline">{link.label}</a></li>)}
-        </ul>
-      </nav>
-    )}
-
-    {actionLinks.length > 0 && (
-      <nav aria-labelledby="footer-action-title">
-        <h2 id="footer-action-title" class="!font-heading-content text-xs">{actionTitle}</h2>
-        <ul class="mt-5 grid gap-3 text-xs text-primary-foreground/80">
-          {actionLinks.map((link) => <li><a href={link.href} class="transition-colors hover:text-primary-foreground hover:underline">{link.label}</a></li>)}
-        </ul>
-      </nav>
-    )}
-
-    {detailText && (
-      <div aria-labelledby="footer-detail-title">
-        <h2 id="footer-detail-title" class="!font-heading-content text-xs">{detailTitle}</h2>
-        <p class="mt-5 max-w-prose text-xs leading-relaxed text-primary-foreground/80">{detailText}</p>
-      </div>
-    )}
   </div>
+  {legalNote && <div class="bg-surface-sunken py-5 text-xs text-muted-foreground"><p class="container-page">{legalNote}</p></div>}
 </footer>

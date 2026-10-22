@@ -1,0 +1,19 @@
+---
+interface Crumb {
+  name: string;
+  href?: string;
+}
+interface Props {
+  /** The trail; the last item is the current page and is never a link. */
+  trail: ReadonlyArray<Crumb>;
+  /** Collection pages rebuild the trail from `?categorie=` (the source derives it from the menu, first parent wins). */
+  dynamic?: boolean;
+}
+const {trail, dynamic = false} = Astro.props;
+---
+<!-- Breadcrumbs (COLL-6): an ordered list in a labelled nav. Styles live on the list so script-built items need none. -->
+<nav aria-label="Kruimelpad" data-breadcrumbs={dynamic ? "" : undefined}>
+  <ol class="m-0 flex list-none flex-wrap items-center gap-x-2 p-0 text-sm text-muted-foreground [&_[aria-current]]:text-foreground [&>li]:inline-flex [&>li]:items-center [&>li]:gap-2 [&>li+li]:before:size-[0.4em] [&>li+li]:before:rotate-45 [&>li+li]:before:border-t [&>li+li]:before:border-r [&>li+li]:before:border-current [&>li+li]:before:content-[''] [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a]:text-muted-foreground [&_a]:underline-offset-2 [&_a:hover]:underline">
+    {trail.map((crumb, index) => <li>{index === trail.length - 1 || !crumb.href ? <span aria-current="page">{crumb.name}</span> : <a href={crumb.href}>{crumb.name}</a>}</li>)}
+  </ol>
+</nav>

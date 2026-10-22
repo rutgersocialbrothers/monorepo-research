@@ -9,13 +9,13 @@ interface Props extends LinkProps {
 const {
   href,
   appearance = "text",
-  variant = "primary",
+  variant = "nav",
   size = "md",
   class: className,
 } = Astro.props;
 
 const textClass =
-  "rounded-sm text-(color:--link-foreground) underline underline-offset-(--link-underline-offset) outline-none hover:no-underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "rounded-sm font-medium text-(color:--link-foreground) underline underline-offset-(--link-underline-offset) outline-none hover:no-underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 ---
 
 <a

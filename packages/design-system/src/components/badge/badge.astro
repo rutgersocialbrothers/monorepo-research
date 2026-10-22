@@ -2,12 +2,12 @@
 import type { BadgeProps } from "./badge.contract";
 interface Props extends BadgeProps { class?: string; }
 const { variant = "primary", class: className } = Astro.props;
-const tones = { primary: "bg-primary text-primary-foreground", secondary: "bg-secondary text-secondary-foreground", outline: "border-border text-foreground", success: "bg-success-subtle text-success-subtle-foreground", warning: "bg-warning-subtle text-warning-subtle-foreground", info: "bg-info-subtle text-info-subtle-foreground", destructive: "bg-destructive-subtle text-destructive-subtle-foreground", ghost: "text-foreground" };
+const tones = { primary: "bg-primary text-primary-foreground", secondary: "bg-secondary text-secondary-foreground", outline: "border-border-strong text-foreground-heading", success: "bg-success-subtle text-success-subtle-foreground", warning: "bg-warning-subtle text-warning-subtle-foreground", info: "bg-info-subtle text-info-subtle-foreground", destructive: "bg-destructive-subtle text-destructive-subtle-foreground", ghost: "text-foreground-heading" };
 ---
 <span
   data-variant={variant}
   class:list={[
-    "inline-flex w-fit items-center gap-1 rounded-(--badge-radius) border border-transparent px-2 py-0.5 text-(length:--ds-text-xs-size) font-(--badge-font-weight)",
+    "inline-flex w-fit items-center gap-1 rounded-(--badge-radius) border border-transparent px-2.5 py-1 text-(length:--ds-text-xs-size) leading-tight font-(--badge-font-weight)",
     tones[variant],
     className,
   ]}

@@ -30,6 +30,7 @@ browser-results/
 *.tsbuildinfo
 **/dist/
 apps/liquid/assets/tailwind.css
+apps/liquid/snippets/tupak-deployment.liquid
 
 # Credentials and remote theme snapshots
 .env*

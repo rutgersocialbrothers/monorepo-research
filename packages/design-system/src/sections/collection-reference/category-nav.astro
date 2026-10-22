@@ -1,0 +1,25 @@
+---
+import {catalogue} from "./collection.data";
+interface Props {
+  /** Collection route the links stay on. */
+  basePath: string;
+}
+const {basePath} = Astro.props;
+---
+<!--
+  Category navigation (COLL-7): every product type, the one you are in marked (aria-current "page" on the type itself,
+  "true" on one of its subcategories; set by the page script from ?categorie=). Links to other collections, never a
+  filter. Wide: a vertical list; narrow: a sideways row of pills with a small decorative picture.
+-->
+<nav aria-label="Categorieën" data-category-nav class="max-[900px]:-mx-(--ds-grid-margin-sm) max-[900px]:overflow-x-auto max-[900px]:px-(--ds-grid-margin-sm) max-[900px]:py-1 max-[900px]:[scrollbar-width:none]">
+  <ul class="m-0 list-none p-0 max-[900px]:flex max-[900px]:gap-2">
+    {catalogue.map(type => (
+      <li>
+        <a href={`${basePath}?${new URLSearchParams({categorie: type.name})}`} data-category-link={type.name} class="flex min-h-11 items-center rounded-(--ds-radius-sm) px-3 text-foreground no-underline hover:not-aria-[current]:bg-surface-sunken aria-[current]:bg-nav aria-[current]:font-bold aria-[current]:text-nav-foreground max-[900px]:rounded-full max-[900px]:border max-[900px]:border-border max-[900px]:bg-surface-raised max-[900px]:text-sm max-[900px]:whitespace-nowrap max-[900px]:aria-[current]:border-nav max-[900px]:aria-[current]:bg-nav">
+          {type.image && <span class="mr-2 -ml-2 hidden size-8 shrink-0 overflow-hidden rounded-full bg-surface-raised max-[900px]:block"><img src={type.image.src} alt="" loading="lazy" decoding="async" width="32" height="32" class="block size-full object-contain" /></span>}
+          {type.name}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

@@ -22,7 +22,7 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "@2digits/liquid#build": {
+    "@tupak/liquid#build": {
       "dependsOn": [],
       "inputs": [
         "styles/**",
@@ -44,7 +44,7 @@
       "dependsOn": ["^build"],
       "cache": false
     },
-    "@2digits/liquid#check": {
+    "@tupak/liquid#check": {
       "dependsOn": ["build"],
       "cache": false
     },
@@ -52,7 +52,7 @@
       "cache": false,
       "persistent": true
     },
-    "@2digits/liquid#dev": {
+    "@tupak/liquid#dev": {
       "dependsOn": ["build"],
       "cache": false,
       "persistent": true,

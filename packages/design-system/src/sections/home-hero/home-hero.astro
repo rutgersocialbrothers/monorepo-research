@@ -1,0 +1,28 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import Link from "../../components/link/link.astro";
+import type {SectionImage, SectionLink, SectionPoint} from "../homepage.contract";
+interface Props {
+  title: string;
+  accent?: string;
+  text?: string;
+  eyebrow?: string;
+  image?: SectionImage;
+  actions?: ReadonlyArray<SectionLink>;
+  points?: ReadonlyArray<SectionPoint>;
+  heading?: "h1" | "h2";
+}
+const {title, accent, text, eyebrow, image, actions = [], points = [], heading: Heading = "h1"} = Astro.props;
+---
+<section class="bg-gradient-to-b from-surface-band to-background py-10 md:py-16">
+  <div class:list={["container-page grid items-center gap-8", image && "lg:grid-cols-[1.15fr_1fr]"]}>
+    <div class="min-w-0">
+      {eyebrow && <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-foreground-link">{eyebrow}</p>}
+      <Heading class="max-w-3xl text-4xl leading-tight text-foreground-heading md:text-5xl lg:text-6xl">{title}{accent && <> <span class="text-foreground-link">{accent}</span></>}</Heading>
+      {text && <p class="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">{text}</p>}
+      {actions.length > 0 && <div class="mt-7 flex flex-wrap gap-3">{actions.map((action, index) => <Link href={action.href} appearance="button" variant={index === 0 ? "nav" : "outline"}>{action.label}<span class="ml-3 inline-flex"><Icon name="arrow-right" size={16} /></span></Link>)}</div>}
+      {points.length > 0 && <ul class="mt-9 grid gap-x-6 gap-y-5 sm:grid-cols-2">{points.map(point => <li class="flex min-w-0 items-start gap-3"><span class="mt-1 text-foreground-link"><Icon name={point.icon ?? "check"} size={20} /></span><span><strong class="block text-sm font-semibold">{point.title}</strong>{point.text && <span class="mt-1 block text-xs leading-relaxed text-muted-foreground">{point.text}</span>}</span></li>)}</ul>}
+    </div>
+    {image && <img src={image.src} alt={image.alt} width="1254" height="1254" fetchpriority="high" decoding="async" class="mx-auto aspect-square w-full max-w-xl rounded-(--ds-radius-lg) object-contain [mix-blend-mode:var(--media-blend-mode)]" />}
+  </div>
+</section>

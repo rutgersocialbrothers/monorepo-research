@@ -2,7 +2,7 @@
 import "../styles/global.css";
 import Icon from "../components/icon/icon.astro";
 interface Props { title?:string; description?:string; }
-const { title="Tupak styleguide",description="A Tupak design workbench with provisional starter tokens, components and scoped light and dark modes." }=Astro.props;
+const { title="Tupak styleguide",description="A Tupak candidate design workbench with Instrument Sans, reusable compositions and scoped light and dark modes. Not a production-approved design." }=Astro.props;
 ---
 <!doctype html>
 <html lang="en" data-theme="tupak" class="light">
@@ -25,7 +25,7 @@ try {
  </div>
 </div></header>
 <slot />
-<footer class="border-t border-border"><div class="container-page flex flex-wrap items-center justify-between gap-2 py-8 text-xs text-muted-foreground"><span>Tupak styleguide · provisional starter tokens</span><span>v0.1 · Astro</span></div></footer>
+<footer class="border-t border-border"><div class="container-page flex flex-wrap items-center justify-between gap-2 py-8 text-xs text-muted-foreground"><span>Tupak styleguide · candidate design, not production-approved</span><a href="/preview" class="underline underline-offset-2">Composed preview</a><span>v0.1 · Astro</span></div></footer>
 <p id="copy-status" class="sg-toast" role="status" aria-live="polite"></p>
 <script>
  import {initStyleguide} from "../styleguide/behavior";

@@ -1,0 +1,55 @@
+---
+import Checkbox from "../../components/checkbox/checkbox.astro";
+import Icon from "../../components/icon/icon.astro";
+import {buttonBaseClass, buttonSizeClass, buttonVariantClass} from "../../components/button/button.styles";
+import BoxPreview from "../size-finder/box-preview.astro";
+import MeasureField from "../size-finder/measure-field.astro";
+import RangeField from "./range-field.astro";
+import {checkboxFilters, rangeFilters, sizeClassStep} from "./collection.data";
+const summaryClass = "flex min-h-12 cursor-pointer list-none items-center gap-2 rounded-(--ds-radius-sm) [&::-webkit-details-marker]:hidden";
+const chevronClass = "ml-auto text-muted-foreground transition-transform duration-(--ds-duration-fast) group-open:rotate-180 motion-reduce:transition-none";
+---
+<!--
+  Filter panel (snippets/filter-sidebar.html, 6f9c7e2). A plain GET form whose input names are the real Shopify
+  parameter names, so every state has a URL. Applies as you change it; the page script filters the example cards and
+  writes the same parameters to the address. The keuzehulp block on top takes three minimum inner sizes in
+  millimetres, matched by 100 mm size class (filter.v.m.custom.<dimension>_klasse), replacing the earlier
+  dimension range sliders.
+-->
+<button type="button" data-filter-toggle aria-expanded="false" aria-controls="collection-filters" class:list={[buttonBaseClass, buttonVariantClass.secondary, buttonSizeClass.sm, "justify-self-start min-[901px]:hidden"]}>Filters<span data-filter-count></span></button>
+<form id="collection-filters" method="get" aria-label="Filter producten" data-filters class="flex flex-col gap-6 rounded-(--ds-radius-lg) border border-border bg-surface-raised p-5 not-data-open:max-[900px]:hidden min-[901px]:sticky min-[901px]:top-4 min-[901px]:max-h-[calc(100vh-2rem)] min-[901px]:overflow-y-auto">
+  <div data-size-finder data-size-step={sizeClassStep} class="grid gap-3">
+    <h3 class="text-xl">Keuzehulp</h3>
+    <p class="m-0 text-sm text-muted-foreground">Minimale binnenmaat in millimeter. We tonen dozen vanaf die maat, in stappen van 100 mm.</p>
+    <BoxPreview unit="mm" />
+    <div class="mt-2 grid gap-3">
+      <MeasureField id="sf-lengte" name="lengte" label="Lengte" description=", minimale binnenmaat in millimeter" unit="mm" step="1" sizeInput />
+      <MeasureField id="sf-breedte" name="breedte" label="Breedte" description=", minimale binnenmaat in millimeter" unit="mm" step="1" sizeInput />
+      <MeasureField id="sf-hoogte" name="hoogte" label="Hoogte" description=", minimale binnenmaat in millimeter" unit="mm" step="1" sizeInput />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <h3 class="text-xl">Filters</h3>
+    <p class="m-0 text-sm text-muted-foreground">Prijzen excl. btw.</p>
+    <button type="reset" data-filter-reset class="mt-2 cursor-pointer self-start rounded-(--ds-radius-sm) border-0 bg-transparent p-0 text-sm text-foreground-link underline underline-offset-2 hover:no-underline">Wis alle filters</button>
+  </div>
+
+  <div class="border-b border-border">
+    {rangeFilters.map(range => (
+      <details data-filter-part open={range.open} class="group border-t border-border">
+        <summary class={summaryClass}><span class="text-sm font-bold">{range.title}</span><span data-part-count class="text-sm font-bold text-foreground-heading tabular-nums"></span><Icon name="chevron-down" size={16} class={chevronClass} /></summary>
+        <div class="grid gap-5 pb-4"><RangeField {...range} /></div>
+      </details>
+    ))}
+    {checkboxFilters.map(filter => (
+      <details data-filter-part class="group border-t border-border">
+        <summary class={summaryClass}><span class="text-sm font-bold">{filter.title}</span><span data-part-count class="text-sm font-bold text-foreground-heading tabular-nums"></span><Icon name="chevron-down" size={16} class={chevronClass} /></summary>
+        <fieldset class="m-0 flex min-w-0 flex-col border-0 p-0 pb-4">
+          <legend class="sr-only">{filter.title}</legend>
+          {filter.options.map(option => <Checkbox name={filter.name} value={option.value} label={option.label} />)}
+        </fieldset>
+      </details>
+    ))}
+  </div>
+</form>

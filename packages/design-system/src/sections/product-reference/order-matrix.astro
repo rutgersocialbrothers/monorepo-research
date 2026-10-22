@@ -1,0 +1,76 @@
+---
+import Icon from "../../components/icon/icon.astro";
+import {buttonBaseClass, buttonSizeClass, buttonVariantClass} from "../../components/button/button.styles";
+import {productVariants} from "./product.data";
+import {amount, euro, sizeLabel} from "./quantity";
+const columns = [1, 2, 3, 4, 5] as const;
+const stockDot = {in: "bg-success", lead: "bg-warning", out: "bg-border-strong"} as const;
+const stepButton = "grid size-10 cursor-pointer place-items-center border-0 bg-transparent text-foreground hover:bg-surface-sunken";
+function spoken(size: {l: number; b: number; h: number}) {
+  return `${size.l} bij ${size.b} bij ${size.h}`;
+}
+---
+<!--
+  "Alle maten" order matrix (MTRX-1; snippets/order-matrix.html 6f9c7e2): every size a row with its own breaks, each
+  price cell carrying its own threshold so rows may break at different quantities (a dash where a row has fewer).
+  Quantities snap to whole bundles from the minimum when a field is left, and the note says so. One button for all
+  rows in a bar that sticks while the table is in view. Below 1400px every row is a card. On the grey band the table
+  is a white panel without a line (the flat trial). SIMULATION: no cart; the button only reports what would happen.
+-->
+<section id="alle-maten" aria-labelledby="alle-maten-title" class="grid gap-6">
+  <div>
+    <p class="m-0 mb-2 text-sm font-bold text-muted-foreground">Meerdere maten in één keer</p>
+    <h2 id="alle-maten-title" class="text-3xl">Alle maten</h2>
+  </div>
+  <div data-order-matrix class="rounded-(--ds-radius-lg) bg-surface-raised max-[1399px]:bg-transparent">
+    <table class="w-full border-collapse text-sm tabular-nums max-[1399px]:block [&_td]:px-3 [&_td]:py-3 [&_th]:px-3 [&_th]:py-3 [&_thead_th]:text-left [&_thead_th]:align-bottom [&_thead_th]:text-xs [&_thead_th]:font-bold [&_thead_th]:text-muted-foreground [&_tbody_tr]:border-t [&_tbody_tr]:border-border max-[1399px]:[&_caption]:block max-[1399px]:[&_tbody]:grid max-[1399px]:[&_tbody]:gap-3 max-[1399px]:[&_tbody_tr]:grid max-[1399px]:[&_tbody_tr]:grid-cols-2 max-[1399px]:[&_tbody_tr]:gap-x-3 max-[1399px]:[&_tbody_tr]:rounded-(--ds-radius-lg) max-[1399px]:[&_tbody_tr]:border-0 max-[1399px]:[&_tbody_tr]:bg-surface-raised max-[1399px]:[&_tbody_tr]:p-3 max-[1399px]:[&_tbody_tr>*]:block max-[1399px]:[&_tbody_tr>*]:px-1 max-[1399px]:[&_tbody_tr>*]:py-1 max-[1399px]:[&_td[data-label]]:before:block max-[1399px]:[&_td[data-label]]:before:text-xs max-[1399px]:[&_td[data-label]]:before:text-muted-foreground max-[1399px]:[&_td[data-label]]:before:content-[attr(data-label)] max-[1399px]:[&_thead]:sr-only min-[700px]:max-[1399px]:[&_tbody_tr]:grid-cols-5">
+      <caption class="caption-bottom p-3 text-left text-xs text-muted-foreground">Prijzen per stuk, excl. btw. Maten zijn binnenmaten in millimeters. De prijs volgt het aantal dat je invult.</caption>
+      <thead>
+        <tr>
+          <th scope="col" rowspan="2">Binnenmaat L×B×H</th>
+          <th scope="col" rowspan="2">Kwaliteit</th>
+          <th scope="col" rowspan="2">Bundel</th>
+          <th scope="col" rowspan="2">Pallet</th>
+          <th scope="col" rowspan="2">Voorraad</th>
+          <th scope="colgroup" colspan="5" class="border-b border-border">Prijs per stuk <em class="font-normal">excl. btw, vanaf het aantal in de cel</em></th>
+          <th scope="col" rowspan="2">Aantal</th>
+          <th scope="col" rowspan="2">Subtotaal</th>
+        </tr>
+        <tr>{columns.map(column => <th scope="col" id={`am-t${column}`}>Staffel {column}</th>)}</tr>
+      </thead>
+      <tbody>
+        {productVariants.map(variant => (
+          <tr data-matrix-row={variant.sku}>
+            <th scope="row" class="text-left max-[1399px]:col-span-full"><span class="block text-base font-bold text-foreground-heading">{sizeLabel(variant.size)}</span><span class="block text-xs font-normal text-muted-foreground">Art.nr. {variant.sku}</span></th>
+            <td data-label="Kwaliteit">{variant.kwaliteit}</td>
+            <td data-label="Bundel">{amount(variant.step)} st.{variant.moq !== variant.step && ` · min. ${amount(variant.moq)}`}</td>
+            <td data-label="Pallet">{amount(variant.pallet)} st.</td>
+            <td class="max-[1399px]:col-span-2"><span class="inline-flex items-center gap-2 text-muted-foreground"><span aria-hidden="true" class:list={["size-2 shrink-0 rounded-full", stockDot[variant.stock]]}></span>{variant.stockLabel}</span></td>
+            {columns.map((column, index) => {
+              const tier = variant.tiers[index];
+              if (!tier) {
+                return <td headers={`am-t${column}`} class="text-muted-foreground max-[1399px]:hidden">—</td>;
+              }
+              const pallets = tier.min % variant.pallet === 0 ? tier.min / variant.pallet : 0;
+              return <td headers={`am-t${column}`} data-matrix-price class="rounded-(--ds-radius-sm) data-active:bg-surface-brand data-active:font-bold"><span class="block text-xs text-muted-foreground">{pallets ? `${pallets} pallet${pallets > 1 ? "s" : ""}` : `${amount(tier.min)}+`}</span>{euro(tier.price)}</td>;
+            })}
+            <td class="max-[1399px]:col-span-2">
+              <div class="inline-flex items-center overflow-hidden rounded-(--input-radius) border border-input bg-surface-raised">
+                <button type="button" data-step="-1" aria-label={`Minder, maat ${spoken(variant.size)}`} class={stepButton}><Icon name="minus" size={16} /></button>
+                <input type="number" min="0" step={variant.step} value="0" inputmode="numeric" aria-label={`Aantal, maat ${spoken(variant.size)}, per bundel van ${variant.step}, minimaal ${variant.moq}`} data-matrix-qty class="h-10 w-16 [appearance:textfield] border-0 bg-transparent text-center text-base text-foreground tabular-nums [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
+                <button type="button" data-step="1" aria-label={`Meer, maat ${spoken(variant.size)}`} class={stepButton}><Icon name="plus" size={16} /></button>
+              </div>
+            </td>
+            <td data-label="Subtotaal" data-matrix-sub class="font-bold data-set:text-foreground-heading">—</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <div class="sticky bottom-0 z-10 flex flex-wrap items-center justify-end gap-x-6 gap-y-2 rounded-b-(--ds-radius-lg) border-t border-border bg-surface-raised p-4 max-[1399px]:mt-3 max-[1399px]:rounded-(--ds-radius-lg) max-[1399px]:shadow-(--ds-shadow-md)">
+      <p class="m-0 flex items-baseline gap-2 font-bold">Totaal <span class="font-normal text-muted-foreground">excl. btw</span><b data-matrix-total class="text-xl text-foreground-heading">{euro(0)}</b></p>
+      <p class="m-0 text-sm text-muted-foreground"><span data-matrix-count>Nog geen maat gekozen</span> <span data-matrix-incl></span></p>
+      <button type="button" data-matrix-submit disabled class:list={[buttonBaseClass, buttonVariantClass.primary, buttonSizeClass.lg]}><Icon name="shopping-cart" size={16} />In winkelwagen</button>
+    </div>
+  </div>
+  <p data-matrix-note aria-live="polite" class="m-0 text-sm font-bold text-foreground-heading empty:hidden"></p>
+</section>

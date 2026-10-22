@@ -1,70 +1,95 @@
 # Tupak workspace decisions
 
-## Native theme boundary
+Each entry records what was decided and why. Operational rules for agents live in [AGENTS.md](../AGENTS.md); delivery procedure in [Shopify delivery](shopify-deployment.md).
 
-The project identity is `@tupak/shopify-theme`. `apps/liquid` is the native Shopify theme root under the existing `@2digits/liquid` tooling namespace; the independent private `@tupak/design-system` Astro workbench remains separate. Preserve repository identity/history, merchant state, ownership and licensing. Files and local configuration do not authorize account, Git or store changes. The initial commit is intended to contain the complete approved codebase; no staging, commits or pushes are authorized while preparing it.
+## 1. Native theme, separate workbench
 
-| Source | Ownership |
-| --- | --- |
-| `apps/liquid` | Native theme layouts, settings, merchant state, templates/groups, snippets, blocks, sections and locales |
-| `apps/liquid/styles/tokens.css` | Merchant-aware CSS utility tokens and mappings |
-| `apps/liquid/snippets/design-button-classes.liquid` | Authored complete button utility selection |
-| `packages/design-system` | Tupak designer workbench, provisional tokens, framework-free contracts and canonical Astro references |
+**Decision.** The workspace (`@tupak/shopify-theme`) holds two independent packages under the `@tupak` scope:
 
-Theme files are authored directly in their Shopify folders. Existing filenames, schema/settings IDs, editor attributes, merchant composition and locale keys are retained. Storefront and schema translations live in the app locale files, including the unchanged `liquid_components` namespace. Shopify CLI loads only supported theme folders, so app metadata and authored `styles/` are not uploaded. The repository root is not a theme root; do not enable repository-root Shopify GitHub synchronization.
+| Package                | Path                     | Role                                                                                       |
+| ---------------------- | ------------------------ | ------------------------------------------------------------------------------------------ |
+| `@tupak/liquid`        | `apps/liquid`            | Native Shopify theme root, authored directly in Shopify's folders                          |
+| `@tupak/design-system` | `packages/design-system` | Designer workbench: candidate tokens, framework-free contracts, canonical Astro references |
 
-Use private ESM manifests, centralized pins, Turbo tasks and mise. Installation/check/build work without client infrastructure. No CMS, Storybook, automatic secret pulls, project IDs, broad hoists or type-error suppression are added.
+The repository root is not a theme root; don't enable root-level Shopify GitHub sync. Shopify CLI uploads only supported theme folders, so package metadata and authored `styles/` stay local.
 
-## Tools and finite CSS lifecycle
+**Why.** The theme stays deployable with plain Shopify tooling, and design exploration can move fast without risking the storefront. No CMS, Storybook, project IDs, broad hoists or type-error suppression.
 
-The lockfile/catalog is authoritative. mise supplies Node **24.20.0** and pnpm **12.1.0**. Tailwind is **4.3.3**; Turbo and workspace Shopify CLI are pinned. Root uses `typescript-native` **7.0.2**; Node24 executes erasable TypeScript scripts directly, including dependency-free CI mapping before installation. Astro's checker uses package-scoped TypeScript 6 and composes `@2digits/tsconfig` with `astro/tsconfigs/strict`. Release-age exceptions stay scoped to exact Shopify CLI/Vitest pins.
+## 2. Pinned toolchain
 
-`styles/tailwind.css` imports app tokens with explicit theme source discovery and no Preflight. A finite native Tailwind build writes Git-ignored `apps/liquid/assets/tailwind.css`; that asset must exist for previews and uploads. Generated CSS is excluded from build inputs. One writer owns CSS; stop development before another build/check.
+**Decision.** The lockfile and pnpm catalog are authoritative. mise pins Node 24.20.0 and pnpm 12.1.0; Tailwind 4.3.3, Turbo and the Shopify CLI are pinned. Root tooling is erasable TypeScript run directly by Node 24 and checked with `typescript-native` (TS 7). Astro's checker needs the TS compiler API, so the workbench uses package-scoped TS 6 (`@2digits/tsconfig` + `astro/tsconfigs/strict`). Release-age exceptions are limited to exact Shopify CLI and Vitest pins.
 
-Root `dev` and `dev:liquid` use standard Turbo package watching to rerun finite CSS compilation on nonignored app-file changes. Task-input watch mode is disabled: installed Turbo 2.11.5 missed both tracked and untracked source deletions in that mode; standard watching passed edit/add/delete/recovery probes. Build inputs/outputs remain declared, and ignored generated CSS, env files and Shopify state do not trigger rebuilds. Some unrelated app-file changes also compile CSS. The persistent, noninterruptible native Shopify CLI depends on the initial build, watches the app theme itself and is not restarted for each theme edit. `dev:liquid:local` watches CSS builds only, with no browser/login/upload. Native Astro owns its independent watcher; delivery stays outside Turbo.
+**Why.** Reproducible installs locally and in CI, with no global tools.
 
-There is no custom theme watcher, replacement framework or process supervisor. Standard Ctrl-C handles Turbo/CLI shutdown; custom draining/recovery guarantees are not provided. Fix compile errors before relying on preview CSS. Restart after env changes; install/restart after dependency, lockfile, catalog or mise changes.
+## 3. Finite CSS build, native watchers
 
-## Single Tupak workbench and provisional baseline
+**Decision.** `apps/liquid/styles/tailwind.css` imports app tokens with explicit sources and no Preflight. A finite Tailwind CLI build writes the Git-ignored `assets/tailwind.css`, which must exist before preview or upload. One process writes CSS at a time.
 
-`packages/design-system/src/styles/tokens.css` is the workbench's CSS-first value authority; `src/tokens/reference.ts` describes names/categories and is not another value store. Framework-free contracts describe purpose, props/defaults, content, states, semantics and accessibility. Astro families implement canonical references, and sections provide generic token-led editorial compositions with genuinely optional media. No source-specific business facts, remote brand assets or fabricated Tupak claims belong in default samples.
+`dev` and `dev:liquid` use Turbo's standard package watcher to rerun that build on app-file changes; the persistent Shopify CLI starts after the first build and watches the theme itself. `dev:liquid:local` only rebuilds CSS. Astro runs its own watcher. Shutdown is plain Ctrl-C; no custom supervisor.
 
-There is one theme, `{ id: 'tupak', label: 'Tupak' }`, with retained `Theme` and `ColorMode` types. No tenant chooser, alternate presets, legacy aliases or theme-persistence migration are supported. Root identity normalizes to `data-theme="tupak"`; only mode persists under `tupak-design-system-mode`. The four public source-export shapes remain `tokens.css`, `themes`, `contracts` and `<family>-contract` under `@tupak/design-system`.
+**Why.** Turbo 2.11.5's task-input watch mode missed source deletions, and the standard watcher passed add/edit/delete/recovery probes. Ignored outputs (CSS, env, Shopify state) don't retrigger builds, so there's no feedback loop. The trade-off is that some unrelated app-file changes also rebuild CSS.
 
-The yellow starter palette and Nunito/Lobster fonts remain **provisional, not approved Tupak design**. Preserve the effective baseline unless a designer-approved brief changes it. Light/dark classes, inherited `color-scheme`, `light-dark()` values, pre-paint valid mode restoration and default light behavior remain independently intact. Whether Tupak needs dark mode and any new mode values require designer decisions; support is **TBD**, not approved by retaining the mechanics.
+## 4. One candidate theme in the workbench
 
-The [designer workflow](designer-workflow.md), [package guide](../packages/design-system/README.md), [contract](templates/component-contract.md) and [handoff](templates/design-handoff.md) describe review and implementation acceptance. Designers approve intent; developers accept supported behavior. AI summaries and automated findings grant neither approval.
+**Decision.** The workbench has a single theme, `{ id: 'tupak', label: 'Tupak' }`, with retained `Theme` and `ColorMode` types and no tenant chooser, presets or aliases. Theme identity does not persist. The optional UI preferences are colour mode (`tupak-design-system-mode`), overview grid/list (`tupak-overview-view`) and collection columns/list (`tupak-collection-columns`); filters and sorting live in the URL, not local storage. `src/styles/tokens.css` holds the values; `src/tokens/reference.ts` only describes them.
 
-## No-shadcn policy and required gates
+The light palette, Instrument Sans, sizing and treatments are manually adapted from `JPPACQ/tupak-design-system` `main` `afd9c66`. They are **candidates, not approved branding**. Button and Link use red for commitment actions, pale blue for support, and a shared navy `nav` variant; Product Card was the 22nd family, with Promo Card added by the subsequent reference update. `/preview` follows the prototype's `index.html` section selection: header-v2, hero, category-slider-v2, banner-pair, product-carousel v1, image-with-text, reviews, publication-feed, FAQ and footer-v3. The unresolved keuzehulp and framed/promo v2 rail remain on dedicated demo routes and in Sections, not on the homepage. Native composition is not pixel-identical; the [integration record](designer-workflow.md#native-adaptations-versus-upstream) records deliberate behavior and presentation differences. Asset provenance is in `src/sections/reference-assets.ts`; rights remain unresolved.
 
-No shadcn configuration, components, dependencies, plugins or lint rules belong in this workspace. Preserve native Better Tailwind validation with exactly `better-tailwindcss/no-unknown-classes` and `better-tailwindcss/no-concatenated-classes`; do not suppress findings, add lint-only scaffolds or change provisional values to fabricate a green gate.
+The full subsequent prototype delta `afd9c66..6f9c7e2` is imported into Astro, including trial variants and local filtering/product simulations, rather than preselecting production behavior. `/overview` exposes those references; new imagery has a separate provenance manifest. Final/provisional distinctions, generated-image caveats and known animation/accessibility concerns stay explicit. No Liquid implementation, merchant settings or Shopify data is imported. Existing workbench `/` remains; `/prototype` provides the prototype-entry redirect.
 
-The workbench gate retains five ordered, uncached leaves: formatting, Astro types, source/native-class lint, static demo build and browser tests. Root checks select these alongside root script types/Vitest and Liquid CSS build/native Theme Check, with aggregate failure reporting. Chromium is a separate prerequisite; both CI check jobs install it and Linux runtime dependencies without delivery credentials. Root Vitest retains local configuration and lossless dotenv regression coverage. Report only actually exercised checks; no historical result establishes the native cutover's current verification status.
+Light/dark mechanics (`light-dark()`, inherited `color-scheme`, pre-paint mode restoration, light default) are kept, with the prior dark colours preserved rather than redesigned. Whether Tupak ships dark mode is **TBD**.
 
-## Manual Liquid adaptation and merchant authority
+**Why.** Designers need a concrete baseline to react to, without the repo implying decisions nobody has made.
 
-`apps/liquid/styles/tokens.css` remains the Liquid CSS authority with merchant custom-property mappings/fallbacks. No workbench CSS import, dependency, token generator, recipe generator or automatic application to Liquid is introduced. Liquid build/watch/delivery never depend on the workbench.
+## 5. Public Tailwind config export
 
-`apps/liquid/snippets/design-button-classes.liquid` selects complete authored utility strings for primary/secondary × small/medium/large, defaulting independently to primary/medium. Native button markup preserves escaping, blank guards, disabled behavior, form `name`/`value`, focus-visible, reduced motion and long-label handling. Developers manually implement approved visual/behavioral intent in app tokens and native Liquid after explicit contract/handoff.
+**Decision.** `@tupak/design-system/tokens.css` is a reusable Tailwind 4 CSS-first configuration: runtime variables, modes and `@theme inline` mappings, with no font imports or asset URLs. The workbench consumes it through the same public export. Consumers own fonts, their Tailwind engine, Preflight and sources; split no-Preflight imports must declare `@layer theme, base, components, utilities;` first. Utility names are global and unprefixed, so import order resolves overlaps. Exports are exactly `tokens.css`, `themes`, `contracts` and `<family>-contract`.
 
-Liquid remains Shopify-native: component CSS in `{% stylesheet %}`, small plain-JavaScript enhancements in `{% javascript %}`, native bundling/subsetting/CDN delivery. No browser TypeScript pipeline or Vite integration is added. The homepage uses native primitives; `design-system-demo` and `page.design-system` remain real editor surfaces. Local compilation creates no pages/template assignments and proves no platform/editor behavior. Review actual authorized URLs separately from Astro evidence.
+**Why.** A future Liquid consumer can keep Shopify-hosted fonts and the plain Tailwind CLI without Vite or the Astro build. This does not authorize that integration; merchant values must still override the underlying runtime tokens, not only the `--color-*` mappings.
 
-## Native configuration, passwords and store safety
+## 6. Manual Liquid adaptation, merchant authority
 
-See [root setup](../README.md) and [Liquid setup](../apps/liquid/README.md). Preview invokes Node24 with `--env-file-if-exists=.env.local` and the pinned CLI's `theme dev --path .` from the app. Configure `SHOPIFY_FLAG_STORE` and optional `SHOPIFY_FLAG_STORE_PASSWORD` in ignored local config or shell; shell values win. `SHOPIFY_CLI_THEME_TOKEN` remains separate Theme Access authentication. Developers own native CLI configuration; no hostname predicate, flag sanitizer or replacement guard is introduced. Shopify CLI handles target format, authentication and missing-input behavior.
+**Decision.** Liquid owns its tokens: merchant settings are published by `snippets/css-variables.liquid`, `assets/critical.css` binds them to the Tupak `--tp-*` roles (see 11), and `apps/liquid/styles/tokens.css` only maps Tailwind names to those roles. Liquid never imports workbench CSS, depends on the workbench or uses token/recipe generators. `snippets/design-button-classes.liquid` selects complete utility strings for primary/secondary × small/medium/large, each defaulting independently. Liquid stays Shopify-native: `{% stylesheet %}`, small plain JS in `{% javascript %}`, Shopify bundling and CDN. `design-system-demo` and `page.design-system` are real editor surfaces.
 
-Preview creates/replaces the user's remote development theme, not a CI/live ID. Agents require direct exact-store approval before starting it even when configuration exists. Native CLI behavior does not grant authorization.
+**Why.** Merchant settings must keep precedence, and the storefront must not inherit unapproved candidate values automatically. Designers approve intent; developers accept behavior after an explicit [contract](templates/component-contract.md) and [handoff](templates/design-handoff.md) (see the [designer workflow](designer-workflow.md)). AI summaries and automated findings grant neither.
 
-`pnpm github:env-pull` uses `gh` and the current repository to read an Environment's required `SHOPIFY_STORE` and optional `SHOPIFY_THEME_PASSWORD` **variables**, not secrets or theme IDs. It writes only `SHOPIFY_FLAG_STORE` and optional `SHOPIFY_FLAG_STORE_PASSWORD` into local ignored config, preserving unrelated settings/auth. Missing password preserves manual local configuration; empty clears it. Exact native Node dotenv roundtrip is required before updating the file or the update fails safely. Passwords are never logged or passed as command arguments; variables are readable to authorized users, so use local config when that visibility is inappropriate. The password is storefront access, not a Theme Access token. Default Environment is the `develop` mapping (`development`); `--environment <name>` overrides it. Pulling configuration is not Shopify authentication or upload permission.
+## 7. Quality gates
 
-## Protected native CI delivery
+**Decision.** No shadcn configuration, components, dependencies or lint rules. The workbench gate is five ordered, uncached steps: format → Astro types → source/native-class lint → static demo build → browser tests. The class lint enables exactly `better-tailwindcss/no-unknown-classes` and `better-tailwindcss/no-concatenated-classes`. Root `pnpm check` adds script types, Vitest (including dotenv round-trip regressions) and the Liquid CSS build + Theme Check, reporting all failures together. The browser lane also tests an isolated external consumer of the public CSS export (utilities, nested overrides, modes, source ownership, consumer-owned Preflight).
 
-[Shopify delivery](shopify-deployment.md) owns operational controls. Exact branches map to Environments whose variables hold store/existing numeric theme ID and whose secrets hold scoped tokens. Delivery remains disabled until authorized targets and external protections are verified. Mappings do not prove account rules, credentials, subscriptions or theme roles.
+**Why.** Findings are fixed, not suppressed or worked around by changing provisional values.
 
-GitHub Actions reads the branch's Environment from `deployments/shopify.json` and invokes the pinned Shopify CLI directly against `apps/liquid`, including compiled CSS, after checks. Protected-branch and deployment-activation gates remain workflow controls. Environment concurrency serializes jobs but does not reject an older queued commit. Push excludes remote `settings_data.json`; code-owned templates/groups may overwrite editor composition. Only production allows updating an already-live theme; no command publishes a theme. Manual runs pull into private review snapshots, never source. Native local push/pull remains available, with exact-target/action approval still required for consequential operations.
+## 8. Local store configuration
 
-## Evidence boundary
+**Decision.** Preview runs `node --env-file-if-exists=.env.local` with the pinned CLI's `theme dev --path .` against the user's own development theme. `SHOPIFY_FLAG_STORE` and optional `SHOPIFY_FLAG_STORE_PASSWORD` come from ignored `.env.local` or the shell (shell wins); `SHOPIFY_CLI_THEME_TOKEN` is separate Theme Access auth. There is no custom hostname validator or flag sanitizer; Shopify CLI validates its own inputs.
 
-Compilation and Theme Check do not certify visual correctness, complete accessibility, checkout or Shopify/editor parity. Workbench browser evidence is separate from native Liquid behavior and does not approve Tupak branding. Record current checks and exact authorized preview evidence in the relevant handoff, including failures and unverified gaps. Configuration and prior observations never authorize future remote actions. Preserve the sibling source; no store uploads, remote changes, staging, commits or pushes are implied by this cutover.
+`pnpm github:env-pull` reads the `develop` → `development` Environment (or `--environment <name>`) **variables** `SHOPIFY_STORE` and optional `SHOPIFY_THEME_PASSWORD` via `gh`, and writes only the two local keys. A missing password keeps the local value; an empty one clears it. Values must round-trip exactly through Node's dotenv parser or nothing is written, and passwords are never logged or passed as arguments. Environment variables are readable by authorized users; use local config when that's inappropriate.
 
-Native cutover verification: root `pnpm check --ui=stream` passed all nine tasks, including 16 dotenv regressions, 23 Chromium workbench tests, and native Theme Check (44 files, zero offenses). The isolated smoke used real Turbo/Tailwind with a local fake Shopify process and synthetic credentials: six watch builds plus one cold build proved initial CSS before CLI startup, CSS edits, new Liquid utilities, deletion/pruning, visible invalid-CSS failure preserving last-good output, recovery, one CLI instance, no feedback loop and clean SIGINT shutdown. A focused probe also verified tracked deletions and that ignored CSS/env/Shopify-state changes do not rebuild. These probes did not exercise Shopify authentication, remote synchronization, storefront rendering or the theme editor; those require an authorized store preview.
+**Why.** Native configuration with no bespoke layer to maintain. Configuration is never upload permission: agents need exact-store approval before starting a preview.
+
+## 9. Protected CI delivery
+
+**Decision.** `deployments/shopify.json` maps exact branches to GitHub Environments (variables: store, existing theme ID; secret: scoped Theme Access token). Delivery is off until `SHOPIFY_DEPLOY_ENABLED=true` and only runs on protected mapped branches. CI checks pull requests and pushes to mapped branches only. The delivery job rechecks its own checkout, then runs the pinned CLI against `apps/liquid` including compiled CSS, with credentials only in that step. Push ignores `settings_data.json`. Before pushing, delivery pulls the store theme and fails if it has changes the repository hasn't incorporated since the last delivered commit (recorded in a CI-owned `snippets/tupak-deployment.liquid` marker), so editor changes are never silently overwritten; they must be pulled and committed first. Only production may update an already-live theme, and nothing publishes a theme. Manual runs pull into private review artifacts, never source. Environment concurrency serializes runs but doesn't reject an older queued commit.
+
+**Why.** GitHub protections are the delivery boundary; mappings alone don't prove account rules, credentials or theme roles.
+
+## 10. Evidence boundary
+
+**Decision.** Compilation, Theme Check and workbench browser tests do not certify visual correctness, full accessibility, checkout, or Shopify/editor parity, and they don't approve branding. Record current checks and exact authorized preview evidence (including failures and gaps) in the relevant handoff. Past results never stand in for a current run.
+
+## 11. Global theme foundation (GENE-3)
+
+**Decision.** One set of theme settings carries the brand baseline, and every consumer reads it through Tupak-owned `--tp-*` custom properties in two tiers, after the Styleguide's own tokens:
+
+1. **Merchant tier** (`snippets/css-variables.liquid`): `--tp-palette-*` colours, body/heading fonts, page width, page margin and section spacing (mobile/desktop), focus colours and width. Components never bind to `--tp-palette-*`.
+2. **Role tier** (`assets/critical.css`, layer `base`): semantic roles such as `--tp-color-text`, `--tp-color-action`, `--tp-color-border`, the type scale, radii, elevation, `--tp-page-margin` and `--tp-section-spacing`. Borders, muted text, subtle bands and hover/pressed shades are derived from the palette with `color-mix()`, so they follow setting changes. `.tp-on-inverse` rebinds the roles on brand (navy) surfaces, including the focus ring.
+
+Tailwind maps only these roles (its default colours, fonts, type sizes, radii and shadows are cleared). `critical.css` is the whole global foundation: reset, typography, tokens, page layout and the focus ring. It declares the Tailwind layer order and sits in `base`, so utilities and component stylesheets override it.
+
+Settings: logo, favicon and social sharing image; page background, text, brand, primary action, links/secondary actions, brand tint, warm and natural surfaces; body and heading fonts (Shopify font library, Instrument Sans); maximum page width; page margin and section spacing per breakpoint; focus colours and width. No colour schemes, presets or per-section overrides of global values. Skeleton's `max_page_width`, `min_page_margin` and `input_corner_radius` are replaced: the widths changed type, and radii are Styleguide tokens rather than merchant settings.
+
+Optional assets fall back without requests or empty wrappers: no logo renders the store name; no favicon emits `<link rel="icon" href="data:,">` so browsers skip `/favicon.ico`; the sharing image order is the page's own product/collection/article image, then the theme setting, then Online Store › Preferences (`page_image`), else no `og:image`.
+
+Default values come from the Styleguide at `JPPACQ/tupak-design-system` `main` `6f9c7e2` (`tokens.css`, `components.css` page gutter and band spacing), which is **in review**. They are provisional; GENE-3 cannot be Done before the Styleguide is approved. Header, footer and feature sections consume these settings and tokens; their own designs (HEAD-1, HEAD-3, footer) are out of scope.
+
+**Why.** Downstream sections (HEAD-1, HEAD-3, COLL-3, COLL-6, FAQS-3, PAGE-1) need one source for brand values instead of competing literals, and merchants need a small set of settings that visibly move every consumer. Deriving shades keeps the editor surface small; the cost is that derived shades approximate, rather than equal, the Styleguide's ramp steps.

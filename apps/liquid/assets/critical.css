@@ -1,117 +1,315 @@
-/** Critical CSS for the theme. This file is included on every page. */
-
-/* Reset styles inspired by https://www.joshwcomeau.com/css/custom-css-reset/ */
-* {
-  box-sizing: border-box;
-  margin: 0;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  min-height: 100svh;
-}
-
-html:has(dialog[scroll-lock][open], details[scroll-lock][open]) {
-  overflow: hidden;
-}
-
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
-
-input,
-textarea,
-select {
-  font: inherit;
-  border-radius: var(--style-border-radius-inputs);
-}
-
-select {
-  background-color: var(--color-background);
-  color: currentcolor;
-}
-
-dialog {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-}
-
-p {
-  text-wrap: pretty;
-}
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  overflow-wrap: break-word;
-}
-
-p:empty {
-  display: none;
-}
-
-:is(p, h1, h2, h3, h4, h5, h6):first-child,
-:empty:first-child + :where(p, h1, h2, h3, h4, h5, h6) {
-  margin-block-start: 0;
-}
-
-:is(p, h1, h2, h3, h4, h5, h6):last-child,
-:where(p, h1, h2, h3, h4, h5, h6) + :has(+ :empty:last-child) {
-  margin-block-end: 0;
-}
-
-/** Theme styles below */
-body {
-  font-family: var(--font-primary--family);
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-}
-
-/** Section layout utilities */
-
 /**
- * Setup a grid that enables both full-width and constrained layouts
- * depending on the class of the child elements.
+ * Tupak global CSS foundation. Loaded first on every layout, including the
+ * gift card, which has no Tailwind.
  *
- * By default, a minimum content margin is set on the left and right
- * sides of the section and the content is centered in the viewport to
- * not exceed the maximum page width.
+ * Scope (GENE-3): reset, base typography, the Tupak-owned `--tp-*` tokens,
+ * page layout and genuine cross-component primitives. Component CSS lives in
+ * each section/block/snippet `{% stylesheet %}`.
  *
- * When a child element is given the `full-width` class, it will span
- * the entire viewport.
+ * Two token tiers, after the Tupak Styleguide (JPPACQ/tupak-design-system
+ * `6f9c7e2`, tokens.css; in review, values provisional until approved):
+ *   1. `--tp-palette-*`, fonts, layout and focus values come from theme
+ *      settings via snippets/css-variables.liquid. Never bind components here.
+ *   2. Semantic roles below (`--tp-color-*`, `--tp-text-*`, `--tp-radius-*`,
+ *      ...). Components and Tailwind utilities bind to these only.
+ *
+ * Everything sits in `base`, the layer order Tailwind also declares, so
+ * utilities and unlayered component stylesheets override these defaults.
  */
-.shopify-section {
-  --content-width: min(
-    calc(var(--page-width) - var(--page-margin) * 2),
-    calc(100% - var(--page-margin) * 2)
-  );
-  --content-margin: minmax(var(--page-margin), 1fr);
-  --content-grid: var(--content-margin) var(--content-width) var(--content-margin);
+@layer properties, theme, base, components, utilities;
 
-  /* This is required to make <img> elements work as background images */
-  position: relative;
-  grid-template-columns: var(--content-grid);
-  display: grid;
-  width: 100%;
-}
+@layer base {
+  :root {
+    color-scheme: light;
 
-/* Child elements, by default, are constrained to the central column of the grid. */
-.shopify-section > * {
-  grid-column: 2;
-}
+    /* Colour roles. Derived shades approximate the Styleguide's zinc,
+       accent and primary steps from the merchant palette, so one setting
+       change moves every dependent shade with it. */
+    --tp-color-page: var(--tp-palette-page);
+    --tp-color-text: var(--tp-palette-ink);
+    --tp-color-text-muted: color-mix(in srgb, var(--tp-palette-ink) 70%, var(--tp-palette-page));
+    --tp-color-text-inverse: #ffffff;
+    --tp-color-text-brand: var(--tp-palette-brand);
+    --tp-color-link: var(--tp-palette-link);
+    --tp-color-border: color-mix(in srgb, var(--tp-palette-ink) 18%, var(--tp-palette-page));
+    --tp-color-border-strong: color-mix(in srgb, var(--tp-palette-ink) 58%, var(--tp-palette-page));
+    --tp-color-surface-raised: var(--tp-palette-page);
+    --tp-color-surface-subtle: color-mix(in srgb, var(--tp-palette-ink) 4.5%, var(--tp-palette-page));
+    --tp-color-surface-band: color-mix(in srgb, var(--tp-palette-ink) 3%, var(--tp-palette-page));
+    --tp-color-surface-inverse: var(--tp-palette-brand);
+    --tp-color-surface-brand: var(--tp-palette-tint);
+    --tp-color-surface-warm: var(--tp-palette-warm);
+    --tp-color-surface-warm-subtle: color-mix(in srgb, var(--tp-palette-warm) 50%, var(--tp-palette-page));
+    --tp-color-surface-natural: var(--tp-palette-natural);
 
-/* Child elements that use the full-width utility class span the entire viewport. */
-.shopify-section > .full-width {
-  grid-column: 1 / -1;
+    --tp-color-action: var(--tp-palette-action);
+    --tp-color-action-hover: color-mix(in srgb, var(--tp-palette-action) 84%, #000000);
+    --tp-color-action-active: color-mix(in srgb, var(--tp-palette-action) 70%, #000000);
+    --tp-color-action-label: #ffffff;
+    --tp-color-secondary: var(--tp-palette-tint);
+    --tp-color-secondary-hover: color-mix(in srgb, var(--tp-palette-tint) 90%, var(--tp-palette-link));
+    --tp-color-secondary-active: color-mix(in srgb, var(--tp-palette-tint) 80%, var(--tp-palette-link));
+    --tp-color-secondary-label: var(--tp-palette-link);
+    --tp-color-secondary-border: var(--tp-palette-link);
+
+    --tp-focus-color: var(--tp-palette-focus);
+    --tp-focus-offset: 2px;
+
+    /* Elevation and scrim, tinted with the brand navy as in the Styleguide. */
+    --tp-shadow-raised:
+      0 1px 2px color-mix(in srgb, var(--tp-palette-brand) 6%, transparent),
+      0 1px 3px color-mix(in srgb, var(--tp-palette-brand) 4%, transparent);
+    --tp-shadow-overlay:
+      0 2px 4px color-mix(in srgb, var(--tp-palette-brand) 6%, transparent),
+      0 8px 16px color-mix(in srgb, var(--tp-palette-brand) 8%, transparent);
+    --tp-shadow-modal:
+      0 4px 8px color-mix(in srgb, var(--tp-palette-brand) 8%, transparent),
+      0 24px 48px color-mix(in srgb, var(--tp-palette-brand) 16%, transparent);
+    --tp-color-scrim: color-mix(in srgb, var(--tp-palette-brand) 55%, transparent);
+
+    /* Type scale (Styleguide px values at a 16px root). Families and weights
+       come from the font settings. */
+    --tp-font-weight-regular: 400;
+    --tp-font-weight-bold: 700;
+    --tp-text-display-size: 3rem;
+    --tp-text-display-leading: 1.1;
+    --tp-text-h1-size: 2.25rem;
+    --tp-text-h1-leading: 1.15;
+    --tp-text-h2-size: 1.75rem;
+    --tp-text-h2-leading: 1.2;
+    --tp-text-h3-size: 1.25rem;
+    --tp-text-h3-leading: 1.3;
+    --tp-text-body-size: 1rem;
+    --tp-text-body-leading: 1.5;
+    --tp-text-small-size: 0.875rem;
+    --tp-text-small-leading: 1.45;
+    --tp-text-caption-size: 0.75rem;
+    --tp-text-caption-leading: 1.4;
+    --tp-tracking-caption: 0.04em;
+
+    --tp-radius-sm: 4px;
+    --tp-radius-md: 8px;
+    --tp-radius-lg: 12px;
+    --tp-radius-xl: 16px;
+    --tp-radius-full: 999px;
+
+    --tp-duration-fast: 100ms;
+    --tp-duration-base: 200ms;
+    --tp-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+    /* Page layout: margins step up at 900px, section spacing at 641px. */
+    --tp-page-margin: var(--tp-page-margin-mobile);
+    --tp-section-spacing: var(--tp-section-spacing-mobile);
+  }
+
+  @media (min-width: 641px) {
+    :root {
+      --tp-section-spacing: var(--tp-section-spacing-desktop);
+    }
+  }
+
+  @media (min-width: 900px) {
+    :root {
+      --tp-page-margin: var(--tp-page-margin-desktop);
+    }
+  }
+
+  /**
+   * Brand (navy) surfaces such as the header and footer. A scope, not a
+   * variant: descendants keep using the same roles, rebound for contrast.
+   */
+  .tp-on-inverse {
+    --tp-color-page: var(--tp-palette-brand);
+    --tp-color-text: var(--tp-color-text-inverse);
+    --tp-color-text-muted: color-mix(in srgb, var(--tp-color-text-inverse) 78%, var(--tp-palette-brand));
+    --tp-color-text-brand: var(--tp-color-text-inverse);
+    --tp-color-link: var(--tp-color-text-inverse);
+    --tp-color-border: color-mix(in srgb, var(--tp-color-text-inverse) 24%, var(--tp-palette-brand));
+    --tp-color-border-strong: color-mix(in srgb, var(--tp-color-text-inverse) 55%, var(--tp-palette-brand));
+    --tp-color-surface-raised: color-mix(in srgb, var(--tp-color-text-inverse) 8%, var(--tp-palette-brand));
+    --tp-color-surface-subtle: var(--tp-palette-brand);
+    --tp-color-surface-band: var(--tp-palette-brand);
+    --tp-color-surface-brand: color-mix(in srgb, var(--tp-color-text-inverse) 8%, var(--tp-palette-brand));
+    --tp-color-surface-warm: color-mix(in srgb, var(--tp-color-text-inverse) 8%, var(--tp-palette-brand));
+    --tp-color-surface-warm-subtle: color-mix(in srgb, var(--tp-color-text-inverse) 8%, var(--tp-palette-brand));
+    --tp-color-surface-natural: color-mix(in srgb, var(--tp-color-text-inverse) 8%, var(--tp-palette-brand));
+    --tp-color-action: color-mix(in srgb, var(--tp-palette-action) 60%, #ffffff);
+    --tp-color-action-hover: color-mix(in srgb, var(--tp-palette-action) 45%, #ffffff);
+    --tp-color-action-active: color-mix(in srgb, var(--tp-palette-action) 30%, #ffffff);
+    --tp-color-action-label: var(--tp-palette-ink);
+    --tp-color-secondary: color-mix(in srgb, var(--tp-palette-link) 70%, var(--tp-palette-brand));
+    --tp-color-secondary-hover: color-mix(in srgb, var(--tp-palette-link) 50%, var(--tp-palette-brand));
+    --tp-color-secondary-active: var(--tp-palette-brand);
+    --tp-color-secondary-label: var(--tp-color-text-inverse);
+    --tp-color-secondary-border: color-mix(in srgb, var(--tp-color-text-inverse) 55%, var(--tp-palette-link));
+    --tp-focus-color: var(--tp-palette-focus-inverse);
+
+    background-color: var(--tp-color-page);
+    color: var(--tp-color-text);
+  }
+
+  /* Reset, after https://www.joshwcomeau.com/css/custom-css-reset/ */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    background-color: var(--tp-color-page);
+    color: var(--tp-color-text);
+    font-family: var(--tp-font-body);
+    font-weight: var(--tp-font-body-weight);
+    font-style: var(--tp-font-body-style);
+    font-size: var(--tp-text-body-size);
+    line-height: var(--tp-text-body-leading);
+  }
+
+  html:has(dialog[scroll-lock][open], details[scroll-lock][open]) {
+    overflow: hidden;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+  }
+
+  input,
+  textarea,
+  select {
+    border-radius: var(--tp-radius-md);
+  }
+
+  select {
+    background-color: var(--tp-color-surface-raised);
+    color: currentcolor;
+  }
+
+  dialog {
+    background-color: var(--tp-color-surface-raised);
+    color: var(--tp-color-text);
+  }
+
+  /* Typography */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--tp-font-heading);
+    font-weight: var(--tp-font-heading-weight);
+    font-style: var(--tp-font-heading-style);
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: var(--tp-text-h1-size);
+    line-height: var(--tp-text-h1-leading);
+  }
+
+  h2 {
+    font-size: var(--tp-text-h2-size);
+    line-height: var(--tp-text-h2-leading);
+  }
+
+  h3 {
+    font-size: var(--tp-text-h3-size);
+    line-height: var(--tp-text-h3-leading);
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: var(--tp-text-body-size);
+    line-height: var(--tp-text-body-leading);
+  }
+
+  p {
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+  }
+
+  p:empty {
+    display: none;
+  }
+
+  small {
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  strong,
+  b {
+    font-weight: var(--tp-font-weight-bold);
+  }
+
+  a {
+    color: var(--tp-color-link);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+
+  /* One keyboard focus ring for every interactive element. */
+  :focus-visible {
+    outline: var(--tp-focus-width) solid var(--tp-focus-color);
+    outline-offset: var(--tp-focus-offset);
+  }
+
+  /* The main landmark fills the remaining height so the footer sits at the
+     bottom. It is only a skip-link target, so it shows no focus ring. */
+  body > main {
+    flex: 1 0 auto;
+  }
+
+  main[tabindex='-1']:focus {
+    outline: none;
+  }
+
+  /**
+   * Page layout. Every section is a three-column grid: direct children sit in
+   * the centred content column (at most --tp-page-width, margins included);
+   * direct `.full-width` children span the viewport.
+   */
+  .shopify-section {
+    --tp-content-width: min(
+      calc(var(--tp-page-width) - var(--tp-page-margin) * 2),
+      calc(100% - var(--tp-page-margin) * 2)
+    );
+    --tp-content-margin: minmax(var(--tp-page-margin), 1fr);
+    --tp-content-grid: var(--tp-content-margin) var(--tp-content-width) var(--tp-content-margin);
+
+    /* Lets <img> elements act as section backgrounds. */
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--tp-content-grid);
+    width: 100%;
+  }
+
+  .shopify-section > * {
+    grid-column: 2;
+  }
+
+  .shopify-section > .full-width {
+    grid-column: 1 / -1;
+  }
 }

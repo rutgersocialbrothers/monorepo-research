@@ -1,0 +1,51 @@
+---
+import DesignSystemLayout from "../layouts/DesignSystemLayout.astro";
+import SiteHeader from "../sections/site-header/site-header.astro";
+import HomeHero from "../sections/home-hero/home-hero.astro";
+import CategoryRow from "../sections/category-row/category-row.astro";
+import BannerPair from "../sections/banner-pair/banner-pair.astro";
+import ProductRail from "../sections/product-rail/product-rail.astro";
+import ImageText from "../sections/image-text/image-text.astro";
+import ReviewRail from "../sections/review-rail/review-rail.astro";
+import PublicationFeed from "../sections/publication-feed/publication-feed.astro";
+import Faq from "../sections/faq/faq.astro";
+import SiteFooter from "../sections/site-footer/site-footer.astro";
+import {referenceAssets as media} from "../sections/reference-assets";
+import {prototypeNavigation, prototypeCategories, prototypePoints, prototypeBanners, prototypeProducts, prototypeReviews, prototypePublications, prototypeFaq} from "../sections/homepage.example-data";
+import {prototypeBranches, prototypeSale} from "../sections/prototype-update.example-data";
+const catalogue = prototypeCategories.map(item => ({label: item.title, href: "#categorieen"}));
+---
+<DesignSystemLayout title="Tupak · composed candidate preview" description="A composed Astro preview of the current Tupak prototype design. Candidate artwork and explicitly labeled prototype content, not an active shop.">
+  <div lang="nl">
+    <a href="#preview-main" class="sr-only z-50 rounded-sm bg-background p-4 text-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Ga naar de inhoud</a>
+    <div class="border-b border-border bg-surface-band px-6 py-3 text-center text-xs leading-relaxed text-foreground">
+      <strong>Tupak ontwerpkandidaat</strong> · prototypevoorbeelden, geen actieve webshop. Beeldrechten en ontwerp niet productie-goedgekeurd. <a href="/#sections" class="underline underline-offset-2">Losse secties bekijken</a>
+    </div>
+    <nav class="container-page flex flex-wrap gap-4 py-4 text-sm" aria-label="Prototypepagina's">
+      <a href="/overview" class="underline underline-offset-2">Sectieoverzicht</a>
+      <a href="/branches" class="underline underline-offset-2">Branches</a>
+      <a href="/collection" class="underline underline-offset-2">Categorie · navy</a>
+      <a href="/collection-v2" class="underline underline-offset-2">Categorie · licht voorstel</a>
+      <a href="/section-image-slider" class="underline underline-offset-2">Beeldslider</a>
+      <a href="/section-keuzehulp" class="underline underline-offset-2">Keuzehulp</a>
+      <a href="/section-product-carousel" class="underline underline-offset-2">Productcarrousel</a>
+      <a href="/product" class="underline underline-offset-2">Productreferentie</a>
+    </nav>
+    <div id="site-header">
+    <SiteHeader title="Tupak Packaging" homeHref="/preview" logo={{src: media.logo.src, alt: "Tupak Packaging"}} links={prototypeNavigation} catalogue={catalogue} branches={prototypeBranches} branchIndexHref="/branches" sale={prototypeSale} saleMotion={true} action={{label: "Workbench", href: "/"}} />
+    </div>
+    <main id="preview-main">
+      <HomeHero title="Verpakkingen voor bedrijven." accent="Direct besteld of op maat gemaakt." eyebrow="Tupak · prototypevoorbeeld" text="Een ontwerpvoorbeeld voor standaardverpakkingen en maatwerk. Bekijk de verschillende presentaties; producten, diensten en ervaringen op deze pagina zijn geen actueel aanbod." image={{src: media.hero.src, alt: "Assortiment kartonnen dozen, kokers en verpakkingsmaterialen"}} actions={[{label: "Bekijk assortimentvoorbeelden", href: "#categorieen"}, {label: "Bekijk maatwerkvoorbeeld", href: "#maatwerk"}]} points={prototypePoints} />
+      <div id="categorieen"><CategoryRow title="Onze categorieën" items={prototypeCategories} action={{label: "Bekijk productvoorbeelden", href: "#producten"}} /></div>
+      <div id="banners"><BannerPair title="Bestellen of maatwerk · prototypevoorbeelden" items={prototypeBanners} /></div>
+      <div id="producten"><ProductRail title="Veelgekozen verpakkingen" eyebrow="Prototype productvoorbeelden · geen actueel aanbod" items={prototypeProducts} /></div>
+      <div id="maatwerk"><ImageText title="Een verpakking die alleen van jou is" eyebrow="Maatwerk · prototypevoorbeeld" text="Een voorbeeldpresentatie voor een eigen formaat en bedrukking. De foto toont het externe referentieontwerp; de opsomming illustreert de inhoudsstructuur en is geen dienstbelofte." image={{src: media.custom.src, alt: "Een geopende postdoos met blauwe en rode bedrukking"}} badge="Eigen formaat · eigen ontwerp" points={[{title: "Een passend formaat", icon: "pencil"}, {title: "Een eigen bedrukking", icon: "sparkles"}, {title: "Ruimte voor persoonlijk advies", icon: "message-square"}]} action={{label: "Lees over deze preview", href: "#vragen"}} /></div>
+      <div id="reviews"><ReviewRail title="Ervaringen in beeld" eyebrow="Fictieve reviews · uitsluitend layoutvoorbeelden" note="Geen echte klantbeoordelingen. Namen, sterren en teksten hieronder zijn expliciete prototypevoorbeelden." items={prototypeReviews} /></div>
+      <div id="publicaties"><PublicationFeed title="De laatste publicaties" eyebrow="Voorbeeldpresentatie · links openen bronartikelen" items={prototypePublications} /></div>
+      <div id="vragen"><Faq title="Snel antwoord op je vraag" eyebrow="Over dit prototype" text="Deze antwoorden beschrijven alleen de preview. Ze bevatten geen verkoop-, verzend- of retourvoorwaarden." items={prototypeFaq} action={{label: "Bekijk de workbench", href: "/"}} /></div>
+    </main>
+    <div id="site-footer">
+    <SiteFooter title="Tupak Packaging" logoSrc={media.logo.src} logoAlt="Tupak Packaging" exploreTitle="Productvoorbeelden" exploreLinks={catalogue.slice(0, 6)} actionTitle="Deze preview" actionLinks={[{label: "Maatwerkvoorbeeld", href: "#maatwerk"}, {label: "Publicaties", href: "#publicaties"}, {label: "Vragen over het prototype", href: "#vragen"}]} detailTitle="Ontwerp en onderdelen" detailText="De huidige externe Tupak-homepage, handmatig vertaald naar herbruikbare Astro-secties." detailLinks={[{label: "Design workbench", href: "/"}, {label: "Losse secties", href: "/#sections"}]} description="Een visuele kandidaat, geen actieve webshop of vastgesteld bedrijfsprofiel." note="Prototypevoorbeelden. Beeldrechten en ontwerp vragen nog productie-goedkeuring." services={prototypePoints} legalNote="Tupak design workbench · Geen adres-, betaal-, leverings- of juridische gegevens geïmpliceerd." />
+    </div>
+  </div>
+</DesignSystemLayout>

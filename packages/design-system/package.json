@@ -17,6 +17,7 @@
     "check:04-demo-build": "pnpm demo:build",
     "check:05-browser": "pnpm test",
     "demo:build": "astro build",
+    "design:detect": "impeccable detect src",
     "dev": "turbo run dev:server --filter=@tupak/design-system --continue=always",
     "dev:server": "astro dev --host 0.0.0.0 --ignore-lock",
     "format": "oxfmt --config ../../oxfmt.config.ts --ignore-path ../../.gitignore --check .",
@@ -29,8 +30,7 @@
     "types": "astro check"
   },
   "dependencies": {
-    "@fontsource-variable/nunito": "catalog:",
-    "@fontsource/lobster": "catalog:",
+    "@fontsource-variable/instrument-sans": "catalog:",
     "@iconify-icons/lucide": "catalog:",
     "@sindresorhus/slugify": "catalog:"
   },
@@ -47,7 +47,8 @@
     "jiti": "catalog:",
     "playwright": "catalog:",
     "tailwindcss": "catalog:",
-    "typescript": "catalog:astro-tooling"
+    "typescript": "catalog:astro-tooling",
+    "vite": "catalog:"
   },
   "engines": {
     "node": "24.x"

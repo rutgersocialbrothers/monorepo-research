@@ -1,0 +1,45 @@
+---
+import SectionDemoLayout from "../layouts/SectionDemoLayout.astro";
+import ImageSlider from "../sections/image-slider/image-slider.astro";
+import {prototypeSlides, prototypeSlidesCool, prototypeSlideStartIndex} from "../sections/prototype-update.example-data";
+const variants = [
+  {caption: "Variant 1 · bron: warme foto's, opent op dia 2 (startIndex 1)", slides: prototypeSlides, startIndex: prototypeSlideStartIndex},
+  {caption: "Variant 2 · vaste startdia: opent op dia 1 (startIndex 0)", slides: prototypeSlides, startIndex: 0},
+  {caption: "Variant 3 · koelere beeldopties uit dezelfde bronwijziging, in de bron ongebruikt", slides: prototypeSlidesCool, startIndex: prototypeSlideStartIndex},
+  {caption: "Randgeval · één dia: geen pijlen of bolletjes", slides: prototypeSlides.slice(1, 2), startIndex: 0},
+];
+---
+<SectionDemoLayout
+  title="Beeldslider"
+  lede="Brede foto's met een label, een grote kop en één knop in het midden, drie na elkaar: Maatwerk, Branches en Assortiment, de drie ingangen van de winkel. Met pijlen en bolletjes onderaan."
+  meta={[
+    {term: "Figma", detail: "Geen. Naar een voorbeeld van de klant."},
+    {term: "Bron", detail: "blocks/image-slider.html, .slideshow in components.css en initSlideshow in prototype.js (6f9c7e2)."},
+    {term: "Astro", detail: "src/sections/image-slider/image-slider.astro met eigen, begrensde browserlogica; geen prototype-runtime."},
+    {term: "Shopify", detail: "Eén blok in blocks/ met een dia-blok erin, zo vaak als de redacteur wil. Per dia instelbaar: afbeelding, label, kop, knoptekst en link."},
+    {term: "Status", detail: "Eén versie in de bron, alleen op de sectiepagina en de branchespagina; nog niet op de homepage."},
+    {term: "Journey", detail: "A Nieuwe klant en C Maatwerk (voorstel, de user stories noemen geen journey)."},
+    {term: "User stories", detail: "PAGE-1 (status: deels), volgens story-map.json van de bron."},
+    {term: "Beeld", detail: "Voorlopige redactionele stand-ins, niet productie-goedgekeurd. [Aantal] is een feit dat Tupak nog moet aanleveren."},
+  ]}
+  decided={[
+    {lead: "Drie dia's, de drie ingangen:", text: "Maatwerk, Branches en Assortiment. Dezelfde drie als in de designrichting van de klant en in het menu."},
+    {lead: "Niets beweegt vanzelf.", text: "De koper schuift zelf, met de pijlen, de bolletjes, vegen of de pijltjestoetsen. Een slider die vanzelf doorloopt neemt het lezen over en heeft een pauzeknop nodig (WCAG 2.2.2)."},
+    {lead: "De pijlen lopen rond:", text: "na de laatste dia komt de eerste."},
+    {lead: "Witte tekst op een donkere waas over de hele foto,", text: "zodat hij ook op een lichte foto leesbaar blijft. De knop is wit met de donkerblauwe rand."},
+    {lead: "Alleen de dia in beeld is bereikbaar met Tab.", text: "Een schermlezer hoort “dia 2 van 3”; elk bolletje zegt naar welke dia het gaat."},
+    {lead: "Op een telefoon is een dia staand", text: "(4 bij 5) en de kop kleiner."},
+  ]}
+  open={[
+    {lead: "De designrichting van de klant sluit een slider bovenaan de pagina uit,", text: "als onderdeel van de “AI-look”. Deze beweegt niet vanzelf, maar het blijft een keuze om met Tupak te bespreken."},
+    {lead: "Waar hij komt.", text: "Als hero zou hij de huidige hero vervangen; lager op de homepage is hij een etalage voor de drie ingangen."},
+    {lead: "De foto's zijn voorlopig:", text: "de maatwerkfoto en twee blogfoto's. Er is geen foto per branche."},
+    {lead: "Het aantal producten in de derde dia", text: "moet Tupak aanleveren."},
+    {lead: "Branches staat niet in de user stories", text: "en had bij het schrijven van deze bronnotitie nog geen eigen pagina. De bron heeft inmiddels branches.html; hier gaat de knop naar /branches."},
+  ]}
+>
+  {variants.map(variant => <div>
+    <div class="container-page pt-8"><p class="text-xs font-semibold text-muted-foreground">{variant.caption}</p></div>
+    <div data-section-preview><ImageSlider slides={variant.slides} startIndex={variant.startIndex} /></div>
+  </div>)}
+</SectionDemoLayout>

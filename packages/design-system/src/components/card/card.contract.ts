@@ -7,18 +7,19 @@ export const cardContract = {
   props: {
     title: {
       type: 'string',
-      default: 'Weekend tickets',
+      default: '',
     },
     description: {
       type: 'string',
-      default: 'Book before Friday and save 15%.',
+      default: '',
     },
   },
   states: ['default', 'focus-visible'],
   accessibility: ['Choose a heading level that fits the page; actions must be independently focusable.'],
   targets: ['html'],
   preview: {
-    content: 'A day full of adventure.',
+    content: 'Related content lives together in one panel.',
+    props: { title: 'Prototype card', description: 'An example of grouped content, not a business offer.' },
   },
 } as const satisfies ComponentContract;
 export type CardProps = ContractProps<typeof cardContract>;

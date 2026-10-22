@@ -1,0 +1,80 @@
+---
+import Icon from "../../components/icon/icon.astro";
+interface Props { label: string; size?: "category" | "card"; }
+const {label, size = "card"} = Astro.props;
+const id = `rail-${crypto.randomUUID()}`;
+---
+<div data-reference-rail>
+  <div id={id} data-rail-viewport tabindex="0" role="group" aria-label={`${label}, horizontaal scrollbaar`} class="relative overflow-x-auto rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background">
+    <div class:list={["grid auto-cols-[minmax(15rem,82%)] grid-flow-col gap-5 pb-3", size === "category" ? "sm:auto-cols-[calc((100%-2.5rem)/3)] lg:auto-cols-[calc((100%-6.25rem)/6)]" : "sm:auto-cols-[calc((100%-1.25rem)/2)] lg:auto-cols-[calc((100%-3.75rem)/4)]"]}>
+      <slot />
+    </div>
+  </div>
+  <div data-rail-controls hidden class="mt-5 flex items-center gap-3">
+    <progress data-rail-progress max="100" value="0" aria-label={`Scrollpositie ${label}`} class="mr-auto h-1 w-full max-w-sm accent-nav"></progress>
+    <button type="button" data-rail-prev aria-label={`Vorige ${label}`} aria-controls={id} class="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border border-border bg-background text-foreground outline-none hover:bg-surface-sunken focus-visible:ring-2 focus-visible:ring-ring aria-disabled:cursor-default aria-disabled:opacity-40"><span class="rotate-180"><Icon name="arrow-right" size={20} /></span></button>
+    <button type="button" data-rail-next aria-label={`Volgende ${label}`} aria-controls={id} class="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border border-border bg-background text-foreground outline-none hover:bg-surface-sunken focus-visible:ring-2 focus-visible:ring-ring aria-disabled:cursor-default aria-disabled:opacity-40"><Icon name="arrow-right" size={20} /></button>
+  </div>
+</div>
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-reference-rail]")) {
+    const viewport = root.querySelector<HTMLElement>("[data-rail-viewport]");
+    const controls = root.querySelector<HTMLElement>("[data-rail-controls]");
+    const previous = root.querySelector<HTMLButtonElement>("[data-rail-prev]");
+    const next = root.querySelector<HTMLButtonElement>("[data-rail-next]");
+    const progress = root.querySelector<HTMLProgressElement>("[data-rail-progress]");
+    if (!viewport || !controls || !previous || !next || !progress) {
+      continue;
+    }
+    initializeRail(viewport, controls, previous, next, progress);
+  }
+
+  function initializeRail(
+    viewport: HTMLElement,
+    controls: HTMLElement,
+    previous: HTMLButtonElement,
+    next: HTMLButtonElement,
+    progress: HTMLProgressElement,
+  ) {
+    function update() {
+      const maximum = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+      controls.hidden = maximum < 2;
+      previous.setAttribute("aria-disabled", String(viewport.scrollLeft <= 1));
+      next.setAttribute("aria-disabled", String(viewport.scrollLeft >= maximum - 1));
+      progress.value = maximum > 0 ? (viewport.scrollLeft / maximum) * 100 : 0;
+    }
+    function move(direction: number) {
+      const maximum = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+      if ((direction < 0 && viewport.scrollLeft <= 1) || (direction > 0 && viewport.scrollLeft >= maximum - 1)) {
+        return;
+      }
+      const reduced = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      viewport.scrollBy({left: direction * viewport.clientWidth * 0.85, behavior: reduced ? "instant" : "smooth"});
+    }
+    previous.addEventListener("click", () => move(-1));
+    next.addEventListener("click", () => move(1));
+    viewport.addEventListener("keydown", event => {
+      if (event.target !== viewport) {
+        return;
+      }
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        move(event.key === "ArrowRight" ? 1 : -1);
+      }
+      if (event.key === "Home" || event.key === "End") {
+        event.preventDefault();
+        viewport.scrollTo({left: event.key === "Home" ? 0 : viewport.scrollWidth});
+      }
+    });
+    viewport.addEventListener("scroll", update, {passive: true});
+    const observer = new ResizeObserver(update);
+    observer.observe(viewport);
+    if (viewport.firstElementChild) {
+      observer.observe(viewport.firstElementChild);
+    }
+    for (const image of viewport.querySelectorAll("img")) {
+      image.addEventListener("load", update, {once: true});
+    }
+    update();
+  }
+</script>
