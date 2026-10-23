@@ -1,0 +1,41 @@
+{%- doc -%}
+  Renders one FAQPage JSON-LD graph for FAQ item metaobjects across selected groups.
+
+  @param {object} items - FAQ group metaobjects whose items fields contain FAQ entries
+{%- enddoc -%}
+
+{%- capture faq_entries -%}
+  {%- assign faq_json_first = true -%}
+  {%- for faq_group in items -%}
+    {%- for faq_item in faq_group.items.value -%}
+      {%- if faq_item != blank and faq_item.question.value != blank and faq_item.answer.value != blank -%}
+        {%- capture faq_answer_markup -%}{{ faq_item.answer | metafield_tag }}{%- endcapture -%}
+        {%- assign faq_question_text = faq_item.question.value | strip_html | strip -%}
+        {%- assign faq_answer_text = faq_answer_markup | strip_html | strip -%}
+        {%- if faq_question_text != blank and faq_answer_text != blank -%}
+          {%- unless faq_json_first -%},{%- endunless -%}
+          {
+            "@type": "Question",
+            "name": {{ faq_question_text | json | replace: '</script>', '<\/script>' }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ faq_answer_text | json | replace: '</script>', '<\/script>' }}
+            }
+          }
+          {%- assign faq_json_first = false -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign faq_entries = faq_entries | strip -%}
+{%- if faq_entries != blank -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{{ faq_entries }}]
+    }
+  </script>
+{%- endif -%}
