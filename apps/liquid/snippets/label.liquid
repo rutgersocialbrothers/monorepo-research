@@ -1,0 +1,34 @@
+{%- doc -%}
+  Renders the visible label for a form control. A blank control id or label renders nothing.
+
+  @param {string} control_id - The id of the labelled form control
+  @param {string} label - Visible label text
+  @param {boolean} [required] - Whether the associated control is required
+  @param {string} [required_text] - Caller-supplied visible required-state text
+
+  @example
+  {% render 'label', control_id: 'contact-email', label: email_label, required: true, required_text: required_label %}
+{%- enddoc -%}
+
+{%- unless control_id == blank or label == blank -%}
+  <label class="tp-form-label" for="{{ control_id | escape }}">
+    {{- label | escape -}}
+    {%- if required == true and required_text != blank -%}
+      <span class="tp-form-label__required"> {{ required_text | escape }}</span>
+    {%- endif -%}
+  </label>
+{%- endunless -%}
+
+{% stylesheet %}
+  .tp-form-label {
+    color: var(--tp-color-heading);
+    font-size: var(--tp-text-small-size);
+    font-weight: var(--tp-font-weight-semibold);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-form-label__required {
+    color: var(--tp-color-text-muted);
+    font-weight: var(--tp-font-weight-regular);
+  }
+{% endstylesheet %}

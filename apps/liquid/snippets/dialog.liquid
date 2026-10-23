@@ -1,0 +1,172 @@
+{%- doc -%}
+  Renders a modal dialog with its own trigger and close control. A blank id,
+  trigger, title, or close label renders nothing. All supplied text and attribute
+  values are escaped. The stable id must be unique on the page.
+
+  @param {string} id - Required stable, page-unique dialog id
+  @param {string} trigger - Required trigger button text
+  @param {string} title - Required dialog title
+  @param {string} close_label - Required close button text
+  @param {string} [description] - Optional text that describes the dialog
+  @param {string} [content] - Optional plain-text dialog body
+  @param {string} [trigger_variant] - Button variant; defaults to outline
+  @param {string} [trigger_size] - Button size; defaults to medium
+
+  @example
+  {% render 'dialog', id: 'shipping-help', trigger: open_label, title: title, description: description, content: help_text, close_label: close_label %}
+{%- enddoc -%}
+
+{%- if id != blank and trigger != blank and title != blank and close_label != blank -%}
+  {%- liquid
+    assign resolved_trigger_variant = 'outline'
+    if trigger_variant != blank
+      assign resolved_trigger_variant = trigger_variant
+    endif
+    capture trigger_classes
+      render 'design-button-classes', variant: resolved_trigger_variant, size: trigger_size
+    endcapture
+    capture close_classes
+      render 'design-button-classes', variant: 'outline', size: 'medium'
+    endcapture
+    assign title_id = id | append: '-title'
+    assign description_id = id | append: '-description'
+  -%}
+  <div class="tp-dialog" data-tp-dialog>
+    <button
+      class="{{ trigger_classes | strip | escape }}"
+      type="button"
+      data-tp-dialog-open
+      aria-haspopup="dialog"
+      aria-controls="{{ id | escape }}"
+    >
+      {{- trigger | escape -}}
+    </button>
+
+    <dialog
+      class="tp-dialog__surface"
+      id="{{ id | escape }}"
+      aria-labelledby="{{ title_id | escape }}"
+      {% if description != blank %}aria-describedby="{{ description_id | escape }}"{% endif %}
+      tabindex="-1"
+      scroll-lock
+    >
+      <div class="tp-dialog__content">
+        <h2 class="tp-dialog__title" id="{{ title_id | escape }}">{{ title | escape }}</h2>
+        {%- if description != blank -%}
+          <p class="tp-dialog__description" id="{{ description_id | escape }}">{{ description | escape }}</p>
+        {%- endif -%}
+        {%- if content != blank -%}
+          <div class="tp-dialog__body">{{ content | escape }}</div>
+        {%- endif -%}
+      </div>
+      <div class="tp-dialog__actions">
+        <button
+          class="{{ close_classes | strip | escape }}"
+          type="button"
+          data-tp-dialog-close
+        >
+          {{- close_label | escape -}}
+        </button>
+      </div>
+    </dialog>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .tp-dialog__surface {
+    width: min(32rem, calc(100vw - 2rem));
+    max-width: none;
+    max-height: calc(100dvh - 2rem);
+    margin: auto;
+    overflow: auto;
+    padding: 1.5rem;
+    border: 1px solid var(--tp-color-border);
+    border-radius: var(--tp-radius-lg);
+    background: var(--tp-color-surface-raised);
+    color: var(--tp-color-text);
+    box-shadow: var(--tp-shadow-modal);
+  }
+
+  .tp-dialog__surface::backdrop {
+    background: var(--tp-color-scrim);
+  }
+
+  .tp-dialog__content {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .tp-dialog__title {
+    font-size: var(--tp-text-h3-size);
+    font-weight: var(--tp-font-weight-bold);
+    line-height: var(--tp-text-h3-leading);
+  }
+
+  .tp-dialog__description {
+    color: var(--tp-color-text-muted);
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-dialog__body {
+    margin-block-start: 0.75rem;
+    color: var(--tp-color-text);
+    font-size: var(--tp-text-body-size);
+    line-height: var(--tp-text-body-leading);
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+  }
+
+  .tp-dialog__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-block-start: 1.25rem;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  const initializeDialogs = (scope) => {
+    const roots = scope.matches?.('[data-tp-dialog]')
+      ? [scope]
+      : scope.querySelectorAll?.('[data-tp-dialog]') || [];
+
+    for (const root of roots) {
+      if (root.hasAttribute('data-tp-dialog-ready')) continue;
+
+      const dialog = root.querySelector('dialog');
+      const trigger = root.querySelector('[data-tp-dialog-open]');
+      const closeButton = root.querySelector('[data-tp-dialog-close]');
+      if (!dialog || !trigger || !closeButton) continue;
+
+      root.setAttribute('data-tp-dialog-ready', '');
+
+      trigger.addEventListener('click', () => {
+        if (dialog.open) return;
+        dialog.showModal();
+        dialog.focus({ preventScroll: true });
+      });
+
+      closeButton.addEventListener('click', () => dialog.close());
+
+      dialog.addEventListener('click', (event) => {
+        if (event.target !== dialog) return;
+        const bounds = dialog.getBoundingClientRect();
+        const outside =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
+        if (outside) dialog.close();
+      });
+
+      dialog.addEventListener('close', () => {
+        if (trigger.isConnected) trigger.focus({ preventScroll: true });
+      });
+    }
+  };
+
+  initializeDialogs(document);
+  document.addEventListener('shopify:section:load', (event) => initializeDialogs(event.target));
+{% endjavascript %}

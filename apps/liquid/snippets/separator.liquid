@@ -1,0 +1,52 @@
+{%- doc -%}
+  Renders a decorative or meaningful separator in the canonical orientations.
+
+  @param {string} [orientation] - horizontal or vertical; defaults to horizontal
+  @param {boolean} [decorative] - Set to false when the separator conveys structure; defaults to true
+  @param {string} [class] - Optional caller-supplied classes
+
+  @example
+  {% render 'separator' %}
+  {% render 'separator', orientation: 'vertical', decorative: false %}
+{%- enddoc -%}
+
+{%- liquid
+  assign resolved_orientation = 'horizontal'
+  if orientation == 'vertical'
+    assign resolved_orientation = 'vertical'
+  endif
+
+  assign is_decorative = true
+  if decorative == false
+    assign is_decorative = false
+  endif
+-%}
+
+<div
+  class="tp-separator tp-separator--{{ resolved_orientation }}{% if class != blank %} {{ class | escape }}{% endif %}"
+  data-orientation="{{ resolved_orientation }}"
+  {% if is_decorative %}
+    aria-hidden="true"
+  {% else %}
+    role="separator"
+    aria-orientation="{{ resolved_orientation }}"
+  {% endif %}
+></div>
+
+{% stylesheet %}
+  .tp-separator {
+    flex: none;
+    background: var(--tp-color-border);
+  }
+
+  .tp-separator--horizontal {
+    width: 100%;
+    height: 1px;
+  }
+
+  .tp-separator--vertical {
+    align-self: stretch;
+    width: 1px;
+    min-height: 1.25rem;
+  }
+{% endstylesheet %}

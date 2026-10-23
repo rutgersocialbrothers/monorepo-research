@@ -1,0 +1,96 @@
+{%- doc -%}
+  Renders a titled fieldset containing caller-composed form fields and optional actions.
+  A blank id, title, or content value renders nothing. Content and actions are trusted captured markup.
+
+  @param {string} id - Required stable, page-unique fieldset id
+  @param {string} title - Visible fieldset legend
+  @param {string} content - Captured form-field markup
+  @param {string} [description] - Optional caller-supplied description
+  @param {string} [actions] - Optional captured action markup
+  @param {string} [layout] - stacked or split; defaults to stacked
+
+  @example
+  {% capture profile_fields %}{% render 'input', id: 'profile-name', name: 'profile[name]', label: name_label %}{% endcapture %}
+  {% render 'form-section', id: 'profile', title: profile_title, description: profile_description, content: profile_fields %}
+{%- enddoc -%}
+
+{%- unless id == blank or title == blank or content == blank -%}
+  {%- liquid
+    assign resolved_layout = 'stacked'
+    if layout == 'split'
+      assign resolved_layout = 'split'
+    endif
+    assign description_id = id | append: '-description'
+  -%}
+  <fieldset
+    class="tp-form-section"
+    id="{{ id | escape }}"
+    data-layout="{{ resolved_layout }}"
+    {% if description != blank %}aria-describedby="{{ description_id | escape }}"{% endif %}
+  >
+    <legend class="tp-form-section__title">{{ title | escape }}</legend>
+    <div class="tp-form-section__body">
+      {%- if description != blank -%}
+        <p class="tp-form-section__description" id="{{ description_id | escape }}">{{ description | escape }}</p>
+      {%- endif -%}
+      <div class="tp-form-section__main">
+        <div class="tp-form-section__content">{{ content }}</div>
+        {%- if actions != blank -%}
+          <div class="tp-form-section__actions">{{ actions }}</div>
+        {%- endif -%}
+      </div>
+    </div>
+  </fieldset>
+{%- endunless -%}
+
+{% stylesheet %}
+  .tp-form-section {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .tp-form-section__title {
+    color: var(--tp-color-heading);
+    font-family: var(--tp-font-heading);
+    font-size: var(--tp-text-h3-size);
+    font-weight: var(--tp-font-weight-bold);
+    line-height: var(--tp-text-h3-leading);
+  }
+
+  .tp-form-section__body {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .tp-form-section__description {
+    color: var(--tp-color-text-muted);
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-form-section__main,
+  .tp-form-section__content {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .tp-form-section__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .tp-form-section[data-layout='split'] .tp-form-section__body {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+
+    .tp-form-section[data-layout='split'] .tp-form-section__main:only-child {
+      grid-column: 2;
+    }
+  }
+{% endstylesheet %}

@@ -27,6 +27,7 @@
        change moves every dependent shade with it. */
     --tp-color-page: var(--tp-palette-page);
     --tp-color-text: var(--tp-palette-ink);
+    --tp-color-heading: var(--tp-palette-brand);
     --tp-color-text-muted: color-mix(in srgb, var(--tp-palette-ink) 70%, var(--tp-palette-page));
     --tp-color-text-inverse: #ffffff;
     --tp-color-text-brand: var(--tp-palette-brand);
@@ -41,6 +42,32 @@
     --tp-color-surface-warm: var(--tp-palette-warm);
     --tp-color-surface-warm-subtle: color-mix(in srgb, var(--tp-palette-warm) 50%, var(--tp-palette-page));
     --tp-color-surface-natural: var(--tp-palette-natural);
+    --tp-color-surface-sunken: #f4f4f5;
+    --tp-color-surface-accent: #ffe2e1;
+    --tp-color-card: var(--tp-color-surface-raised);
+    --tp-color-card-text: var(--tp-color-text);
+    --tp-color-popover: var(--tp-color-surface-raised);
+    --tp-color-popover-text: var(--tp-color-text);
+    --tp-color-input: #71717b;
+    --tp-color-text-disabled: #9f9fa9;
+
+    --tp-color-destructive: #bd1c18;
+    --tp-color-destructive-foreground: #ffffff;
+    --tp-color-destructive-subtle: #fef2f2;
+    --tp-color-destructive-subtle-foreground: #9c1b18;
+    --tp-color-error: var(--tp-color-destructive);
+    --tp-color-success: #007a55;
+    --tp-color-success-foreground: #ffffff;
+    --tp-color-success-subtle: #ecfdf5;
+    --tp-color-success-subtle-foreground: #006045;
+    --tp-color-warning: #ffb900;
+    --tp-color-warning-foreground: #461901;
+    --tp-color-warning-subtle: #fffbeb;
+    --tp-color-warning-subtle-foreground: #973c00;
+    --tp-color-info: var(--tp-palette-link);
+    --tp-color-info-foreground: #ffffff;
+    --tp-color-info-subtle: var(--tp-palette-tint);
+    --tp-color-info-subtle-foreground: var(--tp-palette-link);
 
     --tp-color-action: var(--tp-palette-action);
     --tp-color-action-hover: color-mix(in srgb, var(--tp-palette-action) 84%, #000000);
@@ -51,9 +78,20 @@
     --tp-color-secondary-active: color-mix(in srgb, var(--tp-palette-tint) 80%, var(--tp-palette-link));
     --tp-color-secondary-label: var(--tp-palette-link);
     --tp-color-secondary-border: var(--tp-palette-link);
+    --tp-color-nav: var(--tp-palette-brand);
+    --tp-color-nav-hover: color-mix(in srgb, var(--tp-palette-brand) 25%, var(--tp-palette-link));
+    --tp-color-nav-active: var(--tp-palette-link);
+    --tp-color-nav-label: var(--tp-color-text-inverse);
 
     --tp-focus-color: var(--tp-palette-focus);
     --tp-focus-offset: 2px;
+    --tp-color-ring: var(--tp-focus-color);
+    --tp-opacity-disabled: 0.5;
+    --tp-opacity-scrim: 0.6;
+    --tp-z-dropdown: 1000;
+    --tp-z-overlay: 1200;
+    --tp-z-modal: 1300;
+    --tp-z-popover: 1400;
 
     /* Elevation and scrim, tinted with the brand navy as in the Styleguide. */
     --tp-shadow-raised:
@@ -67,10 +105,13 @@
       0 24px 48px color-mix(in srgb, var(--tp-palette-brand) 16%, transparent);
     --tp-color-scrim: color-mix(in srgb, var(--tp-palette-brand) 55%, transparent);
 
-    /* Type scale (Styleguide px values at a 16px root). Families and weights
-       come from the font settings. */
+    /* Type scale and motion roles adapted from the design-system reference.
+       Families and palette remain merchant-controlled through theme settings. */
     --tp-font-weight-regular: 400;
+    --tp-font-weight-medium: 500;
+    --tp-font-weight-semibold: 600;
     --tp-font-weight-bold: 700;
+    --tp-font-weight-extrabold: 800;
     --tp-text-display-size: 3rem;
     --tp-text-display-leading: 1.1;
     --tp-text-h1-size: 2.25rem;
@@ -85,30 +126,61 @@
     --tp-text-small-leading: 1.45;
     --tp-text-caption-size: 0.75rem;
     --tp-text-caption-leading: 1.4;
+    --tp-tracking-tight: -0.02em;
+    --tp-tracking-normal: 0;
+    --tp-tracking-wide: 0.02em;
+    --tp-tracking-wider: 0.05em;
+    --tp-tracking-widest: 0.1em;
     --tp-tracking-caption: 0.04em;
+    --tp-leading-relaxed: 1.625;
 
     --tp-radius-sm: 4px;
     --tp-radius-md: 8px;
     --tp-radius-lg: 12px;
     --tp-radius-xl: 16px;
     --tp-radius-full: 999px;
+    --tp-border-width-default: 1px;
+    --tp-border-width-thick: 2px;
+    --tp-control-height: 2.75rem;
+    --tp-input-height-sm: 2.625rem;
+    --tp-input-height-md: 3rem;
+    --tp-icon-size-xs: 0.75rem;
+    --tp-icon-size-sm: 1rem;
+    --tp-icon-size-md: 1.25rem;
+    --tp-icon-size-lg: 1.5rem;
+    --tp-icon-size-xl: 2rem;
+    --tp-icon-stroke-width: 1.75;
+    --tp-link-underline-offset: 0.25rem;
 
     --tp-duration-fast: 100ms;
     --tp-duration-base: 200ms;
+    --tp-duration-slow: 300ms;
     --tp-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --tp-ease-enter: cubic-bezier(0, 0, 0.2, 1);
+    --tp-button-gap: 0.5rem;
+    --tp-button-radius: var(--tp-radius-sm);
+    --tp-button-border-width: 1px;
+    --tp-button-shadow: none;
+    --tp-button-height-sm: 2.625rem;
+    --tp-button-height-md: 3rem;
+    --tp-button-height-lg: 3.5rem;
+    --tp-button-padding-sm: 1rem;
+    --tp-button-padding-md: 1.25rem;
+    --tp-button-padding-lg: 1.5rem;
+    --tp-ease-exit: cubic-bezier(0.4, 0, 1, 1);
 
-    /* Page layout: margins step up at 900px, section spacing at 641px. */
+    /* Match the design-system md and lg layout breakpoints. */
     --tp-page-margin: var(--tp-page-margin-mobile);
     --tp-section-spacing: var(--tp-section-spacing-mobile);
   }
 
-  @media (min-width: 641px) {
+  @media (min-width: 768px) {
     :root {
       --tp-section-spacing: var(--tp-section-spacing-desktop);
     }
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1024px) {
     :root {
       --tp-page-margin: var(--tp-page-margin-desktop);
     }
@@ -121,6 +193,7 @@
   .tp-on-inverse {
     --tp-color-page: var(--tp-palette-brand);
     --tp-color-text: var(--tp-color-text-inverse);
+    --tp-color-heading: var(--tp-color-text-inverse);
     --tp-color-text-muted: color-mix(in srgb, var(--tp-color-text-inverse) 78%, var(--tp-palette-brand));
     --tp-color-text-brand: var(--tp-color-text-inverse);
     --tp-color-link: var(--tp-color-text-inverse);
@@ -142,6 +215,10 @@
     --tp-color-secondary-active: var(--tp-palette-brand);
     --tp-color-secondary-label: var(--tp-color-text-inverse);
     --tp-color-secondary-border: color-mix(in srgb, var(--tp-color-text-inverse) 55%, var(--tp-palette-link));
+    --tp-color-nav: var(--tp-palette-action);
+    --tp-color-nav-hover: color-mix(in srgb, var(--tp-palette-action) 78%, #ffffff);
+    --tp-color-nav-active: color-mix(in srgb, var(--tp-palette-action) 70%, #000000);
+    --tp-color-nav-label: var(--tp-palette-ink);
     --tp-focus-color: var(--tp-palette-focus-inverse);
 
     background-color: var(--tp-color-page);
@@ -215,15 +292,18 @@
   h4,
   h5,
   h6 {
+    color: var(--tp-color-heading);
     font-family: var(--tp-font-heading);
     font-weight: var(--tp-font-heading-weight);
     font-style: var(--tp-font-heading-style);
+    letter-spacing: var(--tp-tracking-normal);
     overflow-wrap: break-word;
     text-wrap: balance;
   }
 
   h1 {
     font-size: var(--tp-text-h1-size);
+    font-weight: var(--tp-font-weight-extrabold);
     line-height: var(--tp-text-h1-leading);
   }
 

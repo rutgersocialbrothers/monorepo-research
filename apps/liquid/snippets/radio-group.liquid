@@ -1,0 +1,173 @@
+{%- doc -%}
+  Renders a native radio group with a fieldset, legend, and optional help and error text.
+  Options may be strings or objects with value, label, and optional disabled properties.
+  A blank id, name, label, or options collection renders nothing.
+
+  @param {string} id - Stable fieldset id and option-id prefix
+  @param {string} name - Shared native radio field name
+  @param {string} label - Visible legend text
+  @param {object} options - Option strings or option objects
+  @param {string} [value] - Currently selected option value
+  @param {string} [help_text] - Optional help text
+  @param {string} [error_text] - Optional validation error text
+  @param {string} [required_text] - Caller-supplied visible required-state text
+  @param {boolean} [required] - Whether one option must be selected
+  @param {boolean} [disabled] - Whether the entire group is disabled
+  @param {boolean} [invalid] - Whether the group is invalid
+
+  @example
+  {% assign density_options = 'comfortable,compact,dense' | split: ',' %}
+  {% render 'radio-group', id: 'density', name: 'density', label: density_label, options: density_options, value: 'comfortable' %}
+{%- enddoc -%}
+
+{%- unless id == blank or name == blank or label == blank or options == blank -%}
+  {%- liquid
+    assign invalid_state = false
+    if invalid == true or error_text != blank
+      assign invalid_state = true
+    endif
+
+    assign selected_key = value | append: ''
+    assign help_id = id | append: '-help'
+    assign error_id = id | append: '-error'
+    capture described_by
+      if help_text != blank
+        echo help_id
+      endif
+      if error_text != blank
+        if help_text != blank
+          echo ' '
+        endif
+        echo error_id
+      endif
+    endcapture
+  -%}
+  <fieldset
+    class="tp-radio-group"
+    id="{{ id | escape }}"
+    {% if described_by != blank %}aria-describedby="{{ described_by | strip | escape }}"{% endif %}
+    {% if invalid_state %}aria-invalid="true"{% endif %}
+    {% if disabled == true %}disabled{% endif %}
+  >
+    <legend class="tp-radio-group__legend">
+      {{- label | escape -}}
+      {%- if required == true and required_text != blank -%}
+        <span class="tp-radio-group__required"> {{ required_text | escape }}</span>
+      {%- endif -%}
+    </legend>
+    <div class="tp-radio-group__options">
+      {%- for option in options -%}
+        {%- liquid
+          assign option_value = option.value
+          if option_value == nil
+            assign option_value = option
+          endif
+          assign option_label = option.label
+          if option_label == blank
+            assign option_label = option
+          endif
+          assign option_key = option_value | append: ''
+          assign option_id = id | append: '-' | append: forloop.index0
+        -%}
+        <div class="tp-radio-group__option">
+          <input
+            class="tp-radio-group__control"
+            id="{{ option_id | escape }}"
+            name="{{ name | escape }}"
+            type="radio"
+            value="{{ option_value | escape }}"
+            {% if option_key == selected_key %}checked{% endif %}
+            {% if option.disabled == true %}disabled{% endif %}
+            {% if invalid_state %}aria-invalid="true"{% endif %}
+            {% if required == true %}required{% endif %}
+          >
+          <label class="tp-radio-group__label" for="{{ option_id | escape }}">{{ option_label | escape }}</label>
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- if help_text != blank -%}
+      <p class="tp-radio-group__help" id="{{ help_id | escape }}">{{ help_text | escape }}</p>
+    {%- endif -%}
+    {%- if error_text != blank -%}
+      <p class="tp-radio-group__error" id="{{ error_id | escape }}">{{ error_text | escape }}</p>
+    {%- endif -%}
+  </fieldset>
+{%- endunless -%}
+
+{% stylesheet %}
+  .tp-radio-group {
+    display: grid;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .tp-radio-group:disabled {
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  .tp-radio-group__legend {
+    margin-bottom: 0.75rem;
+    color: var(--tp-color-heading);
+    font-size: var(--tp-text-small-size);
+    font-weight: var(--tp-font-weight-semibold);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-radio-group__required {
+    color: var(--tp-color-text-muted);
+    font-weight: var(--tp-font-weight-regular);
+  }
+
+  .tp-radio-group__options {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .tp-radio-group__option {
+    display: flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .tp-radio-group__control {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: 0 0 auto;
+    margin: 0;
+    accent-color: var(--tp-color-nav);
+  }
+
+  .tp-radio-group__label {
+    color: var(--tp-color-text);
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+    cursor: pointer;
+  }
+
+  .tp-radio-group__control:disabled,
+  .tp-radio-group__control:disabled + .tp-radio-group__label {
+    cursor: not-allowed;
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  .tp-radio-group[aria-invalid='true'] .tp-radio-group__control {
+    box-shadow: 0 0 0 1px var(--tp-color-error, var(--tp-color-action));
+  }
+
+  .tp-radio-group__help,
+  .tp-radio-group__error {
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-radio-group__help {
+    color: var(--tp-color-text-muted);
+  }
+
+  .tp-radio-group__error {
+    color: var(--tp-color-error, var(--tp-color-action));
+  }
+{% endstylesheet %}

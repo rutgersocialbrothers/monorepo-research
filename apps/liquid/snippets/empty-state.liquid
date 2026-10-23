@@ -1,0 +1,129 @@
+{%- doc -%}
+  Renders a canonical empty-content message. It is not intended for loading or
+  error feedback. Captured icon and action markup must come from a trusted theme
+  renderer, never directly from unescaped merchant text.
+
+  @param {string} [variant] - bordered or plain; defaults to bordered
+  @param {image} [icon] - Optional Shopify image object
+  @param {string} [icon_markup] - Optional trusted captured icon markup
+  @param {string} [title] - Optional empty-state title
+  @param {string} [body] - Optional trusted captured body markup
+  @param {string} [action] - Optional trusted captured action markup
+  @param {string} [heading_level] - h1, h2, h3, or h4; defaults to h3
+
+  @example
+  {%- capture empty_action -%}{% render 'button', label: action_label %}{%- endcapture -%}
+  {% render 'empty-state', title: empty_title, body: empty_body, action: empty_action %}
+{%- enddoc -%}
+
+{%- liquid
+  assign has_empty_state_content = false
+  if icon != blank or icon_markup != blank or title != blank or body != blank or action != blank
+    assign has_empty_state_content = true
+  endif
+
+  assign resolved_variant = 'bordered'
+  if variant == 'plain'
+    assign resolved_variant = 'plain'
+  endif
+
+  assign resolved_heading = 'h3'
+  case heading_level
+    when 'h1', 'h2', 'h4'
+      assign resolved_heading = heading_level
+  endcase
+
+-%}
+
+{%- if has_empty_state_content -%}
+  <section class="tp-empty-state tp-empty-state--{{ resolved_variant }}">
+    {%- if icon != blank or icon_markup != blank -%}
+      <div class="tp-empty-state__icon" aria-hidden="true">
+        {%- if icon != blank -%}
+          {{- icon
+            | image_url: width: 96
+            | image_tag:
+              alt: '',
+              class: 'tp-empty-state__icon-image',
+              loading: 'lazy',
+              widths: '48, 64, 96'
+          -}}
+        {%- else -%}
+          {{- icon_markup -}}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if title != blank -%}
+      <{{ resolved_heading }} class="tp-empty-state__title">{{ title | escape }}</{{ resolved_heading }}>
+    {%- endif -%}
+
+    {%- if body != blank -%}
+      <div class="tp-empty-state__body">{{ body }}</div>
+    {%- endif -%}
+
+    {%- if action != blank -%}
+      <div class="tp-empty-state__action">{{ action }}</div>
+    {%- endif -%}
+  </section>
+{%- endif -%}
+
+{% stylesheet %}
+  .tp-empty-state {
+    padding: 2rem;
+    border-radius: var(--tp-radius-md);
+    background: var(--tp-color-surface-raised);
+    color: var(--tp-color-text);
+    text-align: center;
+  }
+
+  .tp-empty-state--bordered {
+    border: 1px dashed var(--tp-color-border-strong);
+  }
+
+
+  .tp-empty-state__icon {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    color: var(--tp-color-text-brand);
+  }
+
+  .tp-empty-state__icon > :is(img, svg) {
+    display: block;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .tp-empty-state__icon-image {
+    object-fit: contain;
+  }
+
+  .tp-empty-state__title {
+    color: var(--tp-color-heading);
+    font-family: var(--tp-font-heading);
+    font-size: var(--tp-text-h3-size);
+    font-style: var(--tp-font-heading-style);
+    font-weight: var(--tp-font-weight-bold);
+    line-height: var(--tp-text-h3-leading);
+    overflow-wrap: anywhere;
+  }
+
+  .tp-empty-state__body {
+    max-width: 32rem;
+    margin: 0.75rem auto 0;
+    color: var(--tp-color-text-muted);
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+    overflow-wrap: anywhere;
+  }
+
+  .tp-empty-state__action {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    max-width: 100%;
+    margin-top: 1.5rem;
+  }
+{% endstylesheet %}

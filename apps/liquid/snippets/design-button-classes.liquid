@@ -2,25 +2,31 @@
   Authored shared button utilities, bound to the Tupak `--tp-*` roles through
   apps/liquid/styles/tokens.css. Keyboard focus comes from the global focus
   ring in assets/critical.css. Variant and size fall back independently.
-  Parameters: variant (primary/secondary), size (small/medium/large).
+  Parameters: variant (primary/secondary/nav/outline/ghost), size (small/medium/large).
 {%- endcomment -%}
 {%- liquid
-  assign base_classes = 'inline-flex max-w-full items-center justify-center gap-2 rounded-sm border font-body font-bold leading-none no-underline wrap-anywhere transition-colors disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
+  assign base_classes = 'inline-flex max-w-full shrink-0 cursor-pointer items-center justify-center gap-[var(--tp-button-gap)] rounded-[var(--tp-button-radius)] border-[length:var(--tp-button-border-width)] font-body font-bold leading-tight no-underline wrap-anywhere transition-colors duration-[var(--tp-duration-fast)] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
 
   case variant
     when 'secondary'
       assign variant_classes = 'border-secondary-border bg-secondary text-secondary-label not-disabled:hover:bg-secondary-hover not-disabled:active:bg-secondary-active'
+    when 'nav'
+      assign variant_classes = 'border-transparent bg-nav text-nav-label not-disabled:hover:bg-nav-hover not-disabled:active:bg-nav-active'
+    when 'outline'
+      assign variant_classes = 'border-2 border-nav bg-surface-raised text-heading not-disabled:hover:bg-secondary not-disabled:active:bg-secondary-active'
+    when 'ghost'
+      assign variant_classes = 'border-transparent bg-transparent text-heading not-disabled:hover:bg-secondary not-disabled:active:bg-secondary-hover'
     else
-      assign variant_classes = 'border-action bg-action text-action-label not-disabled:hover:border-action-hover not-disabled:hover:bg-action-hover not-disabled:active:border-action-active not-disabled:active:bg-action-active'
+      assign variant_classes = 'border-transparent bg-action text-action-label not-disabled:hover:bg-action-hover not-disabled:active:bg-action-active'
   endcase
 
   case size
     when 'small'
-      assign size_classes = 'min-h-10.5 px-4 py-2 text-small'
+      assign size_classes = 'min-h-[var(--tp-button-height-sm)] px-[var(--tp-button-padding-sm)] py-2 text-small'
     when 'large'
-      assign size_classes = 'min-h-14 px-6 py-3 text-body'
+      assign size_classes = 'min-h-[var(--tp-button-height-lg)] px-[var(--tp-button-padding-lg)] py-4 text-body'
     else
-      assign size_classes = 'min-h-12 px-5 py-3 text-body'
+      assign size_classes = 'min-h-[var(--tp-button-height-md)] px-[var(--tp-button-padding-md)] py-3 text-body'
   endcase
 
   echo base_classes | append: ' ' | append: variant_classes | append: ' ' | append: size_classes

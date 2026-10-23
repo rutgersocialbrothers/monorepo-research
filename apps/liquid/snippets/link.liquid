@@ -1,0 +1,72 @@
+{%- doc -%}
+  Renders a navigation anchor with either canonical text-link styling or the
+  shared button appearance. A button appearance remains an anchor.
+
+  @param {string} href - Required navigation destination
+  @param {string} label - Required visible and accessible link text
+  @param {string} [appearance] - text or button; defaults to text
+  @param {string} [variant] - primary, secondary, nav, outline, or ghost; button appearance defaults to nav
+  @param {string} [size] - sm, md, or lg; button appearance defaults to md
+  @param {string} [class] - Optional caller-supplied classes
+
+  @example
+  {% assign link_label = 'general.continue' | t %}
+  {% render 'link', href: routes.root_url, label: link_label %}
+{%- enddoc -%}
+
+{%- if href != blank and label != blank -%}
+  {%- liquid
+    assign resolved_appearance = 'text'
+    if appearance == 'button'
+      assign resolved_appearance = 'button'
+    endif
+
+    assign resolved_variant = 'nav'
+    case variant
+      when 'primary', 'secondary', 'nav', 'outline', 'ghost'
+        assign resolved_variant = variant
+    endcase
+
+    assign button_size = 'medium'
+    case size
+      when 'sm', 'small'
+        assign button_size = 'small'
+      when 'lg', 'large'
+        assign button_size = 'large'
+    endcase
+  -%}
+
+  {%- if resolved_appearance == 'button' -%}
+    {%- capture link_classes -%}
+      {%- render 'design-button-classes', variant: resolved_variant, size: button_size -%}
+    {%- endcapture -%}
+    {%- assign link_classes = link_classes | strip | append: ' tp-link--button' -%}
+  {%- else -%}
+    {%- assign link_classes = 'tp-link--text' -%}
+  {%- endif -%}
+  {%- if class != blank -%}
+    {%- assign link_classes = link_classes | append: ' ' | append: class -%}
+  {%- endif -%}
+
+  <a href="{{ href | escape }}" class="{{ link_classes | strip | escape }}">
+    {{- label | escape -}}
+  </a>
+{%- endif -%}
+
+{% stylesheet %}
+  .tp-link--text {
+    border-radius: var(--tp-radius-sm);
+    color: var(--tp-color-link);
+    font-weight: var(--tp-font-weight-medium);
+    text-decoration: underline;
+    text-underline-offset: var(--tp-link-underline-offset);
+  }
+
+  .tp-link--text:hover {
+    text-decoration: none;
+  }
+
+  .tp-link--button {
+    text-decoration: none;
+  }
+{% endstylesheet %}

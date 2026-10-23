@@ -1,0 +1,329 @@
+{%- doc -%}
+  Renders either an ARIA action menu or an ordinary navigation disclosure. Each
+  item may be a plain string or an object with label. Action item objects may
+  expose value, disabled, and destructive; navigation item objects may expose
+  url and disabled. Action selection emits a bubbling menu-select event whose
+  detail contains value. A blank id, label, or usable items collection renders
+  nothing. Text, URLs, and attribute values are escaped.
+
+  @param {string} id - Required stable, page-unique popup id
+  @param {string} label - Required disclosure button text and accessible menu name
+  @param {object} items - Required item objects
+  @param {string} [menu_type] - actions or navigation; defaults to actions
+  @param {string} [trigger_variant] - Button variant; defaults to outline
+  @param {string} [trigger_size] - Button size; defaults to medium
+
+  @example
+  {% render 'dropdown-menu', id: 'account-actions', label: actions_label, items: actions, menu_type: 'actions' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign has_labelled_item = false
+  if items != blank
+    for item in items
+      assign item_label = item.label | default: item
+      if item_label != blank
+        assign has_labelled_item = true
+        break
+      endif
+    endfor
+  endif
+
+  assign resolved_menu_type = 'actions'
+  if menu_type == 'navigation'
+    assign resolved_menu_type = 'navigation'
+  endif
+  assign resolved_trigger_variant = 'outline'
+  if trigger_variant != blank
+    assign resolved_trigger_variant = trigger_variant
+  endif
+-%}
+
+{%- if id != blank and label != blank and has_labelled_item -%}
+  {%- capture trigger_classes -%}
+    {%- render 'design-button-classes', variant: resolved_trigger_variant, size: trigger_size -%}
+  {%- endcapture -%}
+
+  <div class="tp-dropdown" data-tp-dropdown data-menu-type="{{ resolved_menu_type | escape }}">
+    {%- if resolved_menu_type == 'navigation' -%}
+      <details class="tp-dropdown__disclosure">
+        <summary class="{{ trigger_classes | strip | escape }}">
+          {{- label | escape -}}
+        </summary>
+        <ul class="tp-dropdown__popup" id="{{ id | escape }}">
+          {%- for item in items -%}
+            {%- liquid
+              assign item_label = item.label | default: item
+              assign item_url = item.url
+              assign item_disabled = item.disabled | default: false
+            -%}
+            {%- unless item_label == blank -%}
+              <li class="tp-dropdown__entry">
+                {%- if item_url != blank and item_disabled != true -%}
+                  <a class="tp-dropdown__item" href="{{ item_url | escape }}">
+                    {{- item_label | escape -}}
+                  </a>
+                {%- else -%}
+                  <span class="tp-dropdown__item" aria-disabled="true">
+                    {{- item_label | escape -}}
+                  </span>
+                {%- endif -%}
+              </li>
+            {%- endunless -%}
+          {%- endfor -%}
+        </ul>
+      </details>
+    {%- else -%}
+      <button
+        class="{{ trigger_classes | strip | escape }}"
+        type="button"
+        data-tp-dropdown-trigger
+        aria-expanded="false"
+        aria-controls="{{ id | escape }}"
+        aria-haspopup="menu"
+      >
+        {{- label | escape -}}
+      </button>
+      <div
+        class="tp-dropdown__popup"
+        id="{{ id | escape }}"
+        role="menu"
+        aria-label="{{ label | escape }}"
+        data-tp-dropdown-popup
+        hidden
+      >
+        {%- for item in items -%}
+          {%- liquid
+            assign item_label = item.label | default: item
+            assign item_value = item.value | default: item_label
+            assign item_disabled = item.disabled | default: false
+            assign item_destructive = item.destructive | default: false
+          -%}
+          {%- unless item_label == blank -%}
+            <button
+              class="tp-dropdown__item"
+              type="button"
+              role="menuitem"
+              tabindex="-1"
+              data-tp-dropdown-item
+              data-menu-value="{{ item_value | escape }}"
+              {% if item_disabled == true %}disabled{% endif %}
+              {% if item_destructive == true %}data-destructive{% endif %}
+            >
+              {{- item_label | escape -}}
+            </button>
+          {%- endunless -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .tp-dropdown {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .tp-dropdown__disclosure > summary {
+    list-style: none;
+  }
+
+  .tp-dropdown__disclosure > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .tp-dropdown__popup {
+    position: absolute;
+    z-index: var(--tp-z-popover, 1400);
+    top: 100%;
+    inset-inline-start: 0;
+    width: max-content;
+    min-width: 12rem;
+    max-width: calc(100vw - 3rem);
+    max-height: min(24rem, calc(100dvh - 3rem));
+    margin-block-start: 0.5rem;
+    overflow: auto;
+    padding: 0.5rem;
+    border: 1px solid var(--tp-color-border);
+    border-radius: var(--tp-radius-lg);
+    background: var(--tp-color-surface-raised);
+    color: var(--tp-color-text);
+    box-shadow: var(--tp-shadow-overlay);
+    list-style: none;
+  }
+
+  .tp-dropdown__popup[hidden] {
+    display: none;
+  }
+
+  .tp-dropdown__entry {
+    list-style: none;
+  }
+
+  .tp-dropdown__item {
+    display: block;
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 0;
+    border-radius: var(--tp-radius-sm);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+    text-align: start;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    transition:
+      color var(--tp-duration-fast) var(--tp-ease-standard),
+      background-color var(--tp-duration-fast) var(--tp-ease-standard);
+  }
+
+  .tp-dropdown__item:hover,
+  .tp-dropdown__item:focus-visible {
+    background: var(--tp-color-secondary);
+    color: var(--tp-color-secondary-label);
+  }
+
+  .tp-dropdown__item[data-destructive] {
+    color: var(--tp-color-destructive, var(--tp-color-action));
+  }
+
+  .tp-dropdown__item:disabled,
+  .tp-dropdown__item[aria-disabled='true'] {
+    cursor: not-allowed;
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tp-dropdown__item {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  const initializeDropdowns = (scope) => {
+    const roots = scope.matches?.('[data-tp-dropdown]')
+      ? [scope]
+      : scope.querySelectorAll?.('[data-tp-dropdown]') || [];
+
+    for (const root of roots) {
+      if (root.hasAttribute('data-tp-dropdown-ready')) continue;
+
+      const trigger = root.querySelector('[data-tp-dropdown-trigger]');
+      const popup = root.querySelector('[data-tp-dropdown-popup]');
+      if (!trigger || !popup) continue;
+
+      root.setAttribute('data-tp-dropdown-ready', '');
+      const listenerController = new AbortController();
+      root.tpDropdownListenerController = listenerController;
+      const isActionMenu = root.dataset.menuType === 'actions';
+      const enabledItems = () =>
+        [...popup.querySelectorAll('[data-tp-dropdown-item]')].filter(
+          (item) => !item.matches(':disabled, [aria-disabled="true"]'),
+        );
+
+      const close = (restoreFocus = false) => {
+        if (!popup.hidden) {
+          popup.hidden = true;
+          trigger.setAttribute('aria-expanded', 'false');
+        }
+        if (restoreFocus) trigger.focus({ preventScroll: true });
+      };
+
+      const open = (focusPosition) => {
+        popup.hidden = false;
+        trigger.setAttribute('aria-expanded', 'true');
+        const items = enabledItems();
+        if (focusPosition === 'first') items[0]?.focus({ preventScroll: true });
+        if (focusPosition === 'last') items.at(-1)?.focus({ preventScroll: true });
+      };
+
+      trigger.addEventListener('click', () => {
+        if (!popup.hidden) {
+          close();
+          return;
+        }
+        open(isActionMenu ? 'first' : undefined);
+      });
+
+      trigger.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+        event.preventDefault();
+        event.stopPropagation();
+        open(event.key === 'ArrowDown' ? 'first' : 'last');
+      });
+
+      root.addEventListener('keydown', (event) => {
+        if (popup.hidden) return;
+
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          event.stopPropagation();
+          close(true);
+          return;
+        }
+
+        if (event.key === 'Tab') {
+          setTimeout(() => close(), 0);
+          return;
+        }
+
+        if (!isActionMenu) return;
+        const items = enabledItems();
+        const currentIndex = items.indexOf(document.activeElement);
+        if (currentIndex < 0 || items.length === 0) return;
+
+        let nextIndex;
+        if (event.key === 'Home') nextIndex = 0;
+        if (event.key === 'End') nextIndex = items.length - 1;
+        if (event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % items.length;
+        if (event.key === 'ArrowUp') nextIndex = (currentIndex - 1 + items.length) % items.length;
+        if (nextIndex === undefined) return;
+
+        event.preventDefault();
+        items[nextIndex].focus({ preventScroll: true });
+      });
+
+      popup.addEventListener('click', (event) => {
+        if (!isActionMenu) return;
+        const item = event.target.closest('[data-tp-dropdown-item]');
+        if (!item || item.matches(':disabled')) return;
+        root.dispatchEvent(
+          new CustomEvent('menu-select', {
+            bubbles: true,
+            detail: { value: item.dataset.menuValue || '' },
+          }),
+        );
+        close(true);
+      });
+
+      root.addEventListener('focusout', () => {
+        setTimeout(() => {
+          if (!root.contains(document.activeElement)) close();
+        }, 0);
+      });
+
+      document.addEventListener(
+        'pointerdown',
+        (event) => {
+          if (!root.contains(event.target)) close();
+        },
+        { signal: listenerController.signal },
+      );
+    }
+  };
+
+  initializeDropdowns(document);
+  document.addEventListener('shopify:section:load', (event) => initializeDropdowns(event.target));
+  document.addEventListener('shopify:section:unload', (event) => {
+    const roots = event.target.matches?.('[data-tp-dropdown]')
+      ? [event.target]
+      : event.target.querySelectorAll?.('[data-tp-dropdown]') || [];
+    for (const root of roots) root.tpDropdownListenerController?.abort();
+  });
+{% endjavascript %}

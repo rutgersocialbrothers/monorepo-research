@@ -1,0 +1,141 @@
+{%- doc -%}
+  Renders a labelled native checkbox with optional help and error text.
+  A blank id, name, or label renders nothing.
+
+  @param {string} id - Stable control id
+  @param {string} name - Native form field name
+  @param {string} label - Visible label text
+  @param {string} [value] - Submitted value; defaults to on
+  @param {string} [help_text] - Optional help text
+  @param {string} [error_text] - Optional validation error text
+  @param {string} [required_text] - Caller-supplied visible required-state text
+  @param {boolean} [checked] - Whether the checkbox is checked
+  @param {boolean} [required] - Whether the checkbox is required
+  @param {boolean} [disabled] - Whether the checkbox is disabled
+  @param {boolean} [invalid] - Whether the checkbox is invalid
+  @param {boolean} [indeterminate] - Whether the checkbox presents a mixed state
+
+  @example
+  {% render 'checkbox', id: 'accept-terms', name: 'accept_terms', label: terms_label, value: 'yes', required: true, required_text: required_label %}
+{%- enddoc -%}
+
+{%- unless id == blank or name == blank or label == blank -%}
+  {%- liquid
+    assign resolved_value = value
+    if resolved_value == nil
+      assign resolved_value = 'on'
+    endif
+
+    assign invalid_state = false
+    if invalid == true or error_text != blank
+      assign invalid_state = true
+    endif
+
+    assign help_id = id | append: '-help'
+    assign error_id = id | append: '-error'
+    capture described_by
+      if help_text != blank
+        echo help_id
+      endif
+      if error_text != blank
+        if help_text != blank
+          echo ' '
+        endif
+        echo error_id
+      endif
+    endcapture
+  -%}
+  <div class="tp-checkbox">
+    <div class="tp-checkbox__row">
+      <input
+        class="tp-checkbox__control"
+        id="{{ id | escape }}"
+        name="{{ name | escape }}"
+        type="checkbox"
+        value="{{ resolved_value | escape }}"
+        {% if described_by != blank %}aria-describedby="{{ described_by | strip | escape }}"{% endif %}
+        {% if invalid_state %}aria-invalid="true"{% endif %}
+        {% if checked == true %}checked{% endif %}
+        {% if required == true %}required{% endif %}
+        {% if disabled == true %}disabled{% endif %}
+        {% if indeterminate == true %}data-tp-checkbox-indeterminate="true"{% endif %}
+      >
+      {% render 'label', control_id: id, label: label, required: required, required_text: required_text %}
+    </div>
+    {%- if help_text != blank -%}
+      <p class="tp-checkbox__help" id="{{ help_id | escape }}">{{ help_text | escape }}</p>
+    {%- endif -%}
+    {%- if error_text != blank -%}
+      <p class="tp-checkbox__error" id="{{ error_id | escape }}">{{ error_text | escape }}</p>
+    {%- endif -%}
+  </div>
+{%- endunless -%}
+
+{% stylesheet %}
+  .tp-checkbox {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .tp-checkbox__row {
+    display: flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .tp-checkbox__control {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: 0 0 auto;
+    margin: 0;
+    border-radius: var(--tp-radius-sm);
+    accent-color: var(--tp-color-nav);
+  }
+
+  .tp-checkbox__control:disabled {
+    cursor: not-allowed;
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  .tp-checkbox__row:has(.tp-checkbox__control:not(:disabled)) .tp-form-label {
+    cursor: pointer;
+  }
+
+  .tp-checkbox__row:has(.tp-checkbox__control:disabled) .tp-form-label {
+    cursor: not-allowed;
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  .tp-checkbox__control[aria-invalid='true'] {
+    box-shadow: 0 0 0 1px var(--tp-color-error, var(--tp-color-action));
+  }
+
+  .tp-checkbox__help,
+  .tp-checkbox__error {
+    padding-left: 2rem;
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-checkbox__help {
+    color: var(--tp-color-text-muted);
+  }
+
+  .tp-checkbox__error {
+    color: var(--tp-color-error, var(--tp-color-action));
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('[data-tp-checkbox-indeterminate="true"]').forEach((input) => {
+    input.indeterminate = true;
+  });
+
+  document.addEventListener('shopify:section:load', (event) => {
+    event.target.querySelectorAll('[data-tp-checkbox-indeterminate="true"]').forEach((input) => {
+      input.indeterminate = true;
+    });
+  });
+{% endjavascript %}

@@ -1,0 +1,110 @@
+{%- doc -%}
+  Renders a canonical page title, purpose, and ordered actions. Captured action
+  markup must come from a trusted theme renderer, never directly from unescaped
+  merchant text.
+
+  @param {string} [eyebrow] - Optional context label above the title
+  @param {string} [title] - Optional page title
+  @param {string} [description] - Optional supporting text
+  @param {string} [actions] - Optional trusted captured actions in display order
+  @param {string} [heading_level] - h1, h2, h3, or h4; defaults to h2
+
+  @example
+  {%- capture page_actions -%}{% render 'button', label: save_label, button_type: 'submit' %}{%- endcapture -%}
+  {% render 'page-header', eyebrow: eyebrow, title: page_title, description: page_description, actions: page_actions, heading_level: 'h1' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign has_page_header_content = false
+  if eyebrow != blank or title != blank or description != blank or actions != blank
+    assign has_page_header_content = true
+  endif
+
+  assign resolved_heading = 'h2'
+  case heading_level
+    when 'h1', 'h3', 'h4'
+      assign resolved_heading = heading_level
+  endcase
+-%}
+
+{%- if has_page_header_content -%}
+  <header class="tp-page-header">
+    {%- if eyebrow != blank or title != blank or description != blank -%}
+      <div class="tp-page-header__content">
+        {%- if eyebrow != blank -%}
+          <p class="tp-page-header__eyebrow">{{ eyebrow | escape }}</p>
+        {%- endif -%}
+        {%- if title != blank -%}
+          <{{ resolved_heading }} class="tp-page-header__title">{{ title | escape }}</{{ resolved_heading }}>
+        {%- endif -%}
+        {%- if description != blank -%}
+          <p class="tp-page-header__description">{{ description | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if actions != blank -%}
+      <div class="tp-page-header__actions">{{ actions }}</div>
+    {%- endif -%}
+  </header>
+{%- endif -%}
+
+{% stylesheet %}
+  .tp-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-width: 0;
+  }
+
+  .tp-page-header__content {
+    flex: 1 1 24rem;
+    min-width: min(100%, 16rem);
+  }
+
+  .tp-page-header__eyebrow {
+    margin-bottom: 0.5rem;
+    color: var(--tp-color-text-brand);
+    font-size: var(--tp-text-caption-size);
+    font-weight: var(--tp-font-weight-semibold);
+    letter-spacing: var(--tp-tracking-widest);
+    line-height: var(--tp-text-caption-leading);
+    overflow-wrap: anywhere;
+    text-transform: uppercase;
+  }
+
+  .tp-page-header__title {
+    color: var(--tp-color-heading);
+    font-family: var(--tp-font-heading);
+    font-size: var(--tp-text-h1-size);
+    font-style: var(--tp-font-heading-style);
+    font-weight: var(--tp-font-weight-bold);
+    letter-spacing: var(--tp-tracking-tight);
+    line-height: var(--tp-text-h1-leading);
+    overflow-wrap: anywhere;
+  }
+
+  .tp-page-header__description {
+    max-width: 42rem;
+    margin-top: 0.75rem;
+    color: var(--tp-color-text-muted);
+    overflow-wrap: anywhere;
+  }
+
+  .tp-page-header__actions {
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 100%;
+  }
+
+  @media (max-width: 31.25rem) {
+    .tp-page-header__actions {
+      flex-basis: 100%;
+    }
+  }
+{% endstylesheet %}

@@ -1,0 +1,89 @@
+{%- doc -%}
+  Renders persistent inline feedback. Set role only when dynamic content needs
+  announcement; static feedback has no live-region role.
+
+  @param {string} [title] - Caller-supplied alert heading
+  @param {string} [message] - Caller-supplied alert message
+  @param {string} [variant] - info, success, warning, or destructive; defaults to info
+  @param {string} [role] - Optional alert or status live-region role
+  @param {string} [class] - Optional caller-supplied classes
+
+  @example
+  {% render 'alert', title: alert_title, message: alert_message, variant: 'warning' %}
+{%- enddoc -%}
+
+{%- if title != blank or message != blank -%}
+  {%- liquid
+    assign resolved_variant = 'info'
+    case variant
+      when 'success', 'warning', 'destructive'
+        assign resolved_variant = variant
+    endcase
+
+    assign resolved_role = blank
+    case role
+      when 'alert', 'status'
+        assign resolved_role = role
+    endcase
+  -%}
+  <div
+    class="tp-alert tp-alert--{{ resolved_variant }}{% if class != blank %} {{ class | escape }}{% endif %}"
+    {% if resolved_role != blank %}role="{{ resolved_role }}"{% endif %}
+  >
+    {%- if title != blank -%}
+      <p class="tp-alert__title">{{ title | escape }}</p>
+    {%- endif -%}
+    {%- if message != blank -%}
+      <p class="tp-alert__message">{{ message | escape }}</p>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .tp-alert {
+    border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+    border-inline-start-width: 4px;
+    border-inline-start-color: currentColor;
+    border-radius: var(--tp-radius-md);
+    padding: 1.25rem;
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-alert--info {
+    background: var(--tp-color-info-subtle);
+    color: var(--tp-color-info-subtle-foreground);
+  }
+
+  .tp-alert--success {
+    background: var(--tp-color-success-subtle);
+    color: var(--tp-color-success-subtle-foreground);
+  }
+
+  .tp-alert--warning {
+    background: var(--tp-color-warning-subtle);
+    color: var(--tp-color-warning-subtle-foreground);
+  }
+
+  .tp-alert--destructive {
+    background: var(--tp-color-destructive-subtle);
+    color: var(--tp-color-destructive-subtle-foreground);
+  }
+
+  .tp-alert__title,
+  .tp-alert__message {
+    margin: 0;
+  }
+
+  .tp-alert__title {
+    font-weight: var(--tp-font-weight-bold);
+  }
+
+  .tp-alert__title + .tp-alert__message {
+    margin-block-start: 0.5rem;
+  }
+
+  .tp-alert__message {
+    line-height: var(--tp-leading-relaxed);
+  }
+{% endstylesheet %}

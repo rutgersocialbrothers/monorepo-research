@@ -1,0 +1,139 @@
+{%- doc -%}
+  Renders a labelled single-line native input with optional help and error text.
+  A blank id, name, or label renders nothing.
+
+  @param {string} id - Stable control id
+  @param {string} name - Native form field name
+  @param {string} label - Visible label text
+  @param {string} [type] - text, email, password, search, tel, url, or number; defaults to text
+  @param {string} [value] - Current field value
+  @param {string} [placeholder] - Optional caller-supplied placeholder
+  @param {string} [help_text] - Optional help text
+  @param {string} [error_text] - Optional validation error text
+  @param {string} [required_text] - Caller-supplied visible required-state text
+  @param {string} [autocomplete] - Optional autocomplete token
+  @param {string} [inputmode] - Optional virtual keyboard hint
+  @param {string} [min] - Optional minimum for compatible input types
+  @param {string} [max] - Optional maximum for compatible input types
+  @param {string} [step] - Optional step for compatible input types
+  @param {boolean} [required] - Whether the field is required
+  @param {boolean} [disabled] - Whether the field is disabled
+  @param {boolean} [invalid] - Whether the field is invalid
+
+  @example
+  {% render 'input', id: 'contact-email', name: 'contact[email]', label: email_label, type: 'email', autocomplete: 'email', required: true, required_text: required_label %}
+{%- enddoc -%}
+
+{%- unless id == blank or name == blank or label == blank -%}
+  {%- liquid
+    assign resolved_type = 'text'
+    case type
+      when 'email', 'password', 'search', 'tel', 'url', 'number'
+        assign resolved_type = type
+    endcase
+
+    assign invalid_state = false
+    if invalid == true or error_text != blank
+      assign invalid_state = true
+    endif
+
+    assign help_id = id | append: '-help'
+    assign error_id = id | append: '-error'
+    capture described_by
+      if help_text != blank
+        echo help_id
+      endif
+      if error_text != blank
+        if help_text != blank
+          echo ' '
+        endif
+        echo error_id
+      endif
+    endcapture
+  -%}
+  <div class="tp-input">
+    {% render 'label', control_id: id, label: label, required: required, required_text: required_text %}
+    <input
+      class="tp-input__control"
+      id="{{ id | escape }}"
+      name="{{ name | escape }}"
+      type="{{ resolved_type | escape }}"
+      {% if value != nil %}value="{{ value | escape }}"{% endif %}
+      {% if placeholder != blank %}placeholder="{{ placeholder | escape }}"{% endif %}
+      {% if autocomplete != blank %}autocomplete="{{ autocomplete | escape }}"{% endif %}
+      {% if inputmode != blank %}inputmode="{{ inputmode | escape }}"{% endif %}
+      {% if min != blank %}min="{{ min | escape }}"{% endif %}
+      {% if max != blank %}max="{{ max | escape }}"{% endif %}
+      {% if step != blank %}step="{{ step | escape }}"{% endif %}
+      {% if described_by != blank %}aria-describedby="{{ described_by | strip | escape }}"{% endif %}
+      {% if invalid_state %}aria-invalid="true"{% endif %}
+      {% if required == true %}required{% endif %}
+      {% if disabled == true %}disabled{% endif %}
+    >
+    {%- if help_text != blank -%}
+      <p class="tp-input__help" id="{{ help_id | escape }}">{{ help_text | escape }}</p>
+    {%- endif -%}
+    {%- if error_text != blank -%}
+      <p class="tp-input__error" id="{{ error_id | escape }}">{{ error_text | escape }}</p>
+    {%- endif -%}
+  </div>
+{%- endunless -%}
+
+{% stylesheet %}
+  .tp-input {
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .tp-input__control {
+    width: 100%;
+    min-width: 0;
+    min-height: var(--tp-input-height-md);
+    border: 1px solid var(--tp-color-border);
+    border-radius: var(--tp-radius-md);
+    background: var(--tp-color-surface-raised);
+    color: var(--tp-color-text);
+    padding: 0.5rem 0.75rem;
+    box-shadow: none;
+    transition: border-color var(--tp-duration-fast) var(--tp-ease-standard);
+  }
+
+  .tp-input__control::placeholder {
+    color: var(--tp-color-text-muted);
+    opacity: 1;
+  }
+
+  .tp-input__control:hover:not(:disabled) {
+    border-color: var(--tp-color-border-strong);
+  }
+
+  .tp-input__control[aria-invalid='true'] {
+    border-color: var(--tp-color-error, var(--tp-color-action));
+  }
+
+  .tp-input__control:disabled {
+    cursor: not-allowed;
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  .tp-input__help,
+  .tp-input__error {
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-input__help {
+    color: var(--tp-color-text-muted);
+  }
+
+  .tp-input__error {
+    color: var(--tp-color-error, var(--tp-color-action));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tp-input__control {
+      transition: none;
+    }
+  }
+{% endstylesheet %}

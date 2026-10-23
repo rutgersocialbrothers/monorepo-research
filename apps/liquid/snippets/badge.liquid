@@ -1,0 +1,81 @@
+{%- doc -%}
+  Renders a short, non-interactive status, category, or count badge.
+  The caller supplies text so every tone is communicated without color alone.
+
+  @param {string} label - Required badge text
+  @param {string} [variant] - primary, secondary, outline, success, warning, info, destructive, or ghost; defaults to primary
+  @param {string} [class] - Optional caller-supplied classes
+
+  @example
+  {% render 'badge', label: status_label, variant: 'success' %}
+{%- enddoc -%}
+
+{%- unless label == blank -%}
+  {%- liquid
+    assign resolved_variant = 'primary'
+    case variant
+      when 'secondary', 'outline', 'success', 'warning', 'info', 'destructive', 'ghost'
+        assign resolved_variant = variant
+    endcase
+  -%}
+  <span
+    class="tp-badge tp-badge--{{ resolved_variant }}{% if class != blank %} {{ class | escape }}{% endif %}"
+    data-variant="{{ resolved_variant }}"
+  >
+    {{- label | escape -}}
+  </span>
+{%- endunless -%}
+
+{% stylesheet %}
+  .tp-badge {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.25rem;
+    border: 1px solid transparent;
+    border-radius: var(--tp-radius-full);
+    padding: 0.25rem 0.625rem;
+    font-size: var(--tp-text-caption-size);
+    font-weight: var(--tp-font-weight-bold);
+    line-height: 1.25;
+  }
+
+  .tp-badge--primary {
+    background: var(--tp-color-action);
+    color: var(--tp-color-action-label);
+  }
+
+  .tp-badge--secondary {
+    background: var(--tp-color-secondary);
+    color: var(--tp-color-secondary-label);
+  }
+
+  .tp-badge--outline {
+    border-color: var(--tp-color-border-strong);
+    color: var(--tp-color-heading);
+  }
+
+  .tp-badge--success {
+    background: var(--tp-color-success-subtle);
+    color: var(--tp-color-success-subtle-foreground);
+  }
+
+  .tp-badge--warning {
+    background: var(--tp-color-warning-subtle);
+    color: var(--tp-color-warning-subtle-foreground);
+  }
+
+  .tp-badge--info {
+    background: var(--tp-color-info-subtle);
+    color: var(--tp-color-info-subtle-foreground);
+  }
+
+  .tp-badge--destructive {
+    background: var(--tp-color-destructive-subtle);
+    color: var(--tp-color-destructive-subtle-foreground);
+  }
+
+  .tp-badge--ghost {
+    color: var(--tp-color-heading);
+  }
+{% endstylesheet %}
