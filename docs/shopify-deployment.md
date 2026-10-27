@@ -70,6 +70,40 @@ Actions → CI → Run workflow on a protected mapped branch performs a pull, no
 
 The workflow uploads only theme directories as a private review artifact with requested three-day retention, excluding hidden metadata. Review merchant-controlled files before selectively integrating changes. No automatic merge, commit or source synchronization occurs; never commit credentials or private snapshots.
 
+## Staging Markets and locale fixtures
+
+The development store `tupak-trva8uui.myshopify.com` carries the SETU-4 country/region Market fixtures. Netherlands is the active primary Market; Belgium and Germany are active staging Markets. The existing SETU-3 company-location Markets are separate B2B fixtures and remain unchanged. Shopify permits unlimited country/region Markets on the Development plan, and the three enabled shop locales remain below Shopify's 20-locale limit.
+
+| Market | Region | Staging URL | Currency | Tax and duties | Shipping placeholder | Default language | Alternate language |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Netherlands (primary) | NL | `https://tupak-trva8uui.myshopify.com` | EUR; local currencies off | Prices include tax; duties added at checkout | TBD — SETU-4 does not create or change shipping profiles or rates | Dutch (`nl`) | English (`en`) |
+| Belgium | BE | `https://tupak-trva8uui.myshopify.com/nl-be` | EUR; local currencies off | Prices include tax; duties added at checkout | TBD — SETU-4 does not create or change shipping profiles or rates | Dutch (`nl`) | None |
+| Germany | DE | `https://tupak-trva8uui.myshopify.com/de-de` | EUR; local currencies off | Prices include tax; duties added at checkout | TBD — SETU-4 does not create or change shipping profiles or rates | German (`de`) | None |
+
+Shipping remains an explicit merchant-owned placeholder: confirm delivery zones, rates and tax interactions in Shopify Admin before checkout or fulfillment acceptance. SETU-4 configures only Markets, currencies, tax presentation, published locales and staging web presences.
+
+The theme includes complete `locales/nl.json` and `locales/de.json` fixed-copy fixtures, matched to the default locale keyset so published staging locales do not emit missing-translation tokens. LOCA owns final copy review, merchant-content translation, language-switcher behavior and domain-level locale acceptance.
+
+Use these equivalent route fixtures for LOCA language-switcher, translation, canonical and `hreflang` work:
+
+| Fixture | Netherlands | Belgium | Germany |
+| --- | --- | --- | --- |
+| Home | `/` | `/nl-be` | `/de-de` |
+| Search | `/search` | `/nl-be/search` | `/de-de/search` |
+| Cart | `/cart` | `/nl-be/cart` | `/de-de/cart` |
+
+For every fixture, assert the selected Market, `<html lang>` (`nl`, `nl-BE`, `de-DE`), translated content, equivalent-path switching, canonical URL and reciprocal `hreflang` set. Query-string country overrides are not proof of domain behavior. Staging subfolders prove locale routing; custom-domain behavior must be repeated through the real domains after LIVE-3 activation.
+
+Production domain intent is recorded only; SETU-4 does not connect domains, activate certificates or change DNS:
+
+| Market | Intended production domain | Activation owner |
+| --- | --- | --- |
+| Netherlands | `tupak.com` | LIVE-3 |
+| Belgium | `verzendverpakking.com` | LIVE-3 |
+| Germany | `tupak-deutschland.de` | LIVE-3 |
+
+LIVE-3 owns domain connection, DNS cutover, certificate readiness, primary-domain selection, redirects and the final domain-level locale, canonical and `hreflang` verification.
+
 ## Local development
 
 ```sh
