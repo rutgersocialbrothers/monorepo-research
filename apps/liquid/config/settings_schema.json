@@ -173,6 +173,68 @@
     ]
   },
   {
+    "name": "t:general.navigation",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "breadcrumb_navigation",
+        "label": "t:labels.breadcrumb_navigation",
+        "info": "t:info.breadcrumb_navigation"
+      }
+    ]
+  },
+  {
+    "name": "t:general.breadcrumbs",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "breadcrumb_show_home",
+        "label": "t:labels.breadcrumb_show_home",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "breadcrumb_separator",
+        "label": "t:labels.breadcrumb_separator",
+        "options": [
+          { "value": "chevron", "label": "t:options.breadcrumbs.chevron" },
+          { "value": "slash", "label": "t:options.breadcrumbs.slash" }
+        ],
+        "default": "chevron"
+      },
+      {
+        "type": "select",
+        "id": "breadcrumb_typography",
+        "label": "t:labels.breadcrumb_typography",
+        "options": [
+          { "value": "small", "label": "t:options.breadcrumbs.small" },
+          { "value": "body", "label": "t:options.breadcrumbs.body" }
+        ],
+        "default": "small"
+      },
+      {
+        "type": "select",
+        "id": "breadcrumb_color",
+        "label": "t:labels.breadcrumb_color",
+        "options": [
+          { "value": "muted", "label": "t:options.breadcrumbs.muted" },
+          { "value": "text", "label": "t:options.breadcrumbs.text" }
+        ],
+        "default": "muted"
+      },
+      {
+        "type": "range",
+        "id": "breadcrumb_spacing",
+        "label": "t:labels.breadcrumb_spacing",
+        "min": 4,
+        "max": 24,
+        "step": 4,
+        "unit": "px",
+        "default": 8
+      }
+    ]
+  },
+  {
     "name": "t:general.focus",
     "settings": [
       {

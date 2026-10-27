@@ -10,6 +10,7 @@
   {{ article.image | image_url: width: 1000 | image_tag }}
 {% endif %}
 
+{% render 'breadcrumbs', resource: article, resource_type: 'article' %}
 <h1>{{ article.title }}</h1>
 
 {% assign date = article.published_at | time_tag: format: 'date' %}

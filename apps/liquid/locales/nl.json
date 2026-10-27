@@ -1,0 +1,114 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "not_found": "Pagina niet gevonden.",
+    "back_to_shopping": "Terug naar winkelen"
+  },
+  "accessibility": {
+    "skip_to_content": "Ga naar de inhoud"
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "label": "Broodkruimelnavigatie"
+  },
+  "blog": {
+    "article_comments": "Reacties",
+    "article_metadata_html": "{{ date }} door {{ author }}",
+    "comment_form_body": "Reactie",
+    "comment_form_email": "E-mailadres",
+    "comment_form_name": "Naam",
+    "comment_form_submit": "Plaatsen",
+    "comment_form_title": "Een reactie toevoegen"
+  },
+  "cart": {
+    "checkout": "Afrekenen",
+    "title": "Winkelwagen",
+    "update": "Bijwerken",
+    "remove": "Verwijderen"
+  },
+  "customers": {
+    "login": {
+      "email": "E-mailadres",
+      "password": "Wachtwoord",
+      "submit": "Inloggen",
+      "title": "Inloggen"
+    }
+  },
+  "collections": {
+    "title": "Collecties"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Voeg toe aan Apple Wallet",
+    "card": "Cadeaubon",
+    "expired": "Deze cadeaubon is verlopen",
+    "expires_on": "Verloopt op {{ expires_on }}",
+    "use_at_checkout": "Gebruik bij het afrekenen"
+  },
+  "password": {
+    "title": "Deze winkel is privé",
+    "password": "Wachtwoord",
+    "enter": "Binnengaan"
+  },
+  "search": {
+    "title": "Zoeken",
+    "placeholder": "Zoek in artikelen, pagina's of producten",
+    "submit": "Zoeken",
+    "no_results_html": "Geen resultaten gevonden voor {{ terms }}",
+    "results_for_html": "{{ count }} resultaten gevonden voor {{ terms }}"
+  },
+  "liquid_components": {
+    "design_system": {
+      "title": "Designsysteem",
+      "description": "Herbruikbare Liquid-componenten, vormgegeven met de gedeelde designtokens en de instellingen van dit thema.",
+      "buttons_title": "Voorbeelden van native knoppen",
+      "buttons_description": "Alle zes combinaties van varianten en formaten gebruiken de gedeelde knop-snippet. Ingeschakelde voorbeelden voeren geen actie uit. Gebruik Tab om toetsenbordfocus te bekijken, beweeg met de muis voor feedback en vergelijk native uitgeschakelde bedieningselementen. Beweging volgt de instelling voor verminderde beweging van je apparaat.",
+      "combination": "{{ variant }} · {{ size }}",
+      "enabled_label": "Voorbeeld {{ variant }} {{ size }} — geen actie",
+      "disabled_label": "{{ variant }} {{ size }} uitgeschakeld",
+      "variants": {
+        "primary": "Primair",
+        "secondary": "Secundair"
+      },
+      "sizes": {
+        "small": "Klein",
+        "medium": "Middelgroot",
+        "large": "Groot"
+      },
+      "foundations_title": "Globale basis",
+      "foundations_description": "Oppervlakken, tekst, randen, typografie en witruimte komen uit de thema-instellingen voor kleuren, typografie, lay-out en toetsenbordfocus. Wijzig een instelling om alle toepassingen samen bij te werken.",
+      "surfaces": {
+        "page": "Pagina",
+        "band": "Subtiele band",
+        "brand": "Merktint",
+        "warm": "Warm",
+        "natural": "Natuurlijk",
+        "inverse": "Merkoppervlak"
+      },
+      "muted_sample": "Gedempte tekst en de rand zijn afgeleid van de tekst- en paginakleuren.",
+      "inverse_description": "Tekst, links, acties en de focusring worden aangepast voor contrast op de merkkleur.",
+      "inverse_button": "Voorbeeld — geen actie",
+      "typography_title": "Typografie",
+      "typography_display": "Display",
+      "typography_h1": "Kop 1",
+      "typography_h2": "Kop 2",
+      "typography_h3": "Kop 3",
+      "typography_description": "Lopende tekst gebruikt het body-lettertype. Koppen gebruiken het koplettertype en de typografieschaal van de stijlgids.",
+      "typography_small": "Kleine tekst voor ondersteunende details.",
+      "typography_caption": "Bijschrift",
+      "layout_title": "Paginabreedte en witruimte",
+      "layout_description": "Elke sectie volgt de maximale paginabreedte en marge-instellingen. Sectieafstand bepaalt de ruimte boven en onder deze demo.",
+      "image_title": "Responsieve Shopify-afbeelding",
+      "image_description": "Een echte Shopify-afbeelding wordt via de gedeelde afbeelding-snippet gerenderd met Shopify-filters voor afbeeldings-URL en afbeeldingstag.",
+      "image_empty": "Kies een voorbeeldafbeelding in de thema-editor om de gedeelde afbeeldingcomponent te bekijken. Er wordt geen tijdelijke of externe afbeelding opgevraagd."
+    }
+  }
+}

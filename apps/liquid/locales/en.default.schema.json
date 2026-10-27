@@ -13,6 +13,7 @@
     "article": "Article",
     "block": "Block",
     "blog": "Blog",
+    "breadcrumbs": "Breadcrumbs",
     "brand_assets": "Logo and sharing",
     "cart": "Cart",
     "collection": "Collection",
@@ -26,6 +27,7 @@
     "header": "Header",
     "layout": "Layout",
     "main": "Main",
+    "navigation": "Navigation",
     "page": "Page",
     "page_margin": "Page margin",
     "password": "Password",
@@ -44,6 +46,11 @@
     "background": "Page background",
     "body_font": "Body",
     "brand_color": "Brand",
+    "breadcrumb_color": "Text color",
+    "breadcrumb_separator": "Separator",
+    "breadcrumb_show_home": "Show Home link",
+    "breadcrumb_spacing": "Item spacing",
+    "breadcrumb_typography": "Typography",
     "customer_account_menu": "Customer account menu",
     "desktop": "Desktop",
     "favicon": "Favicon",
@@ -57,6 +64,7 @@
     "link_color": "Links and secondary actions",
     "logo": "Logo",
     "menu": "Menu",
+    "breadcrumb_navigation": "Breadcrumb structure",
     "mobile": "Mobile",
     "natural_color": "Natural surface",
     "page_width": "Maximum page width",
@@ -69,8 +77,9 @@
     "action_color": "The one main call to action per view, such as Add to cart. Label text is white; hover and pressed shades are derived.",
     "brand_color": "Navy surfaces such as the header and footer, and brand-coloured text.",
     "colors": "Defaults follow the Tupak Styleguide, which is still in review. Borders, muted text, subtle bands and hover shades are derived from these colors.",
-    "favicon": "Square PNG, at least 180 × 180 px. Without one, no icon is requested.",
+    "breadcrumb_navigation": "Dedicated Shopify Navigation menu used only for breadcrumbs. Add collections, pages, and blogs in their canonical hierarchy. Product breadcrumbs use custom.primary_collection when set, then the deepest matching collection in menu order.",
     "focus": "Shown around links, buttons and fields when they are reached with the keyboard. Keep at least 3:1 contrast with the surface behind it.",
+    "favicon": "Square PNG, at least 180 × 180 px. Without one, no icon is requested.",
     "link_color": "Inline links, and the label and outline of secondary buttons.",
     "logo": "Shown in the header. Without a logo, the store name is shown as text.",
     "page_width": "Includes the page margins.",
@@ -78,6 +87,14 @@
     "tint_color": "Pale panels and the fill of secondary buttons. Hover shades are derived."
   },
   "options": {
+    "breadcrumbs": {
+      "body": "Body",
+      "chevron": "Chevron",
+      "muted": "Muted",
+      "slash": "Slash",
+      "small": "Small",
+      "text": "Text"
+    },
     "size": {
       "large": "Large",
       "small": "Small"

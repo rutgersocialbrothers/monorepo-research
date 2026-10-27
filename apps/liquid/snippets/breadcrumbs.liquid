@@ -1,0 +1,283 @@
+{%- doc -%}
+  Renders a canonical Tupak breadcrumb trail and matching BreadcrumbList JSON-LD.
+  The native Shopify breadcrumb menu provides collection, page, and blog hierarchy.
+  Products use their optional custom.primary_collection collection reference
+  first; otherwise the deepest matching collection in menu order is canonical.
+
+  @param {object} resource - Required current Shopify resource
+  @param {string} resource_type - Required collection, product, page, blog, or article
+
+  @example
+  {% render 'breadcrumbs', resource: collection, resource_type: 'collection' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign current_title = resource.title
+  assign navigation_depth = 0
+  assign navigation_trail_titles = blank
+  assign navigation_trail_urls = blank
+  assign path_separator = '|~|'
+  assign navigation = settings.breadcrumb_navigation
+
+  if navigation == blank
+    assign navigation = linklists['breadcrumbs']
+  endif
+
+  assign primary_collection = blank
+  assign product_collection_urls = blank
+  assign navigation_target_url = blank
+  assign navigation_target_is_ancestor = false
+
+  if resource_type == 'product'
+    assign primary_collection = resource.metafields.custom.primary_collection.value
+    assign product_collection_urls = resource.collections | map: 'url'
+    assign navigation_target_is_ancestor = true
+
+    if primary_collection != blank
+      assign navigation_target_url = primary_collection.url
+    endif
+  elsif resource_type == 'collection' or resource_type == 'page' or resource_type == 'blog'
+    assign navigation_target_url = resource.url
+  elsif resource_type == 'article' and blog != blank
+    assign navigation_target_url = blog.url
+    assign navigation_target_is_ancestor = true
+  endif
+
+  assign match_urls = navigation_target_url | split: '|'
+  if resource_type == 'product' and primary_collection == blank
+    assign match_urls = product_collection_urls
+  endif
+
+  assign should_scan_navigation = false
+  if navigation != blank and match_urls != blank
+    assign should_scan_navigation = true
+  endif
+
+  if should_scan_navigation
+    for top_link in navigation.links
+      if match_urls contains top_link.url and navigation_depth < 1
+        assign navigation_depth = 1
+        if navigation_target_is_ancestor
+          assign navigation_trail_titles = top_link.title
+          assign navigation_trail_urls = top_link.url
+        endif
+      endif
+
+      for child_link in top_link.links
+        if match_urls contains child_link.url and navigation_depth < 2
+          assign navigation_depth = 2
+          assign navigation_trail_titles = top_link.title
+          assign navigation_trail_urls = top_link.url
+
+          if navigation_target_is_ancestor
+            assign navigation_trail_titles = navigation_trail_titles | append: path_separator | append: child_link.title
+            assign navigation_trail_urls = navigation_trail_urls | append: path_separator | append: child_link.url
+          endif
+        endif
+
+        for grandchild_link in child_link.links
+          if match_urls contains grandchild_link.url and navigation_depth < 3
+            assign navigation_depth = 3
+            assign navigation_trail_titles = top_link.title | append: path_separator | append: child_link.title
+            assign navigation_trail_urls = top_link.url | append: path_separator | append: child_link.url
+
+            if navigation_target_is_ancestor
+              assign navigation_trail_titles = navigation_trail_titles | append: path_separator | append: grandchild_link.title
+              assign navigation_trail_urls = navigation_trail_urls | append: path_separator | append: grandchild_link.url
+            endif
+          endif
+        endfor
+      endfor
+    endfor
+  endif
+
+  if resource_type == 'product' and navigation_depth == 0 and primary_collection != blank
+    assign navigation_trail_titles = primary_collection.title
+    assign navigation_trail_urls = primary_collection.url
+  elsif resource_type == 'article' and navigation_depth == 0 and blog != blank
+    assign navigation_trail_titles = blog.title
+    assign navigation_trail_urls = blog.url
+  endif
+
+  assign show_home = settings.breadcrumb_show_home
+  if show_home == nil
+    assign show_home = true
+  endif
+
+  assign trail_titles = blank
+  assign trail_urls = blank
+
+  if show_home
+    assign trail_titles = 'breadcrumbs.home' | t
+    assign trail_urls = routes.root_url
+  endif
+
+  if navigation_trail_titles != blank
+    if trail_titles != blank
+      assign trail_titles = trail_titles | append: path_separator
+      assign trail_urls = trail_urls | append: path_separator
+    endif
+    assign trail_titles = trail_titles | append: navigation_trail_titles
+    assign trail_urls = trail_urls | append: navigation_trail_urls
+  endif
+
+  if trail_titles != blank
+    assign trail_titles = trail_titles | append: path_separator
+    assign trail_urls = trail_urls | append: path_separator
+  endif
+  assign trail_titles = trail_titles | append: current_title
+  assign trail_urls = trail_urls | append: canonical_url
+  assign breadcrumb_titles = trail_titles | split: path_separator
+  assign breadcrumb_urls = trail_urls | split: path_separator
+
+  assign breadcrumb_separator = settings.breadcrumb_separator | default: 'chevron'
+  assign breadcrumb_typography = settings.breadcrumb_typography | default: 'small'
+  assign breadcrumb_color = settings.breadcrumb_color | default: 'muted'
+  assign breadcrumb_spacing = settings.breadcrumb_spacing | default: 8
+
+  case breadcrumb_separator
+    when 'slash'
+      assign breadcrumb_separator = 'slash'
+    else
+      assign breadcrumb_separator = 'chevron'
+  endcase
+
+  case breadcrumb_typography
+    when 'body'
+      assign breadcrumb_typography = 'body'
+    else
+      assign breadcrumb_typography = 'small'
+  endcase
+
+  case breadcrumb_color
+    when 'text'
+      assign breadcrumb_color = 'text'
+    else
+      assign breadcrumb_color = 'muted'
+  endcase
+
+  assign breadcrumb_label = 'breadcrumbs.label' | t
+  assign json_item_written = false
+  assign json_position = 0
+-%}
+
+<nav
+  class="tp-breadcrumbs tp-breadcrumbs--separator-{{ breadcrumb_separator }} tp-breadcrumbs--type-{{ breadcrumb_typography }} tp-breadcrumbs--color-{{ breadcrumb_color }}"
+  aria-label="{{ breadcrumb_label | escape }}"
+  style="--tp-breadcrumb-gap: {{ breadcrumb_spacing }}px"
+>
+  <ol class="tp-breadcrumbs__list">
+    {%- for breadcrumb_title in breadcrumb_titles -%}
+      {%- assign breadcrumb_url = breadcrumb_urls[forloop.index0] -%}
+      {%- if show_home and forloop.index > 1 and breadcrumb_url == routes.root_url -%}
+        {%- continue -%}
+      {%- endif -%}
+      <li class="tp-breadcrumbs__item">
+        {%- if forloop.last -%}
+          <span class="tp-breadcrumbs__current" aria-current="page">{{ breadcrumb_title | escape }}</span>
+        {%- else -%}
+          <a class="tp-breadcrumbs__link" href="{{ breadcrumb_url | escape }}">{{ breadcrumb_title | escape }}</a>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ol>
+</nav>
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {%- for breadcrumb_title in breadcrumb_titles -%}
+        {%- assign breadcrumb_url = breadcrumb_urls[forloop.index0] -%}
+        {%- if show_home and forloop.index > 1 and breadcrumb_url == routes.root_url -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- assign structured_url = breadcrumb_url -%}
+        {%- assign url_prefix = breadcrumb_url | slice: 0, 1 -%}
+        {%- if url_prefix == '/' -%}
+          {%- assign structured_url = request.origin | append: breadcrumb_url -%}
+        {%- endif -%}
+        {%- if json_item_written %},{% endif -%}
+        {%- assign json_position = json_position | plus: 1 -%}
+        { "@type": "ListItem", "position": {{ json_position }}, "name": {{ breadcrumb_title | json | replace: '</script>', '<\\/script>' }}, "item": {{ structured_url | json | replace: '</script>', '<\\/script>' }} }
+        {%- assign json_item_written = true -%}
+      {%- endfor -%}
+    ]
+  }
+</script>
+
+{% stylesheet %}
+  .tp-breadcrumbs {
+    min-width: 0;
+  }
+
+  .tp-breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--tp-breadcrumb-gap);
+    margin: 0;
+    padding: 0;
+    color: var(--tp-color-text-muted);
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+    list-style: none;
+  }
+
+  .tp-breadcrumbs--type-body .tp-breadcrumbs__list {
+    font-size: var(--tp-text-body-size);
+    line-height: var(--tp-text-body-leading);
+  }
+
+  .tp-breadcrumbs--color-text .tp-breadcrumbs__list,
+  .tp-breadcrumbs--color-text .tp-breadcrumbs__link {
+    color: var(--tp-color-text);
+  }
+
+  .tp-breadcrumbs__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tp-breadcrumb-gap);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .tp-breadcrumbs__item + .tp-breadcrumbs__item::before {
+    width: 0.4em;
+    height: 0.4em;
+    border-top: 1px solid currentcolor;
+    border-right: 1px solid currentcolor;
+    content: '';
+    flex: none;
+    rotate: 45deg;
+  }
+
+  .tp-breadcrumbs--separator-slash .tp-breadcrumbs__item + .tp-breadcrumbs__item::before {
+    width: auto;
+    height: auto;
+    border: 0;
+    content: '/';
+    rotate: none;
+  }
+
+  .tp-breadcrumbs__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--tp-color-text-muted);
+    overflow-wrap: anywhere;
+    text-decoration: none;
+    text-underline-offset: var(--tp-link-underline-offset);
+  }
+
+  .tp-breadcrumbs__link:hover {
+    text-decoration: underline;
+  }
+
+  .tp-breadcrumbs__current {
+    max-width: 100%;
+    color: var(--tp-color-text);
+    overflow-wrap: anywhere;
+  }
+{% endstylesheet %}
