@@ -1,0 +1,114 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "not_found": "Seite nicht gefunden.",
+    "back_to_shopping": "Zurück zum Einkauf"
+  },
+  "accessibility": {
+    "skip_to_content": "Zum Inhalt springen"
+  },
+  "breadcrumbs": {
+    "home": "Startseite",
+    "label": "Brotkrümelnavigation"
+  },
+  "blog": {
+    "article_comments": "Kommentare",
+    "article_metadata_html": "{{ date }} von {{ author }}",
+    "comment_form_body": "Kommentar",
+    "comment_form_email": "E-Mail-Adresse",
+    "comment_form_name": "Name",
+    "comment_form_submit": "Veröffentlichen",
+    "comment_form_title": "Kommentar hinzufügen"
+  },
+  "cart": {
+    "checkout": "Zur Kasse",
+    "title": "Warenkorb",
+    "update": "Aktualisieren",
+    "remove": "Entfernen"
+  },
+  "customers": {
+    "login": {
+      "email": "E-Mail-Adresse",
+      "password": "Passwort",
+      "submit": "Anmelden",
+      "title": "Anmelden"
+    }
+  },
+  "collections": {
+    "title": "Kollektionen"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Zu Apple Wallet hinzufügen",
+    "card": "Geschenkgutschein",
+    "expired": "Dieser Geschenkgutschein ist abgelaufen",
+    "expires_on": "Gültig bis {{ expires_on }}",
+    "use_at_checkout": "Beim Bezahlen verwenden"
+  },
+  "password": {
+    "title": "Dieser Shop ist privat",
+    "password": "Passwort",
+    "enter": "Eintreten"
+  },
+  "search": {
+    "title": "Suche",
+    "placeholder": "Artikel, Seiten oder Produkte durchsuchen",
+    "submit": "Suchen",
+    "no_results_html": "Keine Ergebnisse für {{ terms }} gefunden",
+    "results_for_html": "{{ count }} Ergebnisse für {{ terms }} gefunden"
+  },
+  "liquid_components": {
+    "design_system": {
+      "title": "Designsystem",
+      "description": "Wiederverwendbare Liquid-Komponenten, gestaltet mit den gemeinsamen Design-Tokens und den Einstellungen dieses Themes.",
+      "buttons_title": "Vorschau nativer Schaltflächen",
+      "buttons_description": "Alle sechs Kombinationen aus Varianten und Größen verwenden das gemeinsame Schaltflächen-Snippet. Aktivierte Vorschauen führen keine Aktion aus. Verwende die Tabulatortaste für den Tastaturfokus, fahre mit der Maus über Elemente, um Rückmeldungen zu sehen, und vergleiche native deaktivierte Bedienelemente. Bewegungen folgen der Einstellung für reduzierte Bewegung deines Geräts.",
+      "combination": "{{ variant }} · {{ size }}",
+      "enabled_label": "Vorschau {{ variant }} {{ size }} — keine Aktion",
+      "disabled_label": "{{ variant }} {{ size }} deaktiviert",
+      "variants": {
+        "primary": "Primär",
+        "secondary": "Sekundär"
+      },
+      "sizes": {
+        "small": "Klein",
+        "medium": "Mittel",
+        "large": "Groß"
+      },
+      "foundations_title": "Globale Grundlagen",
+      "foundations_description": "Flächen, Text, Ränder, Typografie und Abstände stammen aus den Theme-Einstellungen für Farben, Typografie, Layout und Tastaturfokus. Ändere eine Einstellung, um alle Anwendungen gemeinsam zu aktualisieren.",
+      "surfaces": {
+        "page": "Seite",
+        "band": "Dezentes Band",
+        "brand": "Markentönung",
+        "warm": "Warm",
+        "natural": "Natürlich",
+        "inverse": "Markenfläche"
+      },
+      "muted_sample": "Gedämpfter Text und der Rand werden aus den Text- und Seitenfarben abgeleitet.",
+      "inverse_description": "Text, Links, Aktionen und der Fokusring werden für Kontrast auf der Markenfarbe angepasst.",
+      "inverse_button": "Vorschau — keine Aktion",
+      "typography_title": "Typografie",
+      "typography_display": "Display",
+      "typography_h1": "Überschrift 1",
+      "typography_h2": "Überschrift 2",
+      "typography_h3": "Überschrift 3",
+      "typography_description": "Fließtext verwendet die Fließtextschrift. Überschriften verwenden die Überschriftenschrift und die Typografieskala des Styleguides.",
+      "typography_small": "Kleiner Text für ergänzende Details.",
+      "typography_caption": "Beschriftung",
+      "layout_title": "Seitenbreite und Abstände",
+      "layout_description": "Jeder Abschnitt richtet sich nach der maximalen Seitenbreite und den Randeinstellungen. Der Abschnittsabstand bestimmt den Raum oberhalb und unterhalb dieser Demo.",
+      "image_title": "Responsives Shopify-Bild",
+      "image_description": "Ein echtes Shopify-Bild wird über das gemeinsame Bild-Snippet mit Shopifys Filtern für Bild-URL und Bild-Tag gerendert.",
+      "image_empty": "Wähle in den Theme-Editor-Einstellungen ein Beispielbild aus, um die gemeinsame Bildkomponente anzuzeigen. Es wird kein Platzhalter oder externes Bild angefordert."
+    }
+  }
+}

@@ -5,6 +5,7 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
 {% endcomment %}
 
+{% render 'breadcrumbs', resource: collection, resource_type: 'collection' %}
 <h1>{{ collection.title }}</h1>
 
 <div class="collection-products">

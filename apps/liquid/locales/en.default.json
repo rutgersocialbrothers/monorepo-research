@@ -16,6 +16,10 @@
   "accessibility": {
     "skip_to_content": "Skip to content"
   },
+  "breadcrumbs": {
+    "home": "Home",
+    "label": "Breadcrumb"
+  },
   "blog": {
     "article_comments": "Comments",
     "article_metadata_html": "{{ date }} by {{ author }}",
