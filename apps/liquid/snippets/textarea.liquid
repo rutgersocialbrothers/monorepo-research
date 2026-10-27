@@ -1,0 +1,127 @@
+{%- doc -%}
+  Renders a labelled native textarea with optional help and error text.
+  A blank id, name, or label renders nothing.
+
+  @param {string} id - Stable control id
+  @param {string} name - Native form field name
+  @param {string} label - Visible label text
+  @param {string} [value] - Current field value
+  @param {number} [rows] - Visible row count; defaults to 3
+  @param {string} [placeholder] - Optional caller-supplied placeholder
+  @param {string} [help_text] - Optional help text
+  @param {string} [error_text] - Optional validation error text
+  @param {string} [required_text] - Caller-supplied visible required-state text
+  @param {string} [autocomplete] - Optional autocomplete token
+  @param {number} [maxlength] - Optional maximum character count
+  @param {boolean} [required] - Whether the field is required
+  @param {boolean} [disabled] - Whether the field is disabled
+  @param {boolean} [invalid] - Whether the field is invalid
+
+  @example
+  {% render 'textarea', id: 'contact-message', name: 'contact[body]', label: message_label, rows: 5 %}
+{%- enddoc -%}
+
+{%- unless id == blank or name == blank or label == blank -%}
+  {%- liquid
+    assign resolved_rows = rows | default: 3
+    assign invalid_state = false
+    if invalid == true or error_text != blank
+      assign invalid_state = true
+    endif
+
+    assign help_id = id | append: '-help'
+    assign error_id = id | append: '-error'
+    capture described_by
+      if help_text != blank
+        echo help_id
+      endif
+      if error_text != blank
+        if help_text != blank
+          echo ' '
+        endif
+        echo error_id
+      endif
+    endcapture
+  -%}
+  <div class="tp-textarea">
+    {% render 'label', control_id: id, label: label, required: required, required_text: required_text %}
+    <textarea
+      class="tp-textarea__control"
+      id="{{ id | escape }}"
+      name="{{ name | escape }}"
+      rows="{{ resolved_rows | escape }}"
+      {% if placeholder != blank %}placeholder="{{ placeholder | escape }}"{% endif %}
+      {% if autocomplete != blank %}autocomplete="{{ autocomplete | escape }}"{% endif %}
+      {% if maxlength != blank %}maxlength="{{ maxlength | escape }}"{% endif %}
+      {% if described_by != blank %}aria-describedby="{{ described_by | strip | escape }}"{% endif %}
+      {% if invalid_state %}aria-invalid="true"{% endif %}
+      {% if required == true %}required{% endif %}
+      {% if disabled == true %}disabled{% endif %}
+    >{{ value | escape }}</textarea>
+    {%- if help_text != blank -%}
+      <p class="tp-textarea__help" id="{{ help_id | escape }}">{{ help_text | escape }}</p>
+    {%- endif -%}
+    {%- if error_text != blank -%}
+      <p class="tp-textarea__error" id="{{ error_id | escape }}">{{ error_text | escape }}</p>
+    {%- endif -%}
+  </div>
+{%- endunless -%}
+
+{% stylesheet %}
+  .tp-textarea {
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .tp-textarea__control {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--tp-color-border);
+    border-radius: var(--tp-radius-md);
+    background: var(--tp-color-surface-raised);
+    color: var(--tp-color-text);
+    padding: 0.75rem;
+    box-shadow: none;
+    resize: vertical;
+    transition: border-color var(--tp-duration-fast) var(--tp-ease-standard);
+  }
+
+  .tp-textarea__control::placeholder {
+    color: var(--tp-color-text-muted);
+    opacity: 1;
+  }
+
+  .tp-textarea__control:hover:not(:disabled) {
+    border-color: var(--tp-color-border-strong);
+  }
+
+  .tp-textarea__control[aria-invalid='true'] {
+    border-color: var(--tp-color-error, var(--tp-color-action));
+  }
+
+  .tp-textarea__control:disabled {
+    cursor: not-allowed;
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  .tp-textarea__help,
+  .tp-textarea__error {
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-textarea__help {
+    color: var(--tp-color-text-muted);
+  }
+
+  .tp-textarea__error {
+    color: var(--tp-color-error, var(--tp-color-action));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tp-textarea__control {
+      transition: none;
+    }
+  }
+{% endstylesheet %}

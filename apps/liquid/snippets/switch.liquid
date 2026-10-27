@@ -1,0 +1,214 @@
+{%- doc -%}
+  Renders a labelled native checkbox with switch presentation and optional help and error text.
+  A blank id, name, or label renders nothing.
+
+  @param {string} id - Stable control id
+  @param {string} name - Native form field name
+  @param {string} label - Visible label text
+  @param {string} [value] - Submitted value; defaults to on
+  @param {string} [size] - sm or md; defaults to md
+  @param {string} [help_text] - Optional help text
+  @param {string} [error_text] - Optional validation error text
+  @param {string} [required_text] - Caller-supplied visible required-state text
+  @param {boolean} [checked] - Whether the switch is on
+  @param {boolean} [required] - Whether the switch is required
+  @param {boolean} [disabled] - Whether the switch is disabled
+  @param {boolean} [invalid] - Whether the switch is invalid
+
+  @example
+  {% render 'switch', id: 'weekly-summary', name: 'weekly_summary', label: summary_label, value: 'yes', size: 'md' %}
+{%- enddoc -%}
+
+{%- unless id == blank or name == blank or label == blank -%}
+  {%- liquid
+    assign resolved_value = value
+    if resolved_value == nil
+      assign resolved_value = 'on'
+    endif
+
+    assign resolved_size = 'md'
+    if size == 'sm'
+      assign resolved_size = 'sm'
+    endif
+
+    assign invalid_state = false
+    if invalid == true or error_text != blank
+      assign invalid_state = true
+    endif
+
+    assign help_id = id | append: '-help'
+    assign error_id = id | append: '-error'
+    capture described_by
+      if help_text != blank
+        echo help_id
+      endif
+      if error_text != blank
+        if help_text != blank
+          echo ' '
+        endif
+        echo error_id
+      endif
+    endcapture
+  -%}
+  <div class="tp-switch">
+    <label class="tp-switch__row" for="{{ id | escape }}" data-size="{{ resolved_size }}">
+      <input
+        class="tp-switch__control"
+        id="{{ id | escape }}"
+        name="{{ name | escape }}"
+        type="checkbox"
+        role="switch"
+        value="{{ resolved_value | escape }}"
+        {% if described_by != blank %}aria-describedby="{{ described_by | strip | escape }}"{% endif %}
+        {% if invalid_state %}aria-invalid="true"{% endif %}
+        {% if checked == true %}checked{% endif %}
+        {% if required == true %}required{% endif %}
+        {% if disabled == true %}disabled{% endif %}
+      >
+      <span class="tp-switch__track" aria-hidden="true"><span class="tp-switch__thumb"></span></span>
+      <span class="tp-switch__label">
+        {{- label | escape -}}
+        {%- if required == true and required_text != blank -%}
+          <span class="tp-switch__required"> {{ required_text | escape }}</span>
+        {%- endif -%}
+      </span>
+    </label>
+    {%- if help_text != blank -%}
+      <p class="tp-switch__help" id="{{ help_id | escape }}">{{ help_text | escape }}</p>
+    {%- endif -%}
+    {%- if error_text != blank -%}
+      <p class="tp-switch__error" id="{{ error_id | escape }}">{{ error_text | escape }}</p>
+    {%- endif -%}
+  </div>
+{%- endunless -%}
+
+{% stylesheet %}
+  .tp-switch {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .tp-switch__row {
+    position: relative;
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.75rem;
+    width: fit-content;
+    cursor: pointer;
+  }
+
+  .tp-switch__control {
+    position: absolute;
+    left: 0;
+    width: 2.25rem;
+    height: 1.25rem;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .tp-switch__row[data-size='sm'] .tp-switch__control {
+    width: 1.75rem;
+    height: 1rem;
+  }
+
+  .tp-switch__track {
+    display: flex;
+    width: 2.25rem;
+    height: 1.25rem;
+    flex: 0 0 auto;
+    align-items: center;
+    border-radius: var(--tp-radius-full);
+    background: var(--tp-color-border-strong);
+    padding: 0.125rem;
+    transition: background-color var(--tp-duration-base) var(--tp-ease-standard);
+  }
+
+  .tp-switch__thumb {
+    width: 1rem;
+    height: 1rem;
+    border-radius: var(--tp-radius-full);
+    background: var(--tp-color-text-inverse);
+    box-shadow: var(--tp-shadow-raised);
+    transition: transform var(--tp-duration-base) var(--tp-ease-standard);
+  }
+
+  .tp-switch__row[data-size='sm'] .tp-switch__track {
+    width: 1.75rem;
+    height: 1rem;
+  }
+
+  .tp-switch__row[data-size='sm'] .tp-switch__thumb {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  .tp-switch__control:checked + .tp-switch__track {
+    background: var(--tp-color-nav);
+  }
+
+  .tp-switch__control:checked + .tp-switch__track .tp-switch__thumb {
+    transform: translateX(1rem);
+  }
+
+  .tp-switch__row[data-size='sm'] .tp-switch__control:checked + .tp-switch__track .tp-switch__thumb {
+    transform: translateX(0.75rem);
+  }
+
+  .tp-switch__control:focus-visible + .tp-switch__track {
+    outline: var(--tp-focus-width) solid var(--tp-focus-color);
+    outline-offset: var(--tp-focus-offset);
+  }
+
+  .tp-switch__control[aria-invalid='true'] + .tp-switch__track {
+    box-shadow: 0 0 0 1px var(--tp-color-error, var(--tp-color-action));
+  }
+
+  .tp-switch__row:has(.tp-switch__control:disabled) {
+    cursor: not-allowed;
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  .tp-switch__control:disabled {
+    cursor: not-allowed;
+  }
+
+  .tp-switch__label {
+    color: var(--tp-color-text);
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-switch__required {
+    color: var(--tp-color-text-muted);
+  }
+
+  .tp-switch__help,
+  .tp-switch__error {
+    padding-left: 3rem;
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-switch__row[data-size='sm'] ~ .tp-switch__help,
+  .tp-switch__row[data-size='sm'] ~ .tp-switch__error {
+    padding-left: 2.5rem;
+  }
+
+  .tp-switch__help {
+    color: var(--tp-color-text-muted);
+  }
+
+  .tp-switch__error {
+    color: var(--tp-color-error, var(--tp-color-action));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tp-switch__track,
+    .tp-switch__thumb {
+      transition: none;
+    }
+  }
+{% endstylesheet %}

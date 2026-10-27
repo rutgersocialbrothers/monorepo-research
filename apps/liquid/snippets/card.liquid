@@ -1,0 +1,193 @@
+{%- doc -%}
+  Renders a canonical card surface. The card is an anchor when `href` is present
+  and an article otherwise. Captured slot markup must come from a trusted theme
+  renderer, never directly from unescaped merchant text. Linked cards must not
+  receive interactive descendants in `content` or `action`.
+
+  @param {string} [title] - Optional card title
+  @param {string} [description] - Optional supporting text
+  @param {string} [heading_level] - h2, h3, or h4; defaults to h3
+  @param {string} [href] - Optional card destination
+  @param {string} [aria_label] - Optional accessible label for a linked card
+  @param {image} [media] - Optional Shopify image object
+  @param {string} [media_markup] - Optional trusted captured media markup
+  @param {string} [media_alt] - Optional override for a Shopify image's alt text
+  @param {string} [media_sizes] - Responsive sizes value for a Shopify image
+  @param {string} [content] - Trusted captured content markup
+  @param {string} [action] - Trusted captured action markup; non-interactive when href is present
+
+  @example
+  {%- capture card_content -%}<p>{{ product.description | strip_html | truncate: 120 | escape }}</p>{%- endcapture -%}
+  {% render 'card', title: product.title, href: product.url, media: product.featured_image, content: card_content %}
+{%- enddoc -%}
+
+{%- liquid
+  assign has_card_content = false
+  if title != blank or description != blank or media != blank or media_markup != blank or content != blank or action != blank
+    assign has_card_content = true
+  endif
+
+  assign resolved_heading = 'h3'
+  case heading_level
+    when 'h2', 'h4'
+      assign resolved_heading = heading_level
+  endcase
+
+  assign wrapper = 'article'
+  if href != blank
+    assign wrapper = 'a'
+  endif
+
+  assign resolved_media_alt = media.alt
+  unless media_alt == nil
+    assign resolved_media_alt = media_alt
+  endunless
+  assign resolved_media_sizes = media_sizes | default: '(min-width: 1024px) 33vw, 100vw'
+-%}
+
+{%- if has_card_content -%}
+  <{{ wrapper }}
+    class="tp-card{% if href != blank %} tp-card--linked{% endif %}"
+    {% if href != blank %}href="{{ href | escape }}"{% endif %}
+    {% if href != blank and aria_label != blank %}aria-label="{{ aria_label | escape }}"{% endif %}
+  >
+    {%- if media != blank or media_markup != blank -%}
+      <div class="tp-card__media">
+        {%- if media != blank -%}
+          {{- media
+            | image_url: width: 1600
+            | image_tag:
+              alt: resolved_media_alt,
+              class: 'tp-card__image',
+              loading: 'lazy',
+              decoding: 'async',
+              sizes: resolved_media_sizes,
+              widths: '320, 480, 640, 800, 1200, 1600'
+          -}}
+        {%- else -%}
+          {{- media_markup -}}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if title != blank or description != blank or action != blank -%}
+      <header class="tp-card__header">
+        <div class="tp-card__heading-group">
+          {%- if title != blank -%}
+            <{{ resolved_heading }} class="tp-card__title">{{ title | escape }}</{{ resolved_heading }}>
+          {%- endif -%}
+          {%- if description != blank -%}
+            <p class="tp-card__description">{{ description | escape }}</p>
+          {%- endif -%}
+        </div>
+        {%- if action != blank -%}
+          <div class="tp-card__action">{{ action }}</div>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    {%- if content != blank -%}
+      <div class="tp-card__content">{{ content }}</div>
+    {%- endif -%}
+  </{{ wrapper }}>
+{%- endif -%}
+
+{% stylesheet %}
+  .tp-card {
+    display: grid;
+    min-width: 0;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--tp-color-border);
+    border-radius: var(--tp-radius-md);
+    background: var(--tp-color-surface-raised);
+    color: var(--tp-color-text);
+  }
+
+  .tp-card--linked {
+    text-decoration: none;
+    transition:
+      border-color var(--tp-duration-fast) var(--tp-ease-standard),
+      box-shadow var(--tp-duration-fast) var(--tp-ease-standard);
+  }
+
+  .tp-card--linked:hover {
+    border-color: var(--tp-color-border-strong);
+    box-shadow: var(--tp-shadow-raised);
+  }
+
+  .tp-card--linked:focus-visible {
+    outline: var(--tp-focus-width) solid var(--tp-focus-color);
+    outline-offset: var(--tp-focus-offset);
+  }
+
+  .tp-card__media,
+  .tp-card__header,
+  .tp-card__heading-group,
+  .tp-card__content {
+    min-width: 0;
+  }
+
+  .tp-card__media {
+    overflow: hidden;
+    border-radius: var(--tp-radius-sm);
+  }
+
+  .tp-card__media > :is(img, svg, video) {
+    display: block;
+    max-width: 100%;
+  }
+
+  .tp-card__image {
+    width: 100%;
+    height: auto;
+  }
+
+  .tp-card__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .tp-card__heading-group {
+    flex: 1 1 14rem;
+  }
+
+  .tp-card__title {
+    color: var(--tp-color-heading);
+    font-family: var(--tp-font-heading);
+    font-size: var(--tp-text-h3-size);
+    font-style: var(--tp-font-heading-style);
+    font-weight: var(--tp-font-weight-bold);
+    line-height: var(--tp-text-h3-leading);
+    overflow-wrap: anywhere;
+  }
+
+  .tp-card__description {
+    margin-top: 0.5rem;
+    color: var(--tp-color-text-muted);
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-card__action {
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 100%;
+  }
+
+  .tp-card__content {
+    overflow-wrap: anywhere;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tp-card--linked {
+      transition: none;
+    }
+  }
+{% endstylesheet %}

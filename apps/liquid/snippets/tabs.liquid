@@ -1,0 +1,288 @@
+{%- doc -%}
+  Renders an accessible tab set for switching between related views. Items may
+  be plain strings or objects with label, content, and optional disabled
+  properties. A blank id, label, items collection, or collection without an
+  enabled labelled item renders nothing. Text and attribute values are escaped.
+
+  @param {string} id - Required stable, page-unique id
+  @param {string} label - Required accessible name for the tab list
+  @param {object} items - Required tab objects with label, content, and optional disabled properties
+  @param {string} [variant] - default or line; defaults to default
+  @param {string} [orientation] - horizontal or vertical; defaults to horizontal
+
+  @example
+  {% render 'tabs', id: 'account-tabs', label: account_tabs_label, items: account_tabs %}
+{%- enddoc -%}
+
+{%- liquid
+  assign has_enabled_item = false
+  if items != blank
+    for item in items
+      assign item_label = item.label | default: item
+      if item_label != blank and item.disabled != true
+        assign has_enabled_item = true
+        break
+      endif
+    endfor
+  endif
+
+  assign resolved_variant = 'default'
+  if variant == 'line'
+    assign resolved_variant = 'line'
+  endif
+
+  assign resolved_orientation = 'horizontal'
+  if orientation == 'vertical'
+    assign resolved_orientation = 'vertical'
+  endif
+-%}
+
+{%- if id != blank and label != blank and has_enabled_item -%}
+  <div
+    class="tp-tabs"
+    data-tp-tabs
+    data-tp-tabs-label="{{ label | escape }}"
+    data-orientation="{{ resolved_orientation | escape }}"
+    data-variant="{{ resolved_variant | escape }}"
+  >
+    <div class="tp-tabs__list" data-tp-tabs-list>
+      {%- for item in items -%}
+        {%- liquid
+          assign item_label = item.label | default: item
+          assign item_disabled = item.disabled | default: false
+          capture tab_id
+            echo id | append: '-tab-' | append: forloop.index0
+          endcapture
+          capture panel_id
+            echo id | append: '-panel-' | append: forloop.index0
+          endcapture
+        -%}
+        {%- unless item_label == blank -%}
+          <button
+            class="tp-tabs__tab"
+            type="button"
+            id="{{ tab_id | escape }}"
+            data-tp-tab
+            data-tp-panel-id="{{ panel_id | escape }}"
+            {% if item_disabled == true %}disabled{% endif %}
+          >
+            {{- item_label | escape -}}
+          </button>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="tp-tabs__panels">
+      {%- for item in items -%}
+        {%- liquid
+          assign item_label = item.label | default: item
+          assign item_content = item.content | default: item_label
+          capture tab_id
+            echo id | append: '-tab-' | append: forloop.index0
+          endcapture
+          capture panel_id
+            echo id | append: '-panel-' | append: forloop.index0
+          endcapture
+        -%}
+        {%- unless item_label == blank -%}
+          <div
+            class="tp-tabs__panel"
+            id="{{ panel_id | escape }}"
+            data-tp-tab-panel
+            data-tp-tab-id="{{ tab_id | escape }}"
+          >
+            {{- item_content | escape -}}
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .tp-tabs {
+    display: flex;
+    min-width: 0;
+    width: 100%;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .tp-tabs[data-orientation='vertical'] {
+    flex-direction: row;
+  }
+
+  .tp-tabs__list {
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
+    gap: 0.25rem;
+    overflow-x: auto;
+    padding: 3px;
+    border-radius: var(--tp-radius-lg);
+    background: var(--tp-color-secondary);
+  }
+
+  .tp-tabs[data-orientation='vertical'] .tp-tabs__list {
+    flex: 0 0 auto;
+    flex-direction: column;
+    overflow-x: visible;
+  }
+
+  .tp-tabs[data-variant='line'] .tp-tabs__list {
+    padding: 0;
+    border-bottom: 1px solid var(--tp-color-border);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .tp-tabs[data-orientation='vertical'][data-variant='line'] .tp-tabs__list {
+    border-right: 1px solid var(--tp-color-border);
+    border-bottom: 0;
+  }
+
+  .tp-tabs__tab {
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    border: 0;
+    border-radius: var(--tp-radius-md);
+    background: transparent;
+    color: var(--tp-color-secondary-label);
+    cursor: pointer;
+    font-size: var(--tp-text-small-size);
+    font-weight: var(--tp-font-weight-semibold);
+    line-height: var(--tp-text-small-leading);
+    white-space: nowrap;
+    transition:
+      color var(--tp-duration-fast) var(--tp-ease-standard),
+      background-color var(--tp-duration-fast) var(--tp-ease-standard),
+      border-color var(--tp-duration-fast) var(--tp-ease-standard);
+  }
+
+  .tp-tabs__tab[aria-selected='true'] {
+    background: var(--tp-color-nav);
+    color: var(--tp-color-nav-label);
+    box-shadow: var(--tp-shadow-raised);
+  }
+
+  .tp-tabs[data-variant='line'] .tp-tabs__tab {
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: var(--tp-color-text-muted);
+  }
+
+  .tp-tabs[data-orientation='vertical'][data-variant='line'] .tp-tabs__tab {
+    border-right: 2px solid transparent;
+    border-bottom: 0;
+  }
+
+  .tp-tabs[data-variant='line'] .tp-tabs__tab[aria-selected='true'] {
+    border-color: var(--tp-color-nav);
+    background: transparent;
+    color: var(--tp-color-heading);
+    box-shadow: none;
+  }
+
+  .tp-tabs__tab:disabled {
+    cursor: not-allowed;
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  .tp-tabs__panels {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .tp-tabs__panel {
+    color: var(--tp-color-text-muted);
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+    overflow-wrap: anywhere;
+  }
+
+  .tp-tabs__panel[hidden] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tp-tabs__tab {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  const initializeTabs = (scope) => {
+    const roots = scope.matches?.('[data-tp-tabs]')
+      ? [scope]
+      : scope.querySelectorAll?.('[data-tp-tabs]') || [];
+
+    for (const root of roots) {
+      if (root.hasAttribute('data-tp-tabs-ready')) continue;
+
+      const tablist = root.querySelector('[data-tp-tabs-list]');
+      const allTabs = [...root.querySelectorAll('[data-tp-tab]')];
+      const tabs = allTabs.filter((tab) => !tab.disabled);
+      const panels = [...root.querySelectorAll('[data-tp-tab-panel]')];
+      if (!tablist || tabs.length === 0 || panels.length === 0) continue;
+
+      tablist.setAttribute('role', 'tablist');
+      tablist.setAttribute('aria-label', root.dataset.tpTabsLabel || '');
+      tablist.setAttribute('aria-orientation', root.dataset.orientation || 'horizontal');
+      for (const tab of allTabs) {
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('aria-controls', tab.dataset.tpPanelId || '');
+        tab.setAttribute('aria-selected', 'false');
+        tab.tabIndex = -1;
+      }
+      for (const panel of panels) {
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('aria-labelledby', panel.dataset.tpTabId || '');
+        panel.tabIndex = 0;
+      }
+
+      const selectTab = (tab, moveFocus = true) => {
+        const controlledPanel = tab.dataset.tpPanelId;
+        for (const item of allTabs) {
+          const selected = item === tab;
+          item.setAttribute('aria-selected', String(selected));
+          item.tabIndex = selected ? 0 : -1;
+        }
+        for (const panel of panels) {
+          panel.hidden = panel.id !== controlledPanel;
+        }
+        if (moveFocus) tab.focus({ preventScroll: true });
+      };
+
+      root.setAttribute('data-tp-tabs-ready', '');
+      selectTab(tabs[0], false);
+
+      for (const tab of tabs) {
+        tab.addEventListener('click', () => selectTab(tab, false));
+      }
+
+      tablist.addEventListener('keydown', (event) => {
+        const currentIndex = tabs.indexOf(document.activeElement);
+        if (currentIndex < 0) return;
+
+        const vertical = root.dataset.orientation === 'vertical';
+        let nextIndex;
+        if (event.key === 'Home') nextIndex = 0;
+        if (event.key === 'End') nextIndex = tabs.length - 1;
+        if (event.key === (vertical ? 'ArrowDown' : 'ArrowRight')) {
+          nextIndex = (currentIndex + 1) % tabs.length;
+        }
+        if (event.key === (vertical ? 'ArrowUp' : 'ArrowLeft')) {
+          nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        }
+
+        if (nextIndex === undefined) return;
+        event.preventDefault();
+        selectTab(tabs[nextIndex]);
+      });
+    }
+  };
+
+  initializeTabs(document);
+  document.addEventListener('shopify:section:load', (event) => initializeTabs(event.target));
+{% endjavascript %}

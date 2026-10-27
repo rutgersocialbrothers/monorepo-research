@@ -1,0 +1,186 @@
+{%- doc -%}
+  Renders a labelled native select with optional help and error text.
+  Options may be strings or objects with value, label, and optional disabled properties.
+  A blank id, name, label, or options collection renders nothing.
+
+  @param {string} id - Stable control id
+  @param {string} name - Native form field name
+  @param {string} label - Visible label text
+  @param {object} options - Option strings or option objects
+  @param {string} [value] - Currently selected value
+  @param {string} [placeholder] - Optional caller-supplied placeholder option
+  @param {string} [size] - sm or md; defaults to md
+  @param {string} [help_text] - Optional help text
+  @param {string} [error_text] - Optional validation error text
+  @param {string} [required_text] - Caller-supplied visible required-state text
+  @param {boolean} [required] - Whether selection is required
+  @param {boolean} [disabled] - Whether the select is disabled
+  @param {boolean} [invalid] - Whether the select is invalid
+
+  @example
+  {% assign frequency_options = 'weekly,monthly,yearly' | split: ',' %}
+  {% render 'select', id: 'frequency', name: 'frequency', label: frequency_label, options: frequency_options, placeholder: frequency_placeholder %}
+{%- enddoc -%}
+
+{%- unless id == blank or name == blank or label == blank or options == blank -%}
+  {%- liquid
+    assign resolved_size = 'md'
+    if size == 'sm'
+      assign resolved_size = 'sm'
+    endif
+
+    assign invalid_state = false
+    if invalid == true or error_text != blank
+      assign invalid_state = true
+    endif
+
+    assign selected_key = value | append: ''
+    assign help_id = id | append: '-help'
+    assign error_id = id | append: '-error'
+    capture described_by
+      if help_text != blank
+        echo help_id
+      endif
+      if error_text != blank
+        if help_text != blank
+          echo ' '
+        endif
+        echo error_id
+      endif
+    endcapture
+  -%}
+  <div class="tp-select">
+    {% render 'label', control_id: id, label: label, required: required, required_text: required_text %}
+    <span class="tp-select__control-wrap">
+      <select
+        class="tp-select__control"
+        id="{{ id | escape }}"
+        name="{{ name | escape }}"
+        data-size="{{ resolved_size }}"
+        {% if described_by != blank %}aria-describedby="{{ described_by | strip | escape }}"{% endif %}
+        {% if invalid_state %}aria-invalid="true"{% endif %}
+        {% if required == true %}required{% endif %}
+        {% if disabled == true %}disabled{% endif %}
+      >
+        {%- if placeholder != blank -%}
+          <option value="" disabled{% if selected_key == blank %} selected{% endif %}>{{ placeholder | escape }}</option>
+        {%- endif -%}
+        {%- for option in options -%}
+          {%- liquid
+            assign option_value = option.value
+            if option_value == nil
+              assign option_value = option
+            endif
+            assign option_label = option.label
+            if option_label == blank
+              assign option_label = option
+            endif
+            assign option_key = option_value | append: ''
+          -%}
+          <option
+            value="{{ option_value | escape }}"
+            {% if option_key == selected_key %}selected{% endif %}
+            {% if option.disabled == true %}disabled{% endif %}
+          >{{ option_label | escape }}</option>
+        {%- endfor -%}
+      </select>
+      <svg class="tp-select__icon" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" focusable="false">
+        <path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+      </svg>
+    </span>
+    {%- if help_text != blank -%}
+      <p class="tp-select__help" id="{{ help_id | escape }}">{{ help_text | escape }}</p>
+    {%- endif -%}
+    {%- if error_text != blank -%}
+      <p class="tp-select__error" id="{{ error_id | escape }}">{{ error_text | escape }}</p>
+    {%- endif -%}
+  </div>
+{%- endunless -%}
+
+{% stylesheet %}
+  .tp-select {
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .tp-select__control-wrap {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    align-items: center;
+  }
+
+  .tp-select__control {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--tp-color-border);
+    border-radius: var(--tp-radius-md);
+    appearance: none;
+    background: var(--tp-color-surface-raised);
+    color: var(--tp-color-text);
+    padding-right: 2.5rem;
+    padding-left: 0.75rem;
+    box-shadow: none;
+    cursor: pointer;
+    transition: border-color var(--tp-duration-fast) var(--tp-ease-standard);
+  }
+
+  .tp-select__control[data-size='sm'] {
+    min-height: var(--tp-input-height-sm);
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .tp-select__control[data-size='md'] {
+    min-height: var(--tp-input-height-md);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .tp-select__control:hover:not(:disabled) {
+    border-color: var(--tp-color-border-strong);
+  }
+
+  .tp-select__control[aria-invalid='true'] {
+    border-color: var(--tp-color-error, var(--tp-color-action));
+  }
+
+  .tp-select__control:disabled {
+    cursor: not-allowed;
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  .tp-select__icon {
+    position: absolute;
+    right: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+    color: var(--tp-color-text-muted);
+    pointer-events: none;
+  }
+
+  .tp-select__control:disabled + .tp-select__icon {
+    opacity: var(--tp-opacity-disabled);
+  }
+
+  .tp-select__help,
+  .tp-select__error {
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .tp-select__help {
+    color: var(--tp-color-text-muted);
+  }
+
+  .tp-select__error {
+    color: var(--tp-color-error, var(--tp-color-action));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tp-select__control {
+      transition: none;
+    }
+  }
+{% endstylesheet %}

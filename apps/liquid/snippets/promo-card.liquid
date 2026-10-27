@@ -1,0 +1,241 @@
+{%- doc -%}
+  Renders promotional content as a static article or one whole-card link.
+  Text, media, and action content are caller-owned. An incomplete action is not rendered.
+
+  @param {string} title - Card heading
+  @param {string} [kicker] - Short label above the heading
+  @param {string} [description] - Supporting text below the heading
+  @param {image} [image] - Optional Shopify image
+  @param {string} [image_alt] - Optional image alternative text; defaults to the Shopify image alt text
+  @param {string} [image_sizes] - Responsive image sizes; defaults to (min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw
+  @param {string} [image_loading] - eager or lazy; defaults to lazy
+  @param {string} [tone] - inverse, brand, warm, or natural; defaults to inverse
+  @param {string} [action_label] - Visible action text; requires action_url
+  @param {string} [action_url] - Action destination; requires action_label
+  @param {string} [heading_level] - h2, h3, or h4; defaults to h3
+
+  @example
+  {% render 'promo-card', title: block.settings.title, image: block.settings.image, action_label: block.settings.link_label, action_url: block.settings.link %}
+{%- enddoc -%}
+
+{%- liquid
+  assign resolved_heading = 'h3'
+  case heading_level
+    when 'h2', 'h4'
+      assign resolved_heading = heading_level
+  endcase
+
+  assign resolved_tone = 'inverse'
+  case tone
+    when 'brand', 'warm', 'natural'
+      assign resolved_tone = tone
+  endcase
+
+  assign resolved_loading = 'lazy'
+  if image_loading == 'eager'
+    assign resolved_loading = 'eager'
+  endif
+
+  assign resolved_sizes = image_sizes | default: '(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw'
+  assign resolved_image_alt = image_alt
+  if image_alt == nil and image != blank
+    assign resolved_image_alt = image.alt
+  endif
+
+  assign has_action = false
+  if action_label != blank and action_url != blank
+    assign has_action = true
+  endif
+
+  assign element = 'article'
+  if has_action
+    assign element = 'a'
+  endif
+
+  capture action_classes
+    render 'design-button-classes', variant: 'nav', size: 'small'
+  endcapture
+-%}
+
+{%- if title != blank or kicker != blank or description != blank or image != blank -%}
+  <{{ element }}
+    class="promo-card promo-card--{{ resolved_tone | escape }}"
+    {% if has_action %}href="{{ action_url | escape }}"{% endif %}
+  >
+    <div class="promo-card__content">
+      {%- if kicker != blank -%}
+        <p class="promo-card__kicker">{{ kicker | escape }}</p>
+      {%- endif -%}
+
+      {%- unless title == blank -%}
+        <{{ resolved_heading }} class="promo-card__title">{{ title | escape }}</{{ resolved_heading }}>
+      {%- endunless -%}
+
+      {%- if description != blank -%}
+        <p class="promo-card__description">{{ description | escape }}</p>
+      {%- endif -%}
+
+      {%- if has_action and image == blank -%}
+        <span class="{{ action_classes | strip | escape }} promo-card__action">
+          <span>{{ action_label | escape }}</span>
+          <svg class="promo-card__arrow" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+      {%- endif -%}
+    </div>
+
+    {%- unless image == blank -%}
+      <div class="promo-card__media">
+        {{-
+          image
+          | image_url: width: 1200
+          | image_tag:
+            widths: '320, 480, 640, 800, 960, 1200',
+            sizes: resolved_sizes,
+            loading: resolved_loading,
+            decoding: 'async',
+            alt: resolved_image_alt,
+            class: 'promo-card__image'
+        -}}
+
+        {%- if has_action -%}
+          <span class="{{ action_classes | strip | escape }} promo-card__action">
+            <span>{{ action_label | escape }}</span>
+            <svg class="promo-card__arrow" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+        {%- endif -%}
+      </div>
+    {%- endunless -%}
+  </{{ element }}>
+{%- endif -%}
+
+{% stylesheet %}
+  .promo-card {
+    --promo-card-surface: var(--tp-color-surface-inverse);
+    --promo-card-text: var(--tp-color-text-inverse);
+    --promo-card-heading: var(--tp-color-text-inverse);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--tp-radius-md);
+    background: var(--promo-card-surface);
+    color: var(--promo-card-text);
+    text-decoration: none;
+  }
+
+  .promo-card--brand {
+    --promo-card-surface: var(--tp-color-surface-brand);
+    --promo-card-text: var(--tp-color-text);
+    --promo-card-heading: var(--tp-color-heading);
+  }
+
+  .promo-card--warm {
+    --promo-card-surface: var(--tp-color-surface-warm);
+    --promo-card-text: var(--tp-color-text);
+    --promo-card-heading: var(--tp-color-heading);
+  }
+
+  .promo-card--natural {
+    --promo-card-surface: var(--tp-color-surface-natural);
+    --promo-card-text: var(--tp-color-text);
+    --promo-card-heading: var(--tp-color-heading);
+  }
+
+  .promo-card__content {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.5rem 1.5rem 1.25rem;
+  }
+
+  .promo-card__kicker,
+  .promo-card__description,
+  .promo-card__title {
+    min-width: 0;
+    color: inherit;
+    overflow-wrap: anywhere;
+  }
+
+  .promo-card__kicker {
+    font-size: var(--tp-text-small-size);
+    font-weight: var(--tp-font-weight-bold);
+    line-height: var(--tp-text-small-leading);
+  }
+
+  .promo-card__title {
+    color: var(--promo-card-heading);
+    font-size: 1.875rem;
+    font-weight: var(--tp-font-weight-bold);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .promo-card__description {
+    font-size: var(--tp-text-small-size);
+    line-height: var(--tp-leading-relaxed);
+    text-wrap: pretty;
+  }
+
+  .promo-card[href]:hover .promo-card__title {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  .promo-card__media {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 12rem;
+    overflow: hidden;
+  }
+
+  .promo-card__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 60% 50%;
+  }
+
+  .promo-card__action {
+    width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .promo-card__content > .promo-card__action {
+    margin-top: 1rem;
+  }
+
+  .promo-card__media > .promo-card__action {
+    position: absolute;
+    inset-inline: 1.25rem;
+    bottom: 1.25rem;
+    width: calc(100% - 2.5rem);
+  }
+
+  .promo-card[href]:hover .promo-card__action {
+    background-color: var(--tp-color-nav-hover);
+  }
+
+  .promo-card[href]:active .promo-card__action {
+    background-color: var(--tp-color-nav-active);
+  }
+
+  .promo-card__arrow {
+    flex: 0 0 auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .promo-card__action {
+      transition-duration: 0s;
+    }
+  }
+{% endstylesheet %}

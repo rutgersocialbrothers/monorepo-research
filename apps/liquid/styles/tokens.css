@@ -6,13 +6,14 @@
  * reach utility classes too.
  *
  * Tailwind's default colours, fonts, type sizes, radii and shadows are cleared:
- * only Tupak tokens produce those utilities. Spacing (4px base), weights,
- * leading and breakpoints keep Tailwind's defaults, which match the Styleguide.
+ * only Tupak tokens produce those utilities. Spacing and breakpoints keep
+ * Tailwind's defaults, which match the Styleguide.
  */
 @theme inline {
   --color-*: initial;
   --color-page: var(--tp-color-page);
   --color-text: var(--tp-color-text);
+  --color-heading: var(--tp-color-heading);
   --color-text-muted: var(--tp-color-text-muted);
   --color-text-inverse: var(--tp-color-text-inverse);
   --color-text-brand: var(--tp-color-text-brand);
@@ -27,6 +28,30 @@
   --color-surface-warm: var(--tp-color-surface-warm);
   --color-surface-warm-subtle: var(--tp-color-surface-warm-subtle);
   --color-surface-natural: var(--tp-color-surface-natural);
+  --color-surface-sunken: var(--tp-color-surface-sunken);
+  --color-surface-accent: var(--tp-color-surface-accent);
+  --color-card: var(--tp-color-card);
+  --color-card-text: var(--tp-color-card-text);
+  --color-popover: var(--tp-color-popover);
+  --color-popover-text: var(--tp-color-popover-text);
+  --color-input: var(--tp-color-input);
+  --color-text-disabled: var(--tp-color-text-disabled);
+  --color-destructive: var(--tp-color-destructive);
+  --color-destructive-foreground: var(--tp-color-destructive-foreground);
+  --color-destructive-subtle: var(--tp-color-destructive-subtle);
+  --color-destructive-subtle-foreground: var(--tp-color-destructive-subtle-foreground);
+  --color-success: var(--tp-color-success);
+  --color-success-foreground: var(--tp-color-success-foreground);
+  --color-success-subtle: var(--tp-color-success-subtle);
+  --color-success-subtle-foreground: var(--tp-color-success-subtle-foreground);
+  --color-warning: var(--tp-color-warning);
+  --color-warning-foreground: var(--tp-color-warning-foreground);
+  --color-warning-subtle: var(--tp-color-warning-subtle);
+  --color-warning-subtle-foreground: var(--tp-color-warning-subtle-foreground);
+  --color-info: var(--tp-color-info);
+  --color-info-foreground: var(--tp-color-info-foreground);
+  --color-info-subtle: var(--tp-color-info-subtle);
+  --color-info-subtle-foreground: var(--tp-color-info-subtle-foreground);
   --color-action: var(--tp-color-action);
   --color-action-hover: var(--tp-color-action-hover);
   --color-action-active: var(--tp-color-action-active);
@@ -36,7 +61,12 @@
   --color-secondary-active: var(--tp-color-secondary-active);
   --color-secondary-label: var(--tp-color-secondary-label);
   --color-secondary-border: var(--tp-color-secondary-border);
+  --color-nav: var(--tp-color-nav);
+  --color-nav-hover: var(--tp-color-nav-hover);
+  --color-nav-active: var(--tp-color-nav-active);
+  --color-nav-label: var(--tp-color-nav-label);
   --color-focus: var(--tp-focus-color);
+  --color-ring: var(--tp-color-ring);
 
   --font-*: initial;
   --font-body: var(--tp-font-body);
@@ -57,7 +87,22 @@
   --text-small--line-height: var(--tp-text-small-leading);
   --text-caption: var(--tp-text-caption-size);
   --text-caption--line-height: var(--tp-text-caption-leading);
+  --tracking-tight: var(--tp-tracking-tight);
+  --tracking-normal: var(--tp-tracking-normal);
+  --tracking-wide: var(--tp-tracking-wide);
+  --tracking-wider: var(--tp-tracking-wider);
+  --tracking-widest: var(--tp-tracking-widest);
   --tracking-caption: var(--tp-tracking-caption);
+
+  --font-weight-regular: var(--tp-font-weight-regular);
+  --font-weight-medium: var(--tp-font-weight-medium);
+  --font-weight-semibold: var(--tp-font-weight-semibold);
+  --font-weight-bold: var(--tp-font-weight-bold);
+  --font-weight-extrabold: var(--tp-font-weight-extrabold);
+
+  --duration-fast: var(--tp-duration-fast);
+  --duration-base: var(--tp-duration-base);
+  --duration-slow: var(--tp-duration-slow);
 
   --radius-*: initial;
   --radius-sm: var(--tp-radius-sm);

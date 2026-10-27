@@ -1,0 +1,126 @@
+{%- doc -%}
+  Renders a labelled button with short supplemental tooltip text. The tooltip
+  must not contain essential instructions or interactive content. A blank id,
+  label, or text renders nothing. Text and attribute values are escaped. The
+  stable id must be unique on the page.
+
+  @param {string} id - Required stable, page-unique tooltip id
+  @param {string} label - Required visible and accessible trigger text
+  @param {string} text - Required supplemental tooltip text
+
+  @example
+  {% render 'tooltip', id: 'shipping-tooltip', label: shipping_label, text: shipping_hint %}
+{%- enddoc -%}
+
+{%- if id != blank and label != blank and text != blank -%}
+  {%- capture trigger_classes -%}
+    {%- render 'design-button-classes', variant: 'ghost', size: 'medium' -%}
+  {%- endcapture -%}
+  <span class="tp-tooltip" data-tp-tooltip>
+    <button
+      class="{{ trigger_classes | strip | append: ' tp-tooltip__trigger' | escape }}"
+      type="button"
+      aria-describedby="{{ id | escape }}"
+      data-tp-tooltip-trigger
+    >
+      {{- label | escape -}}
+    </button>
+    <span
+      class="tp-tooltip__bubble"
+      role="tooltip"
+      id="{{ id | escape }}"
+      data-tp-tooltip-bubble
+      hidden
+    >
+      {{- text | escape -}}
+    </span>
+  </span>
+{%- endif -%}
+
+{% stylesheet %}
+  .tp-tooltip {
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+  }
+
+  .tp-tooltip__bubble {
+    position: absolute;
+    z-index: var(--tp-z-popover, 1400);
+    bottom: calc(100% + 0.5rem);
+    inset-inline-start: 0;
+    width: max-content;
+    max-width: min(14rem, calc(100vw - 3rem));
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--tp-radius-sm);
+    background: var(--tp-color-nav);
+    color: var(--tp-color-nav-label);
+    box-shadow: var(--tp-shadow-overlay);
+    font-size: var(--tp-text-caption-size);
+    line-height: var(--tp-text-caption-leading);
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .tp-tooltip__bubble[hidden] {
+    display: none;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  const initializeTooltips = (scope) => {
+    const roots = scope.matches?.('[data-tp-tooltip]')
+      ? [scope]
+      : scope.querySelectorAll?.('[data-tp-tooltip]') || [];
+
+    for (const root of roots) {
+      if (root.hasAttribute('data-tp-tooltip-ready')) continue;
+
+      const trigger = root.querySelector('[data-tp-tooltip-trigger]');
+      const tooltip = root.querySelector('[data-tp-tooltip-bubble]');
+      if (!trigger || !tooltip) continue;
+
+      root.setAttribute('data-tp-tooltip-ready', '');
+      let hovering = false;
+      let dismissed = false;
+
+      const show = () => {
+        if (!dismissed) tooltip.hidden = false;
+      };
+      const hide = () => {
+        tooltip.hidden = true;
+      };
+
+      root.addEventListener('pointerenter', () => {
+        hovering = true;
+        show();
+      });
+
+      root.addEventListener('pointerleave', () => {
+        hovering = false;
+        dismissed = false;
+        if (document.activeElement !== trigger) hide();
+      });
+
+      trigger.addEventListener('focus', () => {
+        dismissed = false;
+        show();
+      });
+
+      trigger.addEventListener('blur', () => {
+        dismissed = false;
+        if (!hovering) hide();
+      });
+
+      root.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || tooltip.hidden) return;
+        event.stopPropagation();
+        dismissed = true;
+        hide();
+      });
+    }
+  };
+
+  initializeTooltips(document);
+  document.addEventListener('shopify:section:load', (event) => initializeTooltips(event.target));
+{% endjavascript %}
