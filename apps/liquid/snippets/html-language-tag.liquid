@@ -1,0 +1,12 @@
+{%- doc -%}
+  Renders the BCP 47 language tag for the active locale and staging Market.
+{%- enddoc -%}
+
+{%- liquid
+  assign html_language_tag = request.locale.iso_code
+  case localization.country.iso_code
+    when 'BE', 'DE'
+      assign html_language_tag = html_language_tag | append: '-' | append: localization.country.iso_code
+  endcase
+-%}
+{{- html_language_tag -}}

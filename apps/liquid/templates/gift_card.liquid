@@ -1,7 +1,8 @@
 {% layout none %}
+{% capture html_language_tag %}{% render 'html-language-tag' %}{% endcapture %}
 
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}">
+<html lang="{{ html_language_tag }}">
   <head>
     {% # Inlined CSS Variables %}
     {% render 'css-variables' %}
