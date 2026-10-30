@@ -6,7 +6,20 @@
 {% enddoc %}
 
 {% liquid
-  assign faq_groups = block.settings.faq_group
+  case request.page_type
+    when 'page'
+      assign faq_groups = page.metafields.custom.faq_groups.value
+    when 'product'
+      assign faq_groups = product.metafields.custom.faq_groups.value
+    when 'collection'
+      assign faq_groups = collection.metafields.custom.faq_groups.value
+    when 'article'
+      assign faq_groups = article.metafields.custom.faq_groups.value
+    when 'blog'
+      assign faq_groups = blog.metafields.custom.faq_groups.value
+    else
+      assign faq_groups = block.settings.faq_group
+  endcase
   assign heading_tag = block.settings.heading_level | default: 'h2'
   case heading_tag
     when 'h1'
@@ -23,7 +36,7 @@
 {% capture faq_items_markup %}
   {% for faq_group in faq_groups %}
     {% for faq_item in faq_group.items.value %}
-      {% if faq_item != blank and faq_item.question.value != blank %}
+      {% if faq_item != blank and faq_item.question.value != blank and faq_item.answer.value != blank %}
         <details class="faq__item">
           <summary class="faq__summary">
             <{{ question_heading_tag }} class="faq__question">
