@@ -204,5 +204,22 @@
       "image_description": "Ein echtes Shopify-Bild wird über das gemeinsame Bild-Snippet mit Shopifys Filtern für Bild-URL und Bild-Tag gerendert.",
       "image_empty": "Wähle in den Theme-Editor-Einstellungen ein Beispielbild aus, um die gemeinsame Bildkomponente anzuzeigen. Es wird kein Platzhalter oder externes Bild angefordert."
     }
+  },
+  "layout": {
+    "header": {
+      "home_label": "{{ shop }}, Startseite",
+      "search_label": "Im Sortiment suchen",
+      "search_submit": "Suchen",
+      "cart": {
+        "one": "Warenkorb, {{ count }} Artikel",
+        "other": "Warenkorb, {{ count }} Artikel"
+      },
+      "main_nav": "Hauptnavigation",
+      "view_all": "Alles in {{ title }}"
+    },
+    "footer": {
+      "menu_missing": "Wählen Sie ein Menü für diese Spalte.",
+      "payment_methods": "Zahlungsarten"
+    }
   }
 }

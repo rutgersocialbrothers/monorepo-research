@@ -119,7 +119,9 @@
       "product_description": "Product description",
       "product_recommendations": "Product recommendations",
       "value_card": "Value card",
-      "value_cards": "Value cards"
+      "value_cards": "Value cards",
+      "footer_service": "Service promise",
+      "footer_menu": "Link column"
     },
     "labels": {
       "alignment": "Alignment",
@@ -152,7 +154,16 @@
       "open_by_default": "Open by default",
       "product_limit": "Maximum products",
       "recommendation_source": "Products",
-      "title": "Title"
+      "title": "Title",
+      "logo_width": "Logo width",
+      "show_search": "Show search",
+      "show_link_images": "Show pictures in menu panels",
+      "sale_label": "Sale link label",
+      "sale_link": "Sale link",
+      "action_label": "Action label",
+      "action_link": "Action link",
+      "legal_menu": "Legal links menu",
+      "description": "Description"
     },
     "info": {
       "demo_image": "Optional Shopify image for the responsive image example. Buttons are previews only and perform no action.",
@@ -160,7 +171,9 @@
       "highlights": "One selling point per line. Can be connected to a multi-line text metafield.",
       "order_matrix_product": "Leave empty on product pages to use the current product.",
       "show_filter": "Filters on quality and minimum inner size when the product has at least five variants with that data.",
-      "recommendation_source": "Complementary products are set per product in the Search & Discovery app. Related products are chosen by Shopify."
+      "recommendation_source": "Complementary products are set per product in the Search & Discovery app. Related products are chosen by Shopify.",
+      "header_menu": "Top-level links with sub-links open as a panel.",
+      "footer_menu_heading": "Empty uses the menu title."
     },
     "options": {
       "alignment": {

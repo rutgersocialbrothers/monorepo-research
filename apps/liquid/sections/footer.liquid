@@ -1,50 +1,125 @@
-<footer class="site-footer">
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
+{% comment %}
+  Site footer (canonical SiteFooter): on the navy band, an optional row of service promises, then link columns from
+  menus and a brand column with the logo, a short description and a note; under it a light bar with the copyright,
+  the legal links menu and the payment icons. Service promises and link columns are blocks the merchant adds,
+  reorders and removes; all copy is the merchant's.
+{% endcomment %}
+
+{% liquid
+  assign service_blocks = section.blocks | where: 'type', '_footer-service'
+  assign menu_blocks = section.blocks | where: 'type', '_footer-menu'
+%}
+
+<footer class="site-footer full-width">
+  <div class="site-footer__band bg-surface-inverse text-text-inverse">
+    {%- if service_blocks.size > 0 -%}
+      <div class="site-footer__row border-b border-text-inverse/15">
+        <ul class="site-footer__inner m-0 grid list-none gap-5 p-0 py-6 sm:grid-cols-2 lg:grid-cols-4">
+          {%- for block in service_blocks -%}
+            {% render block %}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+
+    <div class="site-footer__row">
+      <div class="site-footer__inner grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-16">
+        {%- for block in menu_blocks -%}
+          {% render block %}
+        {%- endfor -%}
+        <div class="sm:col-start-auto lg:col-start-4">
+          <a href="{{ routes.root_url }}" class="inline-block rounded-sm text-h3 font-bold text-text-inverse no-underline focus-visible:outline-current">
+            {%- render 'logo', width: 160 -%}
+          </a>
+          {%- if section.settings.description != blank -%}
+            <div class="site-footer__text mt-5 text-small text-text-inverse/75">{{ section.settings.description }}</div>
+          {%- endif -%}
+          {%- if section.settings.note != blank -%}
+            <p class="mt-5 text-caption text-text-inverse/60">{{ section.settings.note | escape }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
-
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
+  <div class="site-footer__row bg-surface-sunken text-caption text-text-muted">
+    <div class="site-footer__inner flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-5">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name | escape }}. {{ powered_by_link }}</p>
+      {%- if section.settings.menu.links.size > 0 -%}
+        <ul class="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0">
+          {%- for link in section.settings.menu.links -%}
+            <li><a href="{{ link.url }}" class="text-text-muted hover:text-text hover:underline">{{ link.title | escape }}</a></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+        <ul class="m-0 flex list-none flex-wrap gap-2 p-0" aria-label="{{ 'layout.footer.payment_methods' | t }}">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag: class: 'site-footer__payment' }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
   </div>
 </footer>
 
 {% stylesheet %}
   .site-footer {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: var(--tp-content-grid);
     margin-top: var(--tp-section-spacing);
   }
-  .site-footer a {
-    text-decoration: none;
-    color: var(--tp-color-text);
+
+  .site-footer__band,
+  .site-footer__row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: var(--tp-content-grid);
   }
-  .site-footer .footer__links,
-  .site-footer .footer__payment {
-    display: flex;
-    gap: 1rem;
+
+  .site-footer__band > .site-footer__row {
+    grid-column: 1 / -1;
+  }
+
+  .site-footer__inner {
+    grid-column: 2;
+  }
+
+  .site-footer__text a {
+    color: var(--tp-color-text-inverse);
+    text-decoration: underline;
+  }
+
+  .site-footer__text > * + * {
+    margin-block-start: 0.75em;
+  }
+
+  .site-footer__payment {
+    display: block;
+    width: 2.375rem;
+    height: 1.5rem;
   }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.footer",
+  "blocks": [{ "type": "_footer-service" }, { "type": "_footer-menu" }],
   "settings": [
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "t:liquid_components.labels.description"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "t:liquid_components.labels.note"
+    },
     {
       "type": "link_list",
       "id": "menu",
-      "label": "t:labels.menu"
+      "label": "t:liquid_components.labels.legal_menu"
     },
     {
       "type": "checkbox",

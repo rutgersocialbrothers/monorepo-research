@@ -1,0 +1,40 @@
+{% doc %}
+  Renders one footer link column (canonical SiteFooter link groups): a heading and the top-level links of a menu.
+  The heading defaults to the menu's own title. Renders nothing without links; the theme editor shows a hint.
+
+  @example
+  {% content_for 'block', type: '_footer-menu', id: 'footer-menu' %}
+{% enddoc %}
+
+{% liquid
+  assign footer_menu = block.settings.menu
+  assign menu_heading = block.settings.heading | default: footer_menu.title
+  assign heading_id = 'footer-menu-' | append: block.id
+%}
+
+{% if footer_menu.links.size > 0 %}
+  <nav aria-labelledby="{{ heading_id }}" {{ block.shopify_attributes }}>
+    <h2 id="{{ heading_id }}" class="text-body font-bold text-text-inverse">{{ menu_heading | escape }}</h2>
+    <ul class="mt-5 grid list-none gap-3 p-0 text-small">
+      {%- for link in footer_menu.links -%}
+        <li>
+          <a href="{{ link.url }}" class="rounded-sm text-text-inverse/75 no-underline hover:text-text-inverse hover:underline focus-visible:outline-current">
+            {{- link.title | escape -}}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </nav>
+{% elsif request.design_mode %}
+  <p class="text-small text-text-inverse/75" {{ block.shopify_attributes }}>{{ 'layout.footer.menu_missing' | t }}</p>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.footer_menu",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "t:labels.menu" },
+    { "type": "text", "id": "heading", "label": "t:liquid_components.labels.heading", "info": "t:liquid_components.info.footer_menu_heading" }
+  ]
+}
+{% endschema %}
