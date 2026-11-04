@@ -65,6 +65,100 @@
     "no_results_html": "Keine Ergebnisse für {{ terms }} gefunden",
     "results_for_html": "{{ count }} Ergebnisse für {{ terms }} gefunden"
   },
+  "products": {
+    "product": {
+      "sku": "Art.-Nr. {{ sku }}",
+      "price_per_unit": "pro Stück",
+      "tax_excluded": "zzgl. MwSt.",
+      "tax_included": "inkl. MwSt.",
+      "your_price": "Ihr Preis bei {{ quantity }} Stück",
+      "quantity": "Menge",
+      "decrease": "Menge verringern",
+      "increase": "Menge erhöhen",
+      "add_to_cart": "In den Warenkorb",
+      "sold_out": "Ausverkauft",
+      "rules": "In Bündeln zu {{ increment }} · mindestens {{ min }} Stück",
+      "total": "Gesamt",
+      "snapped": "Menge auf {{ quantity }} angepasst: Bündel zu {{ increment }}, mindestens {{ min }} Stück.",
+      "breaks_title": "Staffelpreise",
+      "breaks_count": {
+        "one": "{{ count }} Staffel",
+        "other": "{{ count }} Staffeln"
+      },
+      "breaks_caption": "Staffelpreise der gewählten Variante, pro Stück",
+      "breaks_quantity": "Menge",
+      "breaks_price": "Pro Stück",
+      "breaks_saving": "Ersparnis",
+      "pallets": {
+        "one": "{{ count }} Palette",
+        "other": "{{ count }} Paletten"
+      },
+      "from_quantity": "{{ quantity }}+",
+      "gallery_thumbnail": "Bild {{ index }} anzeigen",
+      "description": "Beschreibung",
+      "regular_price": "Regulärer Preis",
+      "sale": "Angebot"
+    },
+    "stock": {
+      "in_stock": "Auf Lager",
+      "backorder": "Längere Lieferzeit",
+      "sold_out": "Ausverkauft"
+    },
+    "specs": {
+      "title": "Spezifikationen",
+      "sku": "Artikelnummer",
+      "inner_size": "Innenmaß L × B × H",
+      "size_value": "{{ length }} × {{ width }} × {{ height }} mm",
+      "quality": "Qualität",
+      "bundle": "Verpackt zu",
+      "pieces": "{{ quantity }} Stück",
+      "minimum": "Mindestabnahme",
+      "per_pallet": "Pro Palette",
+      "model": "Modell",
+      "color": "Farbe",
+      "material": "Material",
+      "weight": "Gewicht",
+      "weight_value": "{{ quantity }} g pro Stück",
+      "recycled": "Recyclinganteil",
+      "recyclable": "Recycelbar"
+    },
+    "matrix": {
+      "filter_label": "Größen filtern",
+      "min_size": "Mindestinnenmaß",
+      "length": "Länge (mm)",
+      "width": "Breite (mm)",
+      "height": "Höhe (mm)",
+      "shown": "{{ shown }} von {{ total }} Größen",
+      "reset": "Filter löschen",
+      "caption": "Preise pro Stück, {{ tax }}. Größen sind Innenmaße in Millimetern. Der Preis richtet sich nach der eingegebenen Menge.",
+      "bundle": "Bündel",
+      "pallet": "Palette",
+      "stock": "Bestand",
+      "prices": "Stückpreis ab der Menge in der Zelle",
+      "subtotal": "Zwischensumme",
+      "tier": "Staffel {{ number }}",
+      "bundle_value": "{{ increment }} Stk.",
+      "bundle_minimum": "mind. {{ quantity }}",
+      "quantity_label": "Menge, {{ variant }}",
+      "decrease_label": "Weniger, {{ variant }}",
+      "increase_label": "Mehr, {{ variant }}",
+      "none_chosen": "Noch keine Größe gewählt",
+      "lines_one": "{{ number }} Größe",
+      "lines_other": "{{ number }} Größen",
+      "hidden_one": "· {{ number }} ausgeblendete Größe in Ihrer Bestellung",
+      "hidden_other": "· {{ number }} ausgeblendete Größen in Ihrer Bestellung",
+      "snapped": "{{ variant }}: Menge von {{ typed }} auf {{ quantity }} angepasst. Diese Größe gibt es in Bündeln zu {{ increment }}, mindestens {{ min }}.",
+      "empty": "Keine Größe passt zu diesem Filter. Ändern oder löschen Sie den Filter.",
+      "editor_empty": "Wählen Sie ein Produkt mit mehreren Varianten, um die Bestellmatrix anzuzeigen."
+    },
+    "recommendations": {
+      "rail_label": "{{ title }}, horizontal scrollbar",
+      "previous": "Vorherige Produkte: {{ title }}",
+      "next": "Nächste Produkte: {{ title }}",
+      "fallback_heading": "Das könnte Ihnen auch gefallen",
+      "editor_empty": "Noch keine Empfehlungen für dieses Produkt. Fügen Sie ergänzende Produkte in der App Search & Discovery hinzu oder erlauben Sie verwandte Produkte."
+    }
+  },
   "liquid_components": {
     "design_system": {
       "title": "Designsystem",

@@ -1,0 +1,50 @@
+{% comment %}
+  Value cards (canonical ValueCards): an optional heading over a row of value-card blocks that wraps from one
+  column to as many as fit. Merchants add, reorder and remove the cards; the copy is theirs.
+{% endcomment %}
+
+{% liquid
+  assign heading_id = 'value-cards-title-' | append: section.id
+%}
+
+<section
+  class="value-cards grid gap-7"
+  {% if section.settings.heading != blank %}aria-labelledby="{{ heading_id }}"{% endif %}
+>
+  {% if section.settings.heading != blank %}
+    <h2 id="{{ heading_id }}" class="text-h2">{{ section.settings.heading | escape }}</h2>
+  {% endif %}
+  <div class="grid grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] gap-5 lg:gap-7">
+    {% content_for 'blocks' %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .value-cards {
+    padding-block: var(--tp-section-spacing);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.value_cards",
+  "blocks": [{ "type": "value-card" }],
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:liquid_components.labels.heading"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:liquid_components.general.value_cards",
+      "blocks": [
+        { "type": "value-card", "settings": { "icon": "send" } },
+        { "type": "value-card", "settings": { "icon": "clock" } },
+        { "type": "value-card", "settings": { "icon": "heart-handshake" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

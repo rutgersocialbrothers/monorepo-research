@@ -3,48 +3,59 @@
   media, content, and add-to-cart form.
 
   https://shopify.dev/docs/storefronts/themes/architecture/templates/product
+
+  Product page: title, the gallery, the buy box and merchant-composed introduction blocks in two columns from the
+  medium breakpoint, and one column below it. Gallery and buy box are static blocks because they need this
+  section's product and form; the introduction column takes any theme block. Reading and focus order are the same
+  at every width: gallery, buy box, introduction.
+
+  Elements marked `data-variant-region` show the selected variant. The buy box script replaces them from this
+  section's re-rendered HTML (Section Rendering API) when another variant is chosen.
 {% endcomment %}
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
+{% liquid
+  assign selected_variant = product.selected_or_first_available_variant
+%}
+
+<div
+  class="product-page grid gap-8"
+  data-product-page
+  data-section-id="{{ section.id }}"
+  data-url="{{ product.url }}"
+>
+  <div class="grid gap-3">
+    {% render 'breadcrumbs', resource: product, resource_type: 'product' %}
+    <h1 class="text-h1">{{ product.title }}</h1>
+    <p class="text-small text-text-muted" data-variant-region="sku">
+      {%- if selected_variant.sku != blank -%}
+        {{- 'products.product.sku' | t: sku: selected_variant.sku -}}
+      {%- endif -%}
+    </p>
+  </div>
+
+  <div class="grid grid-cols-[minmax(0,1fr)] items-start gap-8 md:grid-cols-2 md:gap-x-12">
+    <div class="md:sticky md:top-4 md:row-span-2 md:self-start">
+      {% content_for 'block', type: '_product-gallery', id: 'product-gallery' %}
+    </div>
+    <div class="grid content-start">
+      {% content_for 'block', type: '_buy-box', id: 'buy-box' %}
+    </div>
+    <div class="grid content-start gap-5">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
 </div>
 
-<div class="product-info">
-  {% render 'breadcrumbs', resource: product, resource_type: 'product' %}
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
-
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
-
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
-
-    <input type="text" name="quantity" min="1" value="1">
-
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+{% stylesheet %}
+  .product-page {
+    padding-block: var(--tp-section-spacing);
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.product",
+  "blocks": [{ "type": "@theme" }],
   "settings": [],
   "disabled_on": {
     "groups": ["header", "footer"]

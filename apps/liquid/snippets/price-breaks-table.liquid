@@ -1,0 +1,67 @@
+{%- doc -%}
+  Renders a variant's B2B quantity price breaks as a table: the variant price from its minimum quantity, then each
+  catalog break with its saving. Shopify fills the breaks only for a customer buying for a company location whose
+  catalog defines them, so for everyone else this renders nothing and the caller shows the plain price.
+  Rows carry `data-min`; the row reached by `quantity` carries `data-active`.
+
+  @param {variant} variant - Shopify variant whose breaks to list
+  @param {number} [quantity] - Quantity whose break is marked active; defaults to the variant minimum
+
+  @example
+  {% render 'price-breaks-table', variant: product.selected_or_first_available_variant %}
+{%- enddoc -%}
+
+{%- if variant != blank and variant.quantity_price_breaks.size > 0 -%}
+  {%- liquid
+    assign rule_min = variant.quantity_rule.min | default: 1
+    assign active_quantity = quantity | default: rule_min
+    assign active_min = rule_min
+    for price_break in variant.quantity_price_breaks
+      if active_quantity >= price_break.minimum_quantity
+        assign active_min = price_break.minimum_quantity
+      endif
+    endfor
+    assign units_per_pallet = variant.metafields.custom.units_per_pallet.value | default: 0
+  -%}
+  <table class="w-full border-collapse text-small tabular-nums [&_td]:py-2 [&_td]:text-right [&_th]:py-2 [&_th]:text-left [&_thead_th]:font-regular [&_thead_th]:text-text-muted [&_thead_th:not(:first-child)]:text-right [&_tbody_tr]:border-t [&_tbody_tr]:border-border [&_tbody_tr[data-active]]:bg-surface-raised [&_tbody_tr[data-active]]:font-bold [&_tbody_th]:pl-3 [&_tbody_td:last-child]:pr-3">
+    <caption class="sr-only">{{ 'products.product.breaks_caption' | t }}</caption>
+    <thead>
+      <tr>
+        <th scope="col" class="pl-3">{{ 'products.product.breaks_quantity' | t }}</th>
+        <th scope="col">{{ 'products.product.breaks_price' | t }}</th>
+        <th scope="col" class="pr-3">{{ 'products.product.breaks_saving' | t }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-min="{{ rule_min }}" {% if active_min == rule_min %}data-active{% endif %}>
+        <th scope="row">{{ 'products.product.from_quantity' | t: quantity: rule_min }}</th>
+        <td>{{ variant.price | money }}</td>
+        <td>—</td>
+      </tr>
+      {%- for price_break in variant.quantity_price_breaks -%}
+        {%- liquid
+          assign saving = variant.price | minus: price_break.price | times: 100.0 | divided_by: variant.price | round
+          assign pallets = 0
+          if units_per_pallet > 0
+            assign pallet_rest = price_break.minimum_quantity | modulo: units_per_pallet
+            if pallet_rest == 0
+              assign pallets = price_break.minimum_quantity | divided_by: units_per_pallet
+            endif
+          endif
+        -%}
+        <tr data-min="{{ price_break.minimum_quantity }}" {% if active_min == price_break.minimum_quantity %}data-active{% endif %}>
+          <th scope="row">
+            {{- 'products.product.from_quantity' | t: quantity: price_break.minimum_quantity -}}
+            {%- if pallets > 0 %}
+              <span class="ml-1 rounded-sm bg-surface-brand px-1.5 py-0.5 text-caption font-bold text-heading">
+                {{- 'products.product.pallets' | t: count: pallets -}}
+              </span>
+            {%- endif -%}
+          </th>
+          <td>{{ price_break.price | money }}</td>
+          <td><span class="font-bold text-success">−{{ saving }}%</span></td>
+        </tr>
+      {%- endfor -%}
+    </tbody>
+  </table>
+{%- endif -%}

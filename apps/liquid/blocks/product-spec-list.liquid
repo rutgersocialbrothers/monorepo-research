@@ -1,0 +1,108 @@
+{% doc %}
+  Renders the product's specifications as a term and value list for the selected variant. Rows without data are
+  left out, and the block renders nothing without any row. Needs a product: the current product, or the nearest
+  section's. Inside the product section the variant rows follow the variant chosen in the buy box.
+
+  Variant metafields: custom.inner_length, custom.inner_width and custom.inner_height (whole millimetres),
+  custom.quality, custom.units_per_pallet and custom.weight (grams per piece). Product metafields: custom.model,
+  custom.color, custom.material, custom.recycled_content and custom.recyclable. Bundle and minimum come from the
+  B2B quantity rule. Compact shows size, quality, bundle and pallet; full shows every row.
+
+  @example
+  {% content_for 'block', type: 'product-spec-list', id: 'specs' %}
+{% enddoc %}
+
+{% liquid
+  assign spec_product = closest.product
+  assign spec_variant = spec_product.selected_or_first_available_variant
+  assign full_list = false
+  if block.settings.layout == 'full'
+    assign full_list = true
+  endif
+
+  assign variant_fields = spec_variant.metafields.custom
+  assign product_fields = spec_product.metafields.custom
+  assign rule_min = spec_variant.quantity_rule.min | default: 1
+  assign rule_increment = spec_variant.quantity_rule.increment | default: 1
+%}
+
+{% capture spec_rows %}
+  {%- if full_list and spec_variant.sku != blank -%}
+    <dt>{{ 'products.specs.sku' | t }}</dt><dd>{{ spec_variant.sku | escape }}</dd>
+  {%- endif -%}
+  {%- if variant_fields.inner_length != blank and variant_fields.inner_width != blank and variant_fields.inner_height != blank -%}
+    <dt>{{ 'products.specs.inner_size' | t }}</dt>
+    <dd>{{ 'products.specs.size_value' | t: length: variant_fields.inner_length.value, width: variant_fields.inner_width.value, height: variant_fields.inner_height.value }}</dd>
+  {%- endif -%}
+  {%- if variant_fields.quality != blank -%}
+    <dt>{{ 'products.specs.quality' | t }}</dt><dd>{{ variant_fields.quality.value | escape }}</dd>
+  {%- endif -%}
+  {%- if rule_increment > 1 -%}
+    <dt>{{ 'products.specs.bundle' | t }}</dt><dd>{{ 'products.specs.pieces' | t: quantity: rule_increment }}</dd>
+  {%- endif -%}
+  {%- if full_list and rule_min > 1 -%}
+    <dt>{{ 'products.specs.minimum' | t }}</dt><dd>{{ 'products.specs.pieces' | t: quantity: rule_min }}</dd>
+  {%- endif -%}
+  {%- if variant_fields.units_per_pallet != blank -%}
+    <dt>{{ 'products.specs.per_pallet' | t }}</dt><dd>{{ 'products.specs.pieces' | t: quantity: variant_fields.units_per_pallet.value }}</dd>
+  {%- endif -%}
+  {%- if full_list -%}
+    {%- if product_fields.model != blank -%}
+      <dt>{{ 'products.specs.model' | t }}</dt><dd>{{ product_fields.model.value | escape }}</dd>
+    {%- endif -%}
+    {%- if product_fields.color != blank -%}
+      <dt>{{ 'products.specs.color' | t }}</dt><dd>{{ product_fields.color.value | escape }}</dd>
+    {%- endif -%}
+    {%- if product_fields.material != blank -%}
+      <dt>{{ 'products.specs.material' | t }}</dt><dd>{{ product_fields.material.value | escape }}</dd>
+    {%- endif -%}
+    {%- if variant_fields.weight != blank -%}
+      <dt>{{ 'products.specs.weight' | t }}</dt><dd>{{ 'products.specs.weight_value' | t: quantity: variant_fields.weight.value }}</dd>
+    {%- endif -%}
+    {%- if product_fields.recycled_content != blank -%}
+      <dt>{{ 'products.specs.recycled' | t }}</dt><dd>{{ product_fields.recycled_content.value | escape }}</dd>
+    {%- endif -%}
+    {%- if product_fields.recyclable != blank -%}
+      <dt>{{ 'products.specs.recyclable' | t }}</dt><dd>{{ product_fields.recyclable.value | escape }}</dd>
+    {%- endif -%}
+  {%- endif -%}
+{% endcapture %}
+
+{% if spec_rows != blank %}
+  <div class="grid justify-items-start gap-2" {{ block.shopify_attributes }}>
+    {% if block.settings.show_heading %}
+      <h2 class="text-small font-bold text-text">{{ 'products.specs.title' | t }}</h2>
+    {% endif %}
+    <dl
+      class="m-0 grid w-full max-w-120 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] text-small [&>dd]:m-0 [&>dd]:border-b [&>dd]:border-border [&>dd]:py-2 [&>dt]:border-b [&>dt]:border-border [&>dt]:py-2 [&>dt]:pr-3 [&>dt]:text-text-muted"
+      data-variant-region="specs-{{ block.id }}"
+    >
+      {{ spec_rows }}
+    </dl>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.product_specs",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "t:liquid_components.labels.spec_rows",
+      "options": [
+        { "value": "compact", "label": "t:liquid_components.options.spec_rows.compact" },
+        { "value": "full", "label": "t:liquid_components.options.spec_rows.full" }
+      ],
+      "default": "compact"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "t:liquid_components.labels.show_heading",
+      "default": true
+    }
+  ],
+  "presets": [{ "name": "t:liquid_components.general.product_specs" }]
+}
+{% endschema %}

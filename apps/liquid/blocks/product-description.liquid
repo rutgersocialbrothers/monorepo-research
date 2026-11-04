@@ -1,0 +1,65 @@
+{% doc %}
+  Renders the product description from Shopify, as a native disclosure that starts closed or as an open text with
+  its own heading. Needs a product: the current product, or the nearest section's. Renders nothing without a
+  description.
+
+  @example
+  {% content_for 'block', type: 'product-description', id: 'description' %}
+{% enddoc %}
+
+{% liquid
+  assign description_product = closest.product
+%}
+
+{% if description_product.description != blank %}
+  <div class="product-description" {{ block.shopify_attributes }}>
+    {% if block.settings.collapsible %}
+      <details class="group/description border-y border-border" {% if block.settings.open %}open{% endif %}>
+        <summary class="flex min-h-12 cursor-pointer list-none items-center gap-2 text-body font-bold [&::-webkit-details-marker]:hidden">
+          {{- 'products.product.description' | t -}}
+          {% render 'icon', name: 'chevron-down', size: 16, class: 'ml-auto transition-transform group-open/description:rotate-180 motion-reduce:transition-none' %}
+        </summary>
+        <div class="product-description__body pb-4 text-body text-text">{{ description_product.description }}</div>
+      </details>
+    {% else %}
+      <h2 class="mb-3 text-small font-bold text-text">{{ 'products.product.description' | t }}</h2>
+      <div class="product-description__body text-body text-text">{{ description_product.description }}</div>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .product-description__body > * + * {
+    margin-block-start: 0.75em;
+  }
+
+  .product-description__body :is(ul, ol) {
+    padding-inline-start: 1.25em;
+  }
+
+  .product-description__body a {
+    color: var(--tp-color-link);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.product_description",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "collapsible",
+      "label": "t:liquid_components.labels.collapsible",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "open",
+      "label": "t:liquid_components.labels.open_by_default",
+      "default": false,
+      "visible_if": "{{ block.settings.collapsible }}"
+    }
+  ],
+  "presets": [{ "name": "t:liquid_components.general.product_description" }]
+}
+{% endschema %}

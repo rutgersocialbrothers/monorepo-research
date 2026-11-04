@@ -1,0 +1,584 @@
+{% comment %}
+  "All sizes" order matrix (MTRX-1): every variant of one product a row with its own B2B quantity breaks, so rows may
+  break at different quantities (a dash where a row has fewer). The product is the section's selected product, or
+  the current product on a product page. As many break columns as the longest row has; a customer without catalog
+  breaks sees one price column.
+
+  The table is one native cart form posting `items[n][id]` and `items[n][quantity]`. With script, quantities snap to
+  whole bundles from the minimum when a field is left (and the note says so), subtotals and the total follow, rows
+  with nothing ordered are left out of the post, and an optional filter on quality and minimum inner size hides
+  rows. Hidden rows keep their quantities in the order and the total bar says so. A product with one variant
+  renders nothing on the storefront (no empty band) and an editor empty state in the theme editor. Without script every row shows
+  and the filter stays hidden. Below the xl breakpoint every row is a card; the table, row groups, rows and cells
+  carry explicit roles because the card display drops their table semantics in some browsers.
+
+  Variant metafields: custom.inner_length, custom.inner_width, custom.inner_height (mm), custom.quality and
+  custom.units_per_pallet. TRIAL: the light row gradient awaits designer approval.
+{% endcomment %}
+
+{% liquid
+  assign matrix_product = section.settings.product | default: product
+  assign filter_from = 5
+
+  case section.settings.background
+    when 'page'
+      assign background_class = 'bg-page'
+    when 'natural'
+      assign background_class = 'bg-surface-natural'
+    when 'warm'
+      assign background_class = 'bg-surface-warm'
+    else
+      assign background_class = 'bg-surface-band'
+  endcase
+
+  assign tier_columns = 1
+  assign qualities = ''
+  assign has_dimensions = false
+  for matrix_variant in matrix_product.variants
+    assign variant_tiers = matrix_variant.quantity_price_breaks.size | plus: 1
+    if variant_tiers > tier_columns
+      assign tier_columns = variant_tiers
+    endif
+    if matrix_variant.metafields.custom.quality != blank
+      assign qualities = qualities | append: matrix_variant.metafields.custom.quality.value | append: '|~|'
+    endif
+    if matrix_variant.metafields.custom.inner_length != blank
+      assign has_dimensions = true
+    endif
+  endfor
+  assign quality_options = qualities | split: '|~|' | uniq
+
+  assign show_filter = false
+  if section.settings.show_filter and matrix_product.variants.size >= filter_from
+    if quality_options.size > 1 or has_dimensions
+      assign show_filter = true
+    endif
+  endif
+
+  if cart.taxes_included
+    assign tax_label = 'products.product.tax_included' | t
+  else
+    assign tax_label = 'products.product.tax_excluded' | t
+  endif
+
+  assign heading_id = 'order-matrix-title-' | append: section.id
+  assign form_id = 'order-matrix-form-' | append: section.id
+
+  assign has_matrix = false
+  if matrix_product != blank and matrix_product.variants.size > 1
+    assign has_matrix = true
+  endif
+%}
+
+{% if has_matrix or request.design_mode %}
+<div class="order-matrix full-width {{ background_class }}">
+  <div class="order-matrix__content">
+    {% if has_matrix %}
+      <div
+        class="group/stepper grid gap-6"
+        data-order-matrix
+        data-currency="{{ cart.currency.iso_code }}"
+        data-text-none="{{ 'products.matrix.none_chosen' | t | escape }}"
+        data-text-lines-one="{{ 'products.matrix.lines_one' | t: number: '[number]' | escape }}"
+        data-text-lines-other="{{ 'products.matrix.lines_other' | t: number: '[number]' | escape }}"
+        data-text-hidden-one="{{ 'products.matrix.hidden_one' | t: number: '[number]' | escape }}"
+        data-text-hidden-other="{{ 'products.matrix.hidden_other' | t: number: '[number]' | escape }}"
+        data-text-shown="{{ 'products.matrix.shown' | t: shown: '[shown]', total: '[total]' | escape }}"
+        data-text-snapped="{{ 'products.matrix.snapped' | t: variant: '[variant]', typed: '[typed]', quantity: '[quantity]', increment: '[increment]', min: '[min]' | escape }}"
+      >
+        <div class="grid gap-2">
+          {% if section.settings.eyebrow != blank %}
+            <p class="text-small font-bold text-text-muted">{{ section.settings.eyebrow | escape }}</p>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2 id="{{ heading_id }}" class="text-h2">{{ section.settings.heading | escape }}</h2>
+          {% endif %}
+        </div>
+
+        {% if show_filter %}
+          <form
+            class="hidden gap-4 rounded-lg bg-surface-raised p-4 data-ready:grid md:grid-cols-[auto_minmax(0,1fr)] md:gap-x-10 md:p-5"
+            data-matrix-filter
+            aria-label="{{ 'products.matrix.filter_label' | t | escape }}"
+          >
+            {% if quality_options.size > 1 %}
+              <fieldset class="m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-2 border-0 p-0">
+                <legend class="mb-2 p-0 text-small font-bold">{{ 'products.specs.quality' | t }}</legend>
+                {% for quality in quality_options %}
+                  {% assign quality_id = 'matrix-quality-' | append: section.id | append: '-' | append: forloop.index %}
+                  {% render 'checkbox', id: quality_id, name: 'quality', value: quality, label: quality %}
+                {% endfor %}
+              </fieldset>
+            {% endif %}
+            {% if has_dimensions %}
+              <fieldset class="m-0 grid min-w-0 gap-3 border-0 p-0 sm:grid-cols-3">
+                <legend class="mb-2 p-0 text-small font-bold">{{ 'products.matrix.min_size' | t }}</legend>
+                {% liquid
+                  assign length_id = 'matrix-length-' | append: section.id
+                  assign width_id = 'matrix-width-' | append: section.id
+                  assign height_id = 'matrix-height-' | append: section.id
+                  assign length_label = 'products.matrix.length' | t
+                  assign width_label = 'products.matrix.width' | t
+                  assign height_label = 'products.matrix.height' | t
+                  render 'input', id: length_id, name: 'length', label: length_label, type: 'number', inputmode: 'numeric', min: '1', step: '1'
+                  render 'input', id: width_id, name: 'width', label: width_label, type: 'number', inputmode: 'numeric', min: '1', step: '1'
+                  render 'input', id: height_id, name: 'height', label: height_label, type: 'number', inputmode: 'numeric', min: '1', step: '1'
+                %}
+              </fieldset>
+            {% endif %}
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-2 md:col-span-full">
+              <p data-matrix-shown aria-live="polite" class="text-small font-bold text-heading">
+                {{- 'products.matrix.shown' | t: shown: matrix_product.variants.size, total: matrix_product.variants.size -}}
+              </p>
+              <button
+                type="button"
+                data-matrix-filter-reset
+                class="min-h-11 cursor-pointer rounded-sm border-0 bg-transparent p-0 text-small text-link underline underline-offset-2 hover:no-underline"
+              >
+                {{- 'products.matrix.reset' | t -}}
+              </button>
+            </div>
+          </form>
+        {% endif %}
+
+        <form
+          id="{{ form_id }}"
+          action="{{ routes.cart_add_url }}"
+          method="post"
+          class="rounded-lg bg-surface-raised max-xl:bg-transparent"
+          data-matrix-form
+        >
+          <table
+            role="table"
+            {% if section.settings.heading != blank %}aria-labelledby="{{ heading_id }}"{% endif %}
+            class="w-full border-collapse text-small tabular-nums max-xl:block [&_td]:px-3 [&_td]:py-3 [&_th]:px-3 [&_th]:py-3 [&_thead_th]:text-left [&_thead_th]:align-bottom [&_thead_th]:text-caption [&_thead_th]:font-bold [&_thead_th]:text-text-muted [&_tbody_tr]:border-t [&_tbody_tr]:border-border [&_tbody_tr]:bg-linear-to-r [&_tbody_tr]:from-surface-raised [&_tbody_tr]:to-surface-brand/50 [&_tbody_tr[hidden]]:hidden max-xl:[&_caption]:block max-xl:[&_tbody]:grid max-xl:[&_tbody]:gap-3 max-xl:[&_tbody_tr]:grid max-xl:[&_tbody_tr]:grid-cols-2 max-xl:[&_tbody_tr]:gap-x-3 max-xl:[&_tbody_tr]:rounded-lg max-xl:[&_tbody_tr]:border-0 max-xl:[&_tbody_tr]:bg-surface-raised max-xl:[&_tbody_tr]:p-3 max-xl:[&_tbody_tr>*]:block max-xl:[&_tbody_tr>*]:px-1 max-xl:[&_tbody_tr>*]:py-1 max-xl:[&_td[data-no-break]]:hidden max-xl:[&_td[data-label]]:before:block max-xl:[&_td[data-label]]:before:text-caption max-xl:[&_td[data-label]]:before:text-text-muted max-xl:[&_td[data-label]]:before:content-[attr(data-label)] max-xl:[&_thead]:sr-only sm:max-xl:[&_tbody_tr]:grid-cols-5"
+          >
+            <caption class="caption-bottom p-3 text-left text-caption text-text-muted">
+              {{- 'products.matrix.caption' | t: tax: tax_label -}}
+            </caption>
+            <thead role="rowgroup">
+              <tr role="row">
+                <th role="columnheader" scope="col" {% if tier_columns > 1 %}rowspan="2"{% endif %}>{{ 'products.specs.inner_size' | t }}</th>
+                <th role="columnheader" scope="col" {% if tier_columns > 1 %}rowspan="2"{% endif %}>{{ 'products.specs.quality' | t }}</th>
+                <th role="columnheader" scope="col" {% if tier_columns > 1 %}rowspan="2"{% endif %}>{{ 'products.matrix.bundle' | t }}</th>
+                <th role="columnheader" scope="col" {% if tier_columns > 1 %}rowspan="2"{% endif %}>{{ 'products.matrix.pallet' | t }}</th>
+                <th role="columnheader" scope="col" {% if tier_columns > 1 %}rowspan="2"{% endif %}>{{ 'products.matrix.stock' | t }}</th>
+                {% if tier_columns > 1 %}
+                  <th role="columnheader" scope="colgroup" colspan="{{ tier_columns }}" class="border-b border-border">{{ 'products.matrix.prices' | t }}</th>
+                {% else %}
+                  <th role="columnheader" scope="col">{{ 'products.product.breaks_price' | t }}</th>
+                {% endif %}
+                <th role="columnheader" scope="col" {% if tier_columns > 1 %}rowspan="2"{% endif %}>{{ 'products.product.quantity' | t }}</th>
+                <th role="columnheader" scope="col" {% if tier_columns > 1 %}rowspan="2"{% endif %}>{{ 'products.matrix.subtotal' | t }}</th>
+              </tr>
+              {% if tier_columns > 1 %}
+                <tr role="row">
+                  {% for column in (1..tier_columns) %}
+                    <th role="columnheader" scope="col" id="{{ section.id }}-tier-{{ column }}">{{ 'products.matrix.tier' | t: number: column }}</th>
+                  {% endfor %}
+                </tr>
+              {% endif %}
+            </thead>
+            <tbody role="rowgroup">
+              {% for matrix_variant in matrix_product.variants %}
+                {% liquid
+                  assign fields = matrix_variant.metafields.custom
+                  assign rule_min = matrix_variant.quantity_rule.min | default: 1
+                  assign rule_increment = matrix_variant.quantity_rule.increment | default: 1
+                  assign units_per_pallet = fields.units_per_pallet.value | default: 0
+
+                  assign row_label = matrix_variant.title
+                  if fields.inner_length != blank and fields.inner_width != blank and fields.inner_height != blank
+                    assign row_label = fields.inner_length.value | append: ' × ' | append: fields.inner_width.value | append: ' × ' | append: fields.inner_height.value
+                  endif
+
+                  capture break_data
+                    for price_break in matrix_variant.quantity_price_breaks
+                      echo price_break.minimum_quantity | append: ':' | append: price_break.price
+                      unless forloop.last
+                        echo ','
+                      endunless
+                    endfor
+                  endcapture
+                %}
+                <tr
+                  role="row"
+                  data-matrix-row
+                  data-label="{{ row_label | escape }}"
+                  data-price="{{ matrix_variant.price }}"
+                  data-breaks="{{ break_data | strip }}"
+                  data-min="{{ rule_min }}"
+                  data-increment="{{ rule_increment }}"
+                  {% if matrix_variant.quantity_rule.max != blank %}data-max="{{ matrix_variant.quantity_rule.max }}"{% endif %}
+                  data-quality="{{ fields.quality.value | escape }}"
+                  data-length="{{ fields.inner_length.value }}"
+                  data-width="{{ fields.inner_width.value }}"
+                  data-height="{{ fields.inner_height.value }}"
+                >
+                  <th role="rowheader" scope="row" class="text-left max-xl:col-span-full">
+                    <span class="block text-body font-bold text-heading">{{ row_label | escape }}</span>
+                    {% if matrix_variant.sku != blank %}
+                      <span class="block text-caption font-regular text-text-muted">{{ 'products.product.sku' | t: sku: matrix_variant.sku }}</span>
+                    {% endif %}
+                  </th>
+                  <td role="cell" data-label="{{ 'products.specs.quality' | t | escape }}">{{ fields.quality.value | default: '—' | escape }}</td>
+                  <td role="cell" data-label="{{ 'products.matrix.bundle' | t | escape }}">
+                    {{- 'products.matrix.bundle_value' | t: increment: rule_increment -}}
+                    {%- if rule_min != rule_increment %} · {{ 'products.matrix.bundle_minimum' | t: quantity: rule_min }}{% endif -%}
+                  </td>
+                  <td role="cell" data-label="{{ 'products.matrix.pallet' | t | escape }}">
+                    {%- if units_per_pallet > 0 -%}
+                      {{- 'products.matrix.bundle_value' | t: increment: units_per_pallet -}}
+                    {%- else -%}
+                      —
+                    {%- endif -%}
+                  </td>
+                  <td role="cell" class="max-xl:col-span-2">{% render 'stock-status', variant: matrix_variant %}</td>
+                  {% for column in (1..tier_columns) %}
+                    {% liquid
+                      assign break_index = column | minus: 2
+                      if column == 1
+                        assign tier_min = rule_min
+                        assign tier_price = matrix_variant.price
+                      else
+                        assign tier_break = matrix_variant.quantity_price_breaks[break_index]
+                        assign tier_min = tier_break.minimum_quantity
+                        assign tier_price = tier_break.price
+                      endif
+                      assign tier_headers = section.id | append: '-tier-' | append: column
+                    %}
+                    {% if column == 1 or tier_break != blank %}
+                      {% liquid
+                        assign pallets = 0
+                        if units_per_pallet > 0
+                          assign pallet_rest = tier_min | modulo: units_per_pallet
+                          if pallet_rest == 0
+                            assign pallets = tier_min | divided_by: units_per_pallet
+                          endif
+                        endif
+                      %}
+                      <td
+                        role="cell"
+                        {% if tier_columns > 1 %}headers="{{ tier_headers }}"{% endif %}
+                        data-matrix-price
+                        data-min="{{ tier_min }}"
+                        class="rounded-sm data-active:bg-surface-brand data-active:font-bold"
+                      >
+                        <span class="block text-caption text-text-muted">
+                          {%- if pallets > 0 -%}
+                            {{- 'products.product.pallets' | t: count: pallets -}}
+                          {%- else -%}
+                            {{- 'products.product.from_quantity' | t: quantity: tier_min -}}
+                          {%- endif -%}
+                        </span>
+                        {{ tier_price | money }}
+                      </td>
+                    {% else %}
+                      <td role="cell" headers="{{ tier_headers }}" data-no-break class="text-text-muted">—</td>
+                    {% endif %}
+                  {% endfor %}
+                  <td role="cell" class="max-xl:col-span-2">
+                    {% if matrix_variant.available %}
+                      {% liquid
+                        assign quantity_id = 'matrix-quantity-' | append: section.id | append: '-' | append: matrix_variant.id
+                        assign quantity_name = 'items[' | append: forloop.index0 | append: '][quantity]'
+                        assign quantity_label = 'products.matrix.quantity_label' | t: variant: row_label
+                        assign decrease_label = 'products.matrix.decrease_label' | t: variant: row_label
+                        assign increase_label = 'products.matrix.increase_label' | t: variant: row_label
+                      %}
+                      <input type="hidden" name="items[{{ forloop.index0 }}][id]" value="{{ matrix_variant.id }}" data-matrix-id>
+                      {% render 'quantity-stepper', id: quantity_id, name: quantity_name, label: quantity_label, decrease_label: decrease_label, increase_label: increase_label, value: 0, min: 0, step: rule_increment, max: matrix_variant.quantity_rule.max %}
+                    {% else %}
+                      <span class="text-text-muted">—</span>
+                    {% endif %}
+                  </td>
+                  <td role="cell" data-label="{{ 'products.matrix.subtotal' | t | escape }}" data-matrix-sub class="font-bold data-set:text-heading">—</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <p data-matrix-empty hidden class="rounded-lg bg-surface-raised p-4 text-small text-text-muted">{{ 'products.matrix.empty' | t }}</p>
+          {%- capture submit_classes -%}{% render 'design-button-classes', size: 'large' %}{%- endcapture -%}
+          <div class="sticky bottom-0 z-10 flex flex-wrap items-center justify-end gap-x-6 gap-y-2 rounded-b-lg border-t border-border bg-surface-raised p-4 max-xl:mt-3 max-xl:rounded-lg max-xl:shadow-raised">
+            <p class="flex items-baseline gap-2 font-bold">
+              {{- 'products.product.total' | t }} <span class="font-regular text-text-muted">{{ tax_label }}</span>
+              <b data-matrix-total class="text-h3 text-heading">{{ 0 | money }}</b>
+            </p>
+            <p class="text-small text-text-muted">
+              <span data-matrix-count>{{ 'products.matrix.none_chosen' | t }}</span> <span data-matrix-hidden></span>
+            </p>
+            <button type="submit" data-matrix-submit class="{{ submit_classes | strip | escape }}">
+              {%- render 'icon', name: 'shopping-cart', size: 16 -%}
+              {{- 'products.product.add_to_cart' | t -}}
+            </button>
+          </div>
+        </form>
+        <p data-matrix-note aria-live="polite" class="text-small font-bold text-heading empty:hidden"></p>
+      </div>
+    {% else %}
+      {% assign empty_title = 'products.matrix.editor_empty' | t %}
+      {% render 'empty-state', title: empty_title, heading_level: 'h2' %}
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% stylesheet %}
+  .order-matrix__content {
+    display: grid;
+    grid-template-columns: var(--tp-content-grid);
+    padding-block: var(--tp-section-spacing);
+  }
+
+  .order-matrix__content > * {
+    grid-column: 2;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (() => {
+    const fill = (template, values) => template.replace(/\[(\w+)\]/g, (match, key) => String(values[key] ?? match));
+
+    const bind = (root) => {
+      if (root.hasAttribute('data-ready')) {
+        return;
+      }
+      const form = root.querySelector('[data-matrix-form]');
+      const filter = root.querySelector('[data-matrix-filter]');
+      const shown = root.querySelector('[data-matrix-shown]');
+      const empty = root.querySelector('[data-matrix-empty]');
+      const total = root.querySelector('[data-matrix-total]');
+      const count = root.querySelector('[data-matrix-count]');
+      const hiddenLines = root.querySelector('[data-matrix-hidden]');
+      const submit = root.querySelector('[data-matrix-submit]');
+      const note = root.querySelector('[data-matrix-note]');
+      const text = root.dataset;
+      const money = (cents) =>
+        new Intl.NumberFormat(document.documentElement.lang || undefined, {
+          style: 'currency',
+          currency: text.currency,
+        }).format(cents / 100);
+      const plural = (number, one, other) => fill(number === 1 ? one : other, { number });
+      const say = (message) => {
+        if (note) {
+          note.textContent = message;
+        }
+      };
+
+      const rows = [...root.querySelectorAll('tr[data-matrix-row]')].flatMap((row) => {
+        const input = row.querySelector('[data-quantity]');
+        if (!input) {
+          return [];
+        }
+        const breaks = (row.dataset.breaks || '')
+          .split(',')
+          .filter(Boolean)
+          .map((pair) => pair.split(':').map(Number))
+          .map(([min, price]) => ({ min, price }));
+        return [
+          {
+            row,
+            input,
+            id: row.querySelector('[data-matrix-id]'),
+            sub: row.querySelector('[data-matrix-sub]'),
+            cells: [...row.querySelectorAll('[data-matrix-price]')],
+            label: row.dataset.label,
+            price: Number(row.dataset.price),
+            breaks,
+            min: Number(row.dataset.min) || 1,
+            increment: Number(row.dataset.increment) || 1,
+            max: Number(row.dataset.max) || 0,
+          },
+        ];
+      });
+      const entryOf = (node) => rows.find((entry) => entry.row === node.closest('tr'));
+      const limit = (quantity, entry) => (entry.max ? Math.min(quantity, entry.max) : quantity);
+      // Whole bundles from the minimum; nothing stays nothing.
+      const snap = (quantity, entry) =>
+        quantity <= 0 ? 0 : limit(Math.max(entry.min, Math.round(quantity / entry.increment) * entry.increment), entry);
+      const quantityOf = (entry) => Math.max(0, Number.parseInt(entry.input.value, 10) || 0);
+
+      const sync = () => {
+        let sum = 0;
+        let lines = 0;
+        let hidden = 0;
+        for (const entry of rows) {
+          const quantity = quantityOf(entry);
+          const reached = entry.cells.filter((cell) => quantity > 0 && quantity >= Number(cell.dataset.min)).pop();
+          entry.cells.forEach((cell) => cell.toggleAttribute('data-active', cell === reached));
+          entry.sub.toggleAttribute('data-set', quantity > 0);
+          if (quantity > 0) {
+            const price = entry.breaks.reduce((current, step) => (quantity >= step.min ? step.price : current), entry.price);
+            sum += quantity * price;
+            lines += 1;
+            hidden += entry.row.hidden ? 1 : 0;
+            entry.sub.textContent = money(quantity * price);
+          } else {
+            entry.sub.textContent = '—';
+          }
+        }
+        total.textContent = money(sum);
+        count.textContent = lines ? plural(lines, text.textLinesOne, text.textLinesOther) : text.textNone;
+        // Filtering hides rows, never their quantities: say what is still in the order out of sight.
+        hiddenLines.textContent = hidden ? plural(hidden, text.textHiddenOne, text.textHiddenOther) : '';
+        submit.disabled = lines === 0;
+      };
+
+      // Quality (none ticked means all) and minimum inner sizes in mm; a row without a value is never filtered out.
+      const applyFilter = () => {
+        const data = new FormData(filter);
+        const qualities = data.getAll('quality');
+        const least = (name) => Math.max(0, Number.parseInt(String(data.get(name) || ''), 10) || 0);
+        const wanted = { length: least('length'), width: least('width'), height: least('height') };
+        let visible = 0;
+        for (const row of root.querySelectorAll('tr[data-matrix-row]')) {
+          const quality = row.dataset.quality;
+          const fits = Object.entries(wanted).every(([name, size]) => {
+            const value = Number(row.dataset[name]);
+            return !size || !value || value >= size;
+          });
+          const match = (!qualities.length || !quality || qualities.includes(quality)) && fits;
+          row.hidden = !match;
+          visible += match ? 1 : 0;
+        }
+        const all = root.querySelectorAll('tr[data-matrix-row]').length;
+        if (shown) {
+          shown.textContent = fill(text.textShown, { shown: visible, total: all });
+        }
+        empty.hidden = visible > 0;
+        sync();
+      };
+
+      root.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-step]');
+        const entry = button && entryOf(button);
+        if (!entry) {
+          return;
+        }
+        const quantity = quantityOf(entry);
+        // Plus from nothing goes to the minimum; minus at the minimum goes back to nothing.
+        const next =
+          Number(button.dataset.step) > 0
+            ? quantity < entry.min
+              ? entry.min
+              : quantity + entry.increment
+            : quantity <= entry.min
+              ? 0
+              : quantity - entry.increment;
+        entry.input.value = String(limit(next, entry));
+        say('');
+        sync();
+      });
+      form.addEventListener('input', (event) => {
+        if (event.target.matches('[data-quantity]')) {
+          sync();
+        }
+      });
+      // Snapped only when the field is left, so typing is not fought mid-keystroke, and said when it happens.
+      form.addEventListener('change', (event) => {
+        const entry = event.target.matches('[data-quantity]') ? entryOf(event.target) : undefined;
+        if (!entry) {
+          return;
+        }
+        const typed = quantityOf(entry);
+        const quantity = snap(typed, entry);
+        entry.input.value = String(quantity);
+        say(
+          quantity === typed
+            ? ''
+            : fill(text.textSnapped, {
+                variant: entry.label,
+                typed,
+                quantity,
+                increment: entry.increment,
+                min: entry.min,
+              }),
+        );
+        sync();
+      });
+      // Only rows with a quantity are posted.
+      form.addEventListener('submit', () => {
+        for (const entry of rows) {
+          const skip = quantityOf(entry) === 0;
+          entry.input.disabled = skip;
+          if (entry.id) {
+            entry.id.disabled = skip;
+          }
+        }
+      });
+      window.addEventListener('pageshow', () => {
+        for (const entry of rows) {
+          entry.input.disabled = false;
+          if (entry.id) {
+            entry.id.disabled = false;
+          }
+        }
+      });
+
+      if (filter) {
+        filter.addEventListener('input', applyFilter);
+        filter.addEventListener('submit', (event) => event.preventDefault());
+        filter.querySelector('[data-matrix-filter-reset]')?.addEventListener('click', () => {
+          filter.reset();
+          applyFilter();
+        });
+        filter.setAttribute('data-ready', '');
+      }
+      root.setAttribute('data-ready', '');
+      sync();
+    };
+
+    const init = (scope) => scope.querySelectorAll('[data-order-matrix]').forEach(bind);
+    init(document);
+    // The theme editor re-renders sections in place; bind the new markup.
+    document.addEventListener('shopify:section:load', (event) => init(event.target));
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.order_matrix",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "t:liquid_components.labels.product",
+      "info": "t:liquid_components.info.order_matrix_product"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:liquid_components.labels.eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:liquid_components.labels.heading",
+      "default": "All sizes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filter",
+      "label": "t:liquid_components.labels.show_filter",
+      "info": "t:liquid_components.info.show_filter",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "background",
+      "label": "t:liquid_components.labels.background",
+      "options": [
+        { "value": "band", "label": "t:liquid_components.options.background.band" },
+        { "value": "page", "label": "t:liquid_components.options.background.page" },
+        { "value": "natural", "label": "t:liquid_components.options.background.natural" },
+        { "value": "warm", "label": "t:liquid_components.options.background.warm" }
+      ],
+      "default": "band"
+    }
+  ],
+  "presets": [{ "name": "t:liquid_components.general.order_matrix" }],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

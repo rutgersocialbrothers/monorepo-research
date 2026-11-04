@@ -11,10 +11,104 @@
   "sections": {
     "main": {
       "type": "product",
+      "blocks": {
+        "product-gallery": {
+          "type": "_product-gallery",
+          "static": true,
+          "settings": {}
+        },
+        "buy-box": {
+          "type": "_buy-box",
+          "static": true,
+          "settings": {}
+        },
+        "highlights": {
+          "type": "product-highlights",
+          "settings": {}
+        },
+        "value-delivery": {
+          "type": "value-card",
+          "settings": {
+            "icon": "send",
+            "style": "compact"
+          }
+        },
+        "value-service": {
+          "type": "value-card",
+          "settings": {
+            "icon": "heart-handshake",
+            "style": "compact"
+          }
+        },
+        "description": {
+          "type": "product-description",
+          "settings": {
+            "collapsible": true,
+            "open": false
+          }
+        },
+        "specs": {
+          "type": "product-spec-list",
+          "settings": {
+            "layout": "compact",
+            "show_heading": true
+          }
+        }
+      },
+      "block_order": [
+        "highlights",
+        "value-delivery",
+        "value-service",
+        "description",
+        "specs"
+      ],
+      "settings": {}
+    },
+    "order-matrix": {
+      "type": "order-matrix",
+      "settings": {
+        "eyebrow": "",
+        "heading": "All sizes",
+        "show_filter": true,
+        "background": "band"
+      }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "eyebrow": "",
+        "heading": "Frequently bought together",
+        "intent": "complementary_related",
+        "limit": 8,
+        "framed": false
+      }
+    },
+    "specifications": {
+      "type": "custom-section",
+      "blocks": {
+        "specs-full": {
+          "type": "product-spec-list",
+          "settings": {
+            "layout": "full",
+            "show_heading": true
+          }
+        },
+        "faq": {
+          "type": "faq",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "specs-full",
+        "faq"
+      ],
       "settings": {}
     }
   },
   "order": [
-    "main"
+    "main",
+    "order-matrix",
+    "specifications",
+    "recommendations"
   ]
 }

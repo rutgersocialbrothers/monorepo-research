@@ -1,0 +1,220 @@
+{% comment %}
+  Product rail (canonical ProductRail with ProductCard): products that go with the current product, in a
+  horizontally scrolling row with previous and next buttons. Products come from Shopify's Product Recommendations
+  API: complementary products (Search & Discovery, "frequently bought together") first, then related products when
+  the setting allows it and there are none. The page renders an empty shell; the script fetches this section with
+  the recommendations and swaps it in. Without products the section stays hidden on the storefront and shows an
+  empty state in the theme editor.
+{% endcomment %}
+
+{% liquid
+  assign heading_id = 'recommendations-title-' | append: section.id
+  assign rail_id = 'recommendations-rail-' | append: section.id
+  assign rail_label = section.settings.heading
+  if rail_label == blank
+    assign rail_label = 'products.recommendations.fallback_heading' | t
+  endif
+%}
+
+<div
+  class="product-recommendations"
+  data-product-recommendations
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.limit }}"
+  data-intent="{{ section.settings.intent }}"
+  {% unless recommendations.performed? %}hidden{% endunless %}
+>
+  {% if recommendations.performed? and recommendations.products_count > 0 %}
+    <section class="grid grid-cols-[minmax(0,1fr)] gap-7" aria-labelledby="{{ heading_id }}" data-recommendations-ready>
+      <div class="grid gap-2">
+        {% if section.settings.eyebrow != blank %}
+          <p class="text-caption font-bold tracking-widest text-link uppercase">{{ section.settings.eyebrow | escape }}</p>
+        {% endif %}
+        <h2 id="{{ heading_id }}" class="text-h2">{{ rail_label | escape }}</h2>
+      </div>
+
+      <div data-rail>
+        <div
+          id="{{ rail_id }}"
+          data-rail-viewport
+          tabindex="0"
+          role="group"
+          aria-label="{{ 'products.recommendations.rail_label' | t: title: rail_label | escape }}"
+          class="overflow-x-auto rounded-sm pb-3"
+        >
+          <ul class="m-0 grid list-none auto-cols-[minmax(15rem,82%)] grid-flow-col gap-5 p-0 sm:auto-cols-[calc((100%-1.25rem)/2)] lg:auto-cols-[calc((100%-3.75rem)/4)]">
+            {% for recommendation in recommendations.products %}
+              <li class="grid">
+                {% liquid
+                  assign available_label = 'products.stock.in_stock' | t
+                  assign unavailable_label = 'products.stock.sold_out' | t
+                  render 'product-card', product: recommendation, framed: section.settings.framed, available_label: available_label, unavailable_label: unavailable_label, image_sizes: '(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 82vw'
+                %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div data-rail-controls hidden class="mt-5 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            data-rail-step="-1"
+            aria-controls="{{ rail_id }}"
+            aria-label="{{ 'products.recommendations.previous' | t: title: rail_label | escape }}"
+            class="grid size-11 cursor-pointer place-items-center rounded-full border border-border bg-page text-text hover:bg-surface-sunken aria-disabled:cursor-default aria-disabled:opacity-40"
+          >
+            {% render 'icon', name: 'chevron-left', size: 20 %}
+          </button>
+          <button
+            type="button"
+            data-rail-step="1"
+            aria-controls="{{ rail_id }}"
+            aria-label="{{ 'products.recommendations.next' | t: title: rail_label | escape }}"
+            class="grid size-11 cursor-pointer place-items-center rounded-full border border-border bg-page text-text hover:bg-surface-sunken aria-disabled:cursor-default aria-disabled:opacity-40"
+          >
+            {% render 'icon', name: 'chevron-right', size: 20 %}
+          </button>
+        </div>
+      </div>
+    </section>
+  {% elsif recommendations.performed? and request.design_mode %}
+    {% assign empty_title = 'products.recommendations.editor_empty' | t %}
+    {% render 'empty-state', title: empty_title, heading_level: 'h2' %}
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .product-recommendations {
+    min-width: 0;
+    padding-block: var(--tp-section-spacing);
+  }
+
+  .product-recommendations[hidden] {
+    display: none;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (() => {
+    const bindRail = (rail) => {
+      const viewport = rail.querySelector('[data-rail-viewport]');
+      const controls = rail.querySelector('[data-rail-controls]');
+      const buttons = [...rail.querySelectorAll('[data-rail-step]')];
+      if (!viewport || !controls) {
+        return;
+      }
+      const update = () => {
+        const maximum = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+        // Sub-pixel and border rounding can leave a few pixels of scroll width; that is not a scrollable rail.
+        controls.hidden = maximum < 8;
+        buttons.forEach((button) => {
+          const back = Number(button.dataset.railStep) < 0;
+          button.setAttribute('aria-disabled', String(back ? viewport.scrollLeft <= 1 : viewport.scrollLeft >= maximum - 1));
+        });
+      };
+      buttons.forEach((button) =>
+        button.addEventListener('click', () => {
+          if (button.getAttribute('aria-disabled') === 'true') {
+            return;
+          }
+          const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          viewport.scrollBy({
+            left: Number(button.dataset.railStep) * viewport.clientWidth * 0.85,
+            behavior: reduced ? 'auto' : 'smooth',
+          });
+        }),
+      );
+      viewport.addEventListener('scroll', update, { passive: true });
+      new ResizeObserver(update).observe(viewport);
+      update();
+    };
+
+    const load = async (root) => {
+      if (root.hasAttribute('data-loading') || root.querySelector('[data-recommendations-ready]')) {
+        return;
+      }
+      root.setAttribute('data-loading', '');
+      const intents = root.dataset.intent === 'related' ? ['related'] : ['complementary'];
+      if (root.dataset.intent === 'complementary_related') {
+        intents.push('related');
+      }
+      for (const intent of intents) {
+        try {
+          const response = await fetch(`${root.dataset.url}&intent=${intent}`);
+          if (!response.ok) {
+            continue;
+          }
+          const html = new DOMParser().parseFromString(await response.text(), 'text/html');
+          const fresh = html.querySelector('[data-product-recommendations]');
+          if (!fresh || !fresh.innerHTML.trim()) {
+            continue;
+          }
+          root.innerHTML = fresh.innerHTML;
+          root.hidden = false;
+          const rail = root.querySelector('[data-rail]');
+          if (rail) {
+            bindRail(rail);
+          }
+          if (root.querySelector('[data-recommendations-ready]')) {
+            return;
+          }
+        } catch {
+          // Leave the section hidden; recommendations are an enhancement.
+        }
+      }
+    };
+
+    const init = (scope) => scope.querySelectorAll('[data-product-recommendations]').forEach(load);
+    init(document);
+    // The theme editor re-renders sections in place; load the new markup.
+    document.addEventListener('shopify:section:load', (event) => init(event.target));
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.product_recommendations",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:liquid_components.labels.eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:liquid_components.labels.heading",
+      "default": "Frequently bought together"
+    },
+    {
+      "type": "select",
+      "id": "intent",
+      "label": "t:liquid_components.labels.recommendation_source",
+      "info": "t:liquid_components.info.recommendation_source",
+      "options": [
+        { "value": "complementary_related", "label": "t:liquid_components.options.recommendation_source.complementary_related" },
+        { "value": "complementary", "label": "t:liquid_components.options.recommendation_source.complementary" },
+        { "value": "related", "label": "t:liquid_components.options.recommendation_source.related" }
+      ],
+      "default": "complementary_related"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "t:liquid_components.labels.product_limit",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "framed",
+      "label": "t:liquid_components.labels.framed_cards",
+      "default": false
+    }
+  ],
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "presets": [{ "name": "t:liquid_components.general.product_recommendations" }]
+}
+{% endschema %}
