@@ -121,7 +121,8 @@
       "value_card": "Value card",
       "value_cards": "Value cards",
       "footer_service": "Service promise",
-      "footer_menu": "Link column"
+      "footer_menu": "Link column",
+      "footer_services": "Footer service promises"
     },
     "labels": {
       "alignment": "Alignment",

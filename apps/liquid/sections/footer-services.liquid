@@ -1,0 +1,38 @@
+{% comment %}
+  Footer service promises (canonical SiteFooter services): a row of icon promises on the navy band, directly above
+  the footer. Promises are blocks the merchant adds and orders; the copy is theirs. Without promises nothing renders.
+{% endcomment %}
+
+{% if section.blocks.size > 0 %}
+  <div class="footer-services full-width border-b border-text-inverse/15 bg-surface-inverse text-text-inverse">
+    <ul class="footer-services__inner m-0 grid list-none gap-5 p-0 py-6 sm:grid-cols-2 lg:grid-cols-4">
+      {% content_for 'blocks' %}
+    </ul>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .footer-services {
+    display: grid;
+    grid-template-columns: var(--tp-content-grid);
+    margin-top: var(--tp-section-spacing);
+  }
+
+  .footer-services__inner {
+    grid-column: 2;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.footer_services",
+  "blocks": [{ "type": "_footer-service" }],
+  "enabled_on": { "groups": ["footer"] },
+  "presets": [
+    {
+      "name": "t:liquid_components.general.footer_services",
+      "blocks": [{ "type": "_footer-service" }, { "type": "_footer-service" }, { "type": "_footer-service" }]
+    }
+  ]
+}
+{% endschema %}

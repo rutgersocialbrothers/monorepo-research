@@ -1,32 +1,17 @@
 {% comment %}
-  Site footer (canonical SiteFooter): on the navy band, an optional row of service promises, then link columns from
-  menus and a brand column with the logo, a short description and a note; under it a light bar with the copyright,
-  the legal links menu and the payment icons. Service promises and link columns are blocks the merchant adds,
-  reorders and removes; all copy is the merchant's.
+  Site footer (canonical SiteFooter): on the navy band, link columns from menus and a brand column with the logo, a
+  short description and a note; under it a light bar with the copyright, the legal links menu and the payment icons.
+  Link columns are blocks the merchant adds, reorders and removes; all copy is the merchant's. The row of service
+  promises above it is its own section (footer-services), so both can hold their own blocks.
 {% endcomment %}
 
-{% liquid
-  assign service_blocks = section.blocks | where: 'type', '_footer-service'
-  assign menu_blocks = section.blocks | where: 'type', '_footer-menu'
-%}
 
 <footer class="site-footer full-width">
   <div class="site-footer__band bg-surface-inverse text-text-inverse">
-    {%- if service_blocks.size > 0 -%}
-      <div class="site-footer__row border-b border-text-inverse/15">
-        <ul class="site-footer__inner m-0 grid list-none gap-5 p-0 py-6 sm:grid-cols-2 lg:grid-cols-4">
-          {%- for block in service_blocks -%}
-            {% render block %}
-          {%- endfor -%}
-        </ul>
-      </div>
-    {%- endif -%}
 
     <div class="site-footer__row">
       <div class="site-footer__inner grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-16">
-        {%- for block in menu_blocks -%}
-          {% render block %}
-        {%- endfor -%}
+        {% content_for 'blocks' %}
         <div class="sm:col-start-auto lg:col-start-4">
           <a href="{{ routes.root_url }}" class="inline-block rounded-sm text-h3 font-bold text-text-inverse no-underline focus-visible:outline-current">
             {%- render 'logo', width: 160 -%}
@@ -70,6 +55,11 @@
     margin-top: var(--tp-section-spacing);
   }
 
+  /* Directly under the service promises the band continues without a gap. */
+  .shopify-section:has(.footer-services) + .shopify-section .site-footer {
+    margin-top: 0;
+  }
+
   .site-footer__band,
   .site-footer__row {
     grid-column: 1 / -1;
@@ -104,7 +94,7 @@
 {% schema %}
 {
   "name": "t:general.footer",
-  "blocks": [{ "type": "_footer-service" }, { "type": "_footer-menu" }],
+  "blocks": [{ "type": "_footer-menu" }],
   "settings": [
     {
       "type": "richtext",
