@@ -2,7 +2,7 @@
 import Button from "../../components/button/button.astro";
 import Icon from "../../components/icon/icon.astro";
 import {defaultVariantSku, productVariants} from "./product.data";
-import {amount, breakLabel, displayVatFactor, euro, sizeLabel} from "./quantity";
+import {amount, breakLabel, euro, sizeLabel} from "./quantity";
 const variant = productVariants.find(item => item.sku === defaultVariantSku) ?? productVariants[0];
 if (!variant) {
   throw new Error("The product reference needs at least one variant.");
@@ -13,11 +13,16 @@ const stepButton = "grid size-11 cursor-pointer place-items-center border-0 bg-t
 ---
 <!--
   Buy box (PROD-1, PROD-4; snippets/buy-box.html 6f9c7e2): choose a size, see that size's quantity breaks, enter a
-  quantity in whole bundles from the minimum. The large price is the unit price AT the quantity; totals are excl. btw
-  with incl. btw second. Changing the size rewrites the breaks, the rule line, stock and every [data-variant-field] on
-  the page, writes ?variant= and redraws the box. SIMULATION: there is no cart; submitting only says what would happen.
+  quantity in whole bundles from the minimum. The large price is the unit price AT the quantity; totals are excl. btw.
+  Changing the size rewrites the breaks, the rule line, stock and every [data-variant-field] on the page, writes
+  ?variant= and redraws the box. SIMULATION: there is no cart; submitting only says what would happen.
+
+  Client feedback, a quicker route to the cart: stock sits with the price and the quantity and button follow
+  directly; the break table folds into a disclosure, open by default (and without script) and closed below the
+  two-column width so the button comes first on a phone. A size with a single break (no catalog breaks, or a guest)
+  shows only its price. The source's fixed 21% incl.-btw figure is dropped; B2B tax display belongs to Shopify.
 -->
-<form data-buy-box class="grid gap-5 rounded-(--ds-radius-lg) bg-surface-sunken p-6">
+<form data-buy-box class="grid gap-4 rounded-(--ds-radius-lg) bg-surface-sunken p-4 md:gap-5 md:p-6">
   <div class="grid gap-2">
     <label for="buy-variant" class="text-sm font-bold">Maat <span class="font-normal text-muted-foreground">binnenmaat L × B × H in mm</span></label>
     <span class="relative flex items-center">
@@ -33,18 +38,7 @@ const stepButton = "grid size-11 cursor-pointer place-items-center border-0 bg-t
     <p data-buy-yours class="m-0 text-sm text-muted-foreground">Jouw prijs bij {amount(variant.moq)} stuks</p>
   </div>
 
-  <table class="w-full border-collapse text-sm tabular-nums [&_td]:py-2 [&_td]:text-right [&_th]:py-2 [&_th]:text-left [&_thead_th]:font-normal [&_thead_th]:text-muted-foreground [&_thead_th:not(:first-child)]:text-right [&_tbody_tr]:border-t [&_tbody_tr]:border-border [&_tbody_tr[data-active]]:bg-surface-raised [&_tbody_tr[data-active]]:font-bold">
-    <caption class="sr-only">Staffelprijzen van de gekozen maat, per stuk en excl. btw</caption>
-    <thead><tr><th scope="col" class="pl-3">Aantal</th><th scope="col">Per stuk</th><th scope="col" class="pr-3">Besparing</th></tr></thead>
-    <tbody data-buy-tiers class="[&_td:last-child]:pr-3 [&_th]:pl-3">
-      {variant.tiers.map((tier, index) => {
-        const {from, pallets} = breakLabel(tier, variant.pallet);
-        return <tr data-active={index === 0 ? "" : undefined}><th scope="row">{from}{pallets > 0 && <> <span class="ml-1 rounded-(--ds-radius-sm) bg-surface-brand px-1.5 py-0.5 text-xs font-bold text-foreground-heading">{pallets} pallet{pallets > 1 ? "s" : ""}</span></>}</th><td>{euro(tier.price)}</td><td>{index === 0 ? "—" : <span class="font-bold text-success">−{Math.round((1 - tier.price / first) * 100)}%</span>}</td></tr>;
-      })}
-    </tbody>
-  </table>
-
-  <p data-buy-rules class="m-0 text-sm text-muted-foreground">Per bundel van {amount(variant.step)} · minimaal {amount(variant.moq)} stuks · 1 pallet = {amount(variant.pallet)} stuks</p>
+  <span class="inline-flex items-center gap-2 text-sm text-muted-foreground"><span aria-hidden="true" data-buy-stock-dot class:list={["size-2 shrink-0 rounded-full", stockDot[variant.stock]]}></span><span data-buy-stock>{variant.stockLabel}</span></span>
 
   <div class="flex flex-wrap items-center gap-3">
     <div class="inline-flex items-center overflow-hidden rounded-(--input-radius) border border-input bg-surface-raised">
@@ -55,16 +49,31 @@ const stepButton = "grid size-11 cursor-pointer place-items-center border-0 bg-t
     <Button type="submit" size="lg"><Icon slot="leadingIcon" name="shopping-cart" size={16} />In winkelwagen</Button>
   </div>
 
+  <p data-buy-rules class="m-0 text-sm text-muted-foreground">Per bundel van {amount(variant.step)} · minimaal {amount(variant.moq)} stuks · 1 pallet = {amount(variant.pallet)} stuks</p>
+
   <p class="m-0 flex flex-wrap items-baseline justify-between gap-2 border-t border-border pt-4">
     <span class="font-bold">Totaal <span class="font-normal text-muted-foreground">excl. btw</span></span>
-    <span><b data-buy-total class="text-xl text-foreground-heading">{euro(first * variant.moq)}</b> <small data-buy-incl class="text-sm text-muted-foreground">{euro(first * variant.moq * displayVatFactor)} incl. btw</small></span>
+    <b data-buy-total class="text-xl text-foreground-heading">{euro(first * variant.moq)}</b>
   </p>
   <p data-buy-status aria-live="polite" class="m-0 text-sm font-bold text-foreground-heading empty:hidden"></p>
+
+  <details open data-buy-breaks hidden={variant.tiers.length < 2} class="group border-t border-border pt-2">
+    <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 text-sm font-bold [&::-webkit-details-marker]:hidden">Staffelprijzen <span data-buy-break-count class="font-normal text-muted-foreground">{variant.tiers.length} staffels</span><Icon name="chevron-down" size={16} class="ml-auto transition-transform duration-(--ds-duration-fast) group-open:rotate-180 motion-reduce:transition-none" /></summary>
+  <table class="w-full border-collapse text-sm tabular-nums [&_td]:py-2 [&_td]:text-right [&_th]:py-2 [&_th]:text-left [&_thead_th]:font-normal [&_thead_th]:text-muted-foreground [&_thead_th:not(:first-child)]:text-right [&_tbody_tr]:border-t [&_tbody_tr]:border-border [&_tbody_tr[data-active]]:bg-surface-raised [&_tbody_tr[data-active]]:font-bold">
+    <caption class="sr-only">Staffelprijzen van de gekozen maat, per stuk en excl. btw</caption>
+    <thead><tr><th scope="col" class="pl-3">Aantal</th><th scope="col">Per stuk</th><th scope="col" class="pr-3">Besparing</th></tr></thead>
+    <tbody data-buy-tiers class="[&_td:last-child]:pr-3 [&_th]:pl-3">
+      {variant.tiers.map((tier, index) => {
+        const {from, pallets} = breakLabel(tier, variant.pallet);
+        return <tr data-active={index === 0 ? "" : undefined}><th scope="row">{from}{pallets > 0 && <> <span class="ml-1 rounded-(--ds-radius-sm) bg-surface-brand px-1.5 py-0.5 text-xs font-bold text-foreground-heading">{pallets} pallet{pallets > 1 ? "s" : ""}</span></>}</th><td>{euro(tier.price)}</td><td>{index === 0 ? "—" : <span class="font-bold text-success">−{Math.round((1 - tier.price / first) * 100)}%</span>}</td></tr>;
+      })}
+    </tbody>
+  </table>
+  </details>
 
   <a href="#alle-maten" class="inline-flex min-h-11 items-center gap-2 self-start text-foreground-link underline underline-offset-2 hover:no-underline">Meerdere maten bestellen<Icon name="chevron-down" size={16} /></a>
 
   <div class="grid gap-2 border-t border-border pt-4 text-sm">
-    <span class="inline-flex items-center gap-2 text-muted-foreground"><span aria-hidden="true" data-buy-stock-dot class:list={["size-2 shrink-0 rounded-full", stockDot[variant.stock]]}></span><span data-buy-stock>{variant.stockLabel}</span></span>
     <p class="m-0 text-muted-foreground">Met eigen bedrukking of in een andere maat? <a href="/preview#maatwerk" class="text-foreground-link underline underline-offset-2 hover:no-underline">Vraag maatwerk aan</a>.</p>
   </div>
 </form>

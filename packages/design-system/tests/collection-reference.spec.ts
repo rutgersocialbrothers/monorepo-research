@@ -444,3 +444,63 @@ test('product buy box and order matrix follow variant, bundles and breaks, and o
 
   expect(requested.filter((path) => path.startsWith('/cart'))).toEqual([]);
 });
+
+test('product matrix takes every catalog break, filters on quality and inner size, and keeps hidden quantities', async ({
+  page,
+}) => {
+  await page.goto('/product');
+  const buy = page.locator('form[data-buy-box]');
+  const breaks = buy.locator('[data-buy-breaks]');
+  const matrix = page.locator('#alle-maten');
+  const filter = matrix.locator('[data-matrix-filter]');
+  const row = (sku: string) => matrix.locator(`tr[data-matrix-row="${sku}"]`);
+  const shown = filter.locator('[data-matrix-shown]');
+  const empty = matrix.locator('[data-matrix-empty]');
+  const hiddenLines = matrix.locator('[data-matrix-hidden]');
+
+  // Art.nr. 1524 has eight breaks, so the matrix has eight break columns, not a fixed five.
+  await expect(matrix.locator('thead th[id^="am-t"]')).toHaveCount(8);
+  await expect(row('1524').locator('[data-matrix-price]')).toHaveCount(8);
+
+  // Wide: the break table is open. Art.nr. 1552 has a single break (no catalog breaks), so only its price shows.
+  await expect(breaks).toHaveAttribute('open', '');
+  await expect(breaks).toBeVisible();
+  await buy.locator('[data-buy-variant]').selectOption('1552');
+  await expect(breaks).toBeHidden();
+  await expect(buy.locator('[data-buy-price]')).toHaveText('€ 1,22');
+
+  // A quantity in a row the filter then hides stays in the order, and the bar says so.
+  await row('1520').locator('button[data-step="1"]').click();
+  await expect(matrix.locator('[data-matrix-total]')).toHaveText('€ 8,50');
+  await expect(shown).toHaveText('8 van 8 maten');
+  await filter.getByRole('checkbox', { name: 'Dubbelgolf' }).check();
+  await expect(shown).toHaveText('4 van 8 maten');
+  await expect(row('1520')).toBeHidden();
+  await expect(row('1548')).toBeVisible();
+  await expect(hiddenLines).toHaveText('· 1 verborgen maat in je bestelling');
+  await expect(matrix.locator('[data-matrix-total]')).toHaveText('€ 8,50');
+
+  // Minimum inner sizes: at least 450 mm long leaves 500 × 400 × 300 and 600 × 400 × 400.
+  await filter.locator('#am-lengte').fill('450');
+  await expect(shown).toHaveText('2 van 8 maten');
+  await expect(row('1560')).toBeVisible();
+  await expect(row('1566')).toBeVisible();
+  await expect(empty).toBeHidden();
+  await filter.locator('#am-hoogte').fill('500');
+  await expect(shown).toHaveText('0 van 8 maten');
+  await expect(empty).toBeVisible();
+
+  await filter.getByRole('button', { name: 'Wis filter' }).click();
+  await expect(shown).toHaveText('8 van 8 maten');
+  await expect(empty).toBeHidden();
+  await expect(row('1520')).toBeVisible();
+  await expect(hiddenLines).toHaveText('');
+  await expect(filter.locator('#am-lengte')).toHaveValue('');
+
+  // Narrow: the break table folds so the button comes first.
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('/product');
+  await expect(breaks).toBeVisible();
+  await expect(breaks).not.toHaveAttribute('open');
+  await expect(buy.getByRole('button', { name: 'In winkelwagen' })).toBeVisible();
+});

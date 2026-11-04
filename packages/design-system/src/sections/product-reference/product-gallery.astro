@@ -9,8 +9,8 @@ const [main] = productGallery;
   photograph and two category photographs standing in for further views.
 -->
 {main && (
-  <div data-gallery class="grid gap-3 min-[1400px]:h-full min-[1400px]:grid-rows-[1fr_auto]">
-    <figure class="m-0 grid aspect-square place-items-center overflow-hidden rounded-(--ds-radius-lg) min-[1400px]:aspect-auto min-[1400px]:min-h-80">
+  <div data-gallery class="grid gap-3">
+    <figure class="m-0 grid aspect-square place-items-center overflow-hidden rounded-(--ds-radius-lg)">
       <img src={main.image.src} alt={main.image.alt} width="800" height="800" data-gallery-main data-cover={main.cover ? "" : undefined} decoding="async" class="size-full object-contain data-cover:object-cover" />
     </figure>
     <ul class="m-0 flex list-none gap-2 p-0">

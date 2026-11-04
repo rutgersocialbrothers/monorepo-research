@@ -1,14 +1,5 @@
 import { productVariants, type ProductVariant } from './product.data';
-import {
-  amount,
-  breakLabel,
-  displayVatFactor,
-  euro,
-  sizeLabel,
-  snapQuantity,
-  stepQuantity,
-  tierIndex,
-} from './quantity';
+import { amount, breakLabel, euro, sizeLabel, snapQuantity, stepQuantity, tierIndex } from './quantity';
 
 /**
  * Product page behaviour after initBuyBox / initOrderMatrix / initGallery in prototype.js (6f9c7e2). A SIMULATION:
@@ -41,6 +32,11 @@ function bindBuyBox(page: HTMLElement, box: HTMLFormElement): void {
   const buyInput = box.querySelector<HTMLInputElement>('[data-buy-qty]');
   const buyTiersBody = box.querySelector<HTMLTableSectionElement>('[data-buy-tiers]');
   const status = box.querySelector<HTMLElement>('[data-buy-status]');
+  const breaks = box.querySelector<HTMLDetailsElement>('[data-buy-breaks]');
+  // Open by default and without script; folded below the two-column width so the button comes first on a phone.
+  if (breaks && !matchMedia('(min-width: 48rem)').matches) {
+    breaks.open = false;
+  }
   if (!buySelect || !buyInput || !buyTiersBody) {
     return;
   }
@@ -73,7 +69,6 @@ function bindBuyBox(page: HTMLElement, box: HTMLFormElement): void {
     set('[data-buy-price]', euro(price));
     set('[data-buy-yours]', `Jouw prijs bij ${amount(Math.max(quantity, variant.moq))} stuks`);
     set('[data-buy-total]', euro(price * quantity));
-    set('[data-buy-incl]', `${euro(price * quantity * displayVatFactor)} incl. btw`);
   }
 
   function render() {
@@ -108,6 +103,11 @@ function bindBuyBox(page: HTMLElement, box: HTMLFormElement): void {
         return row;
       }),
     );
+    // A single break is no break: only the price shows (a guest, or a catalog without breaks for this size).
+    if (breaks) {
+      breaks.hidden = variant.tiers.length < 2;
+    }
+    set('[data-buy-break-count]', `${variant.tiers.length} staffels`);
     set(
       '[data-buy-rules]',
       `Per bundel van ${amount(variant.step)} · minimaal ${amount(variant.moq)} stuks · 1 pallet = ${amount(variant.pallet)} stuks`,
@@ -207,9 +207,12 @@ function bindOrderMatrix(matrix: HTMLElement): void {
   });
   const total = matrix.querySelector<HTMLElement>('[data-matrix-total]');
   const count = matrix.querySelector<HTMLElement>('[data-matrix-count]');
-  const incl = matrix.querySelector<HTMLElement>('[data-matrix-incl]');
+  const hiddenLines = matrix.querySelector<HTMLElement>('[data-matrix-hidden]');
   const submit = matrix.querySelector<HTMLButtonElement>('[data-matrix-submit]');
   const note = matrix.parentElement?.querySelector<HTMLElement>('[data-matrix-note]');
+  const filter = matrix.parentElement?.querySelector<HTMLFormElement>('[data-matrix-filter]');
+  const shown = filter?.querySelector<HTMLElement>('[data-matrix-shown]');
+  const empty = matrix.querySelector<HTMLElement>('[data-matrix-empty]');
   function say(text: string) {
     if (note) {
       note.textContent = text;
@@ -222,6 +225,7 @@ function bindOrderMatrix(matrix: HTMLElement): void {
   function sync() {
     let sum = 0;
     let lines = 0;
+    let hidden = 0;
     for (const entry of rows) {
       const quantity = Math.max(0, Number.parseInt(entry.input.value, 10) || 0);
       const tier = tierIndex(entry.variant.tiers, quantity);
@@ -235,6 +239,7 @@ function bindOrderMatrix(matrix: HTMLElement): void {
       } else {
         sum += quantity * price;
         lines += 1;
+        hidden += entry.row.hidden ? 1 : 0;
         entry.sub.textContent = euro(quantity * price);
       }
     }
@@ -244,8 +249,11 @@ function bindOrderMatrix(matrix: HTMLElement): void {
     if (count) {
       count.textContent = lines ? lineCount(lines) : 'Nog geen maat gekozen';
     }
-    if (incl) {
-      incl.textContent = lines ? `${euro(sum * displayVatFactor)} incl. btw` : '';
+    // Filtering hides rows, never their quantities: say what is still in the order out of sight.
+    if (hiddenLines) {
+      hiddenLines.textContent = hidden
+        ? `· ${hidden === 1 ? '1 verborgen maat' : `${hidden} verborgen maten`} in je bestelling`
+        : '';
     }
     if (submit) {
       submit.disabled = lines === 0;
@@ -292,6 +300,43 @@ function bindOrderMatrix(matrix: HTMLElement): void {
     );
     sync();
   });
+  // Quality (none ticked means all) and minimum inner sizes in mm; a row stays when its box is at least that large.
+  function applyFilter() {
+    if (!filter) {
+      return;
+    }
+    const data = new FormData(filter);
+    const qualities = data.getAll('kwaliteit');
+    function least(name: string) {
+      const value = data.get(name);
+      return typeof value === 'string' ? Math.max(0, Number.parseInt(value, 10) || 0) : 0;
+    }
+    const [l, b, h] = [least('lengte'), least('breedte'), least('hoogte')];
+    let visible = 0;
+    for (const entry of rows) {
+      const { kwaliteit, size } = entry.variant;
+      const match =
+        (qualities.length === 0 || qualities.includes(kwaliteit)) && size.l >= l && size.b >= b && size.h >= h;
+      entry.row.hidden = !match;
+      visible += match ? 1 : 0;
+    }
+    if (shown) {
+      shown.textContent = `${visible} van ${rows.length} maten`;
+    }
+    if (empty) {
+      empty.hidden = visible > 0;
+    }
+    sync();
+  }
+  if (filter) {
+    filter.toggleAttribute('data-ready', true);
+    filter.addEventListener('input', applyFilter);
+    filter.addEventListener('submit', (event) => event.preventDefault());
+    filter.querySelector('[data-matrix-filter-reset]')?.addEventListener('click', () => {
+      filter.reset();
+      applyFilter();
+    });
+  }
   submit?.addEventListener('click', () => {
     say(
       `Simulatie: ${lineCount(sync())} zouden nu in de winkelwagen gaan. Dit prototype heeft geen winkelwagen; er is niets besteld.`,
