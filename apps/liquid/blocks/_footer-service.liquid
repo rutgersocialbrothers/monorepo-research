@@ -1,0 +1,47 @@
+{% doc %}
+  Renders one service promise in the footer's top row (canonical SiteFooter services): an icon, a bold title and an
+  optional short text, in the band's light text. Claims are merchant copy. Renders nothing without a title.
+
+  @example
+  {% content_for 'block', type: '_footer-service', id: 'service' %}
+{% enddoc %}
+
+{% if block.settings.title != blank %}
+  <li class="flex items-start gap-3" {{ block.shopify_attributes }}>
+    <span class="mt-0.5 shrink-0">{% render 'icon', name: block.settings.icon, size: 20 %}</span>
+    <span class="text-small">
+      <strong class="font-bold">{{ block.settings.title | escape }}</strong>
+      {%- if block.settings.text != blank -%}
+        <span class="mt-1 block text-caption text-text-inverse/75">{{ block.settings.text | escape }}</span>
+      {%- endif -%}
+    </span>
+  </li>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.footer_service",
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "t:liquid_components.labels.icon",
+      "options": [
+        { "value": "check", "label": "t:liquid_components.options.icon.check" },
+        { "value": "clock", "label": "t:liquid_components.options.icon.clock" },
+        { "value": "send", "label": "t:liquid_components.options.icon.send" },
+        { "value": "heart-handshake", "label": "t:liquid_components.options.icon.heart_handshake" },
+        { "value": "phone", "label": "t:liquid_components.options.icon.phone" },
+        { "value": "map-pin", "label": "t:liquid_components.options.icon.map_pin" },
+        { "value": "lock", "label": "t:liquid_components.options.icon.lock" },
+        { "value": "ruler", "label": "t:liquid_components.options.icon.ruler" },
+        { "value": "sparkles", "label": "t:liquid_components.options.icon.sparkles" },
+        { "value": "star", "label": "t:liquid_components.options.icon.star" }
+      ],
+      "default": "check"
+    },
+    { "type": "text", "id": "title", "label": "t:liquid_components.labels.title" },
+    { "type": "text", "id": "text", "label": "t:liquid_components.labels.text" }
+  ]
+}
+{% endschema %}

@@ -1,76 +1,297 @@
-<header class="site-header">
-  <a class="header__logo" href="{{ routes.root_url }}">
-    {%- render 'logo' -%}
-  </a>
+{% comment %}
+  Site header (canonical SiteHeader): a navy band with the logo, product search, an optional action link, the
+  customer account and the cart, over a light navigation row built from the main menu. A top-level link with
+  sub-links becomes a disclosure panel (the "Assortiment" and "Branches" panels of the reference), ending in a link to
+  the parent itself; a sub-link to a collection or product can show its picture. An optional sale link
+  closes the row in the action colour with three static decorative stars; the reference's twinkle trial is not
+  carried over. Escape closes an open panel and returns focus to its summary; opening one closes the others; a click
+  or focus outside closes it.
+{% endcomment %}
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
+{% liquid
+  assign search_id = 'header-search-' | append: section.id
+  assign nav_menu = section.settings.menu
+  assign has_nav = false
+  if nav_menu.links.size > 0 or section.settings.sale_label != blank
+    assign has_nav = true
+  endif
+  capture action_classes
+    render 'design-button-classes', variant: 'outline', size: 'small'
+  endcapture
+  assign spark = 'M5 0C5.6 3.4 6.6 4.4 10 5C6.6 5.6 5.6 6.6 5 10C4.4 6.6 3.4 5.6 0 5C3.4 4.4 4.4 3.4 5 0Z'
+%}
+
+<header class="site-header full-width" data-site-header>
+  <div class="site-header__band bg-surface-inverse text-text-inverse">
+    <div class="site-header__inner flex flex-wrap items-center gap-x-6 gap-y-4 py-5 md:gap-x-8 md:py-6">
+      <a
+        href="{{ routes.root_url }}"
+        class="shrink-0 rounded-sm text-h3 font-bold text-text-inverse no-underline focus-visible:outline-current"
+        aria-label="{{ 'layout.header.home_label' | t: shop: shop.name | escape }}"
+      >
+        {%- render 'logo', width: section.settings.logo_width -%}
+      </a>
+
+      {%- if section.settings.show_search -%}
+        <form
+          action="{{ routes.search_url }}"
+          method="get"
+          role="search"
+          class="order-last flex min-w-0 basis-full items-center rounded-full bg-page p-1 text-text md:order-none md:basis-auto md:flex-1"
+        >
+          <input type="hidden" name="type" value="product">
+          <label for="{{ search_id }}" class="sr-only">{{ 'layout.header.search_label' | t }}</label>
+          <input
+            id="{{ search_id }}"
+            name="q"
+            type="search"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ 'layout.header.search_label' | t }}"
+            autocomplete="off"
+            class="min-h-10 min-w-0 flex-1 rounded-full border-0 bg-transparent px-5 text-body text-text outline-none focus-visible:outline-2 focus-visible:outline-ring"
+          >
+          <button
+            type="submit"
+            aria-label="{{ 'layout.header.search_submit' | t }}"
+            class="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border-0 bg-transparent text-text hover:bg-surface-sunken"
+          >
+            {% render 'icon', name: 'search', size: 20 %}
+          </button>
+        </form>
+      {%- endif -%}
+
+      <div class="ml-auto flex items-center gap-2 md:ml-0">
+        {%- if section.settings.action_label != blank and section.settings.action_link != blank -%}
+          <a href="{{ section.settings.action_link }}" class="{{ action_classes | strip }} site-header__action max-sm:hidden">
+            {{- section.settings.action_label | escape -}}
+          </a>
+        {%- endif -%}
+
+        {%- if shop.customer_accounts_enabled -%}
+          <shopify-account menu="{{ section.settings.customer_account_menu }}" class="site-header__account">
+            {% render 'icon', name: 'user', size: 24 %}
+          </shopify-account>
+        {%- endif -%}
+
+        <a
+          href="{{ routes.cart_url }}"
+          class="relative grid size-11 place-items-center rounded-full text-text-inverse hover:bg-text-inverse/10"
+          aria-label="{{ 'layout.header.cart' | t: count: cart.item_count | escape }}"
+        >
+          {% render 'icon', name: 'shopping-cart', size: 24 %}
+          {%- if cart.item_count > 0 -%}
+            <span aria-hidden="true" class="absolute top-0.5 right-0.5 grid min-w-5 place-items-center rounded-full bg-action px-1 text-caption font-bold text-action-label tabular-nums">
+              {{- cart.item_count -}}
+            </span>
+          {%- endif -%}
+        </a>
+      </div>
+    </div>
   </div>
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      <shopify-account menu="{{ section.settings.customer_account_menu }}">
-        {{ 'icon-account.svg' | inline_asset_content }}
-      </shopify-account>
-    {% endif %}
+  {%- if has_nav -%}
+    <nav aria-label="{{ 'layout.header.main_nav' | t }}" class="border-b border-border bg-page">
+      <div class="site-header__inner flex flex-wrap items-center gap-x-8 gap-y-1 py-2 text-small font-bold">
+        {%- for link in nav_menu.links -%}
+          {%- if link.links.size > 0 -%}
+            <details data-header-disclosure class="group/disclosure relative">
+              <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-sm {% if link.active or link.child_active %}text-link{% endif %} [&::-webkit-details-marker]:hidden">
+                {{- link.title | escape -}}
+                <span class="transition-transform group-open/disclosure:rotate-180 motion-reduce:transition-none">{% render 'icon', name: 'chevron-down', size: 16 %}</span>
+              </summary>
+              <ul class="absolute top-full left-0 z-20 mt-2 grid max-h-[min(24rem,70vh)] w-max max-w-[min(20rem,calc(100vw-2rem))] min-w-56 gap-1 overflow-y-auto rounded-lg border border-border bg-page p-3 font-normal shadow-overlay">
+                {%- for child in link.links -%}
+                  {%- assign child_image = child.object.featured_image | default: child.object.image -%}
+                  <li>
+                    <a
+                      href="{{ child.url }}"
+                      {% if child.current %}aria-current="page"{% endif %}
+                      class="flex min-h-11 items-center gap-3 rounded-sm px-3 py-1 text-text no-underline hover:bg-surface-sunken aria-[current]:font-bold"
+                    >
+                      {%- if section.settings.show_link_images and child_image != blank -%}
+                        <span class="grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-sunken">
+                          {{- child_image | image_url: width: 80, height: 80 | image_tag: alt: '', loading: 'lazy', width: 40, height: 40, class: 'size-full object-contain p-1' -}}
+                        </span>
+                      {%- endif -%}
+                      {{- child.title | escape -}}
+                    </a>
+                  </li>
+                {%- endfor -%}
+                <li class="mt-2 border-t border-border pt-2">
+                  <a href="{{ link.url }}" class="block min-h-11 rounded-sm px-3 py-2.5 font-bold text-text no-underline hover:bg-surface-sunken">
+                    {{- 'layout.header.view_all' | t: title: link.title | escape -}}
+                  </a>
+                </li>
+              </ul>
+            </details>
+          {%- else -%}
+            <a
+              href="{{ link.url }}"
+              {% if link.current %}aria-current="page"{% endif %}
+              class="inline-flex min-h-11 items-center rounded-sm text-text no-underline hover:underline aria-[current]:text-link"
+            >
+              {{- link.title | escape -}}
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
 
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
-      {% endif %}
-
-      {{ 'icon-cart.svg' | inline_asset_content }}
-    </a>
-  </div>
+        {%- if section.settings.sale_label != blank and section.settings.sale_link != blank -%}
+          <a
+            href="{{ section.settings.sale_link }}"
+            class="relative inline-flex min-h-11 items-center rounded-sm px-2 text-action no-underline hover:text-action-hover hover:underline"
+          >
+            {{- section.settings.sale_label | escape -}}
+            <svg class="pointer-events-none absolute top-2 -left-0.5 size-[0.55em] fill-current max-sm:hidden" viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="{{ spark }}" /></svg>
+            <svg class="pointer-events-none absolute top-1 -right-1.5 size-[0.45em] fill-current max-sm:hidden" viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="{{ spark }}" /></svg>
+            <svg class="pointer-events-none absolute right-[-0.125rem] bottom-1.5 size-[0.55em] fill-current max-sm:hidden" viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="{{ spark }}" /></svg>
+          </a>
+        {%- endif -%}
+      </div>
+    </nav>
+  {%- endif -%}
 </header>
 
 {% stylesheet %}
   .site-header {
-    min-height: 5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: var(--tp-content-grid);
   }
-  .site-header a {
-    position: relative;
-    text-decoration: none;
-    color: var(--tp-color-text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+  .site-header > * {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: var(--tp-content-grid);
   }
-  .site-header .header__logo {
-    font-family: var(--tp-font-heading);
-    font-weight: var(--tp-font-heading-weight);
-    font-size: var(--tp-text-h3-size);
+
+  .site-header__inner {
+    grid-column: 2;
   }
-  .site-header a sup {
-    position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--tp-page-margin);
+
+  .site-header__account {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    color: var(--tp-color-text-inverse);
   }
-  .site-header .header__icons svg {
-    width: 2rem;
+
+  /* The outline action sits on the navy band, so it takes the band's text colour. */
+  .site-header .site-header__action {
+    border-color: currentcolor;
+    color: var(--tp-color-text-inverse);
+    background: transparent;
   }
-  .site-header .header__menu,
-  .site-header .header__icons {
-    display: flex;
-    gap: 1rem;
+
+  /* On a phone the panel spans the row instead of running off the screen. */
+  @media (max-width: 39.99rem) {
+    .site-header [data-header-disclosure] {
+      position: static;
+    }
+
+    .site-header [data-header-disclosure] > ul {
+      right: 0;
+      left: 0;
+      max-width: none;
+    }
+
+    .site-header nav > div {
+      position: relative;
+    }
   }
 {% endstylesheet %}
+
+{% javascript %}
+  (() => {
+    const bind = (header) => {
+      if (header.hasAttribute('data-ready')) {
+        return;
+      }
+      header.setAttribute('data-ready', '');
+      const disclosures = [...header.querySelectorAll('[data-header-disclosure]')];
+      disclosures.forEach((disclosure) => {
+        disclosure.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && disclosure.open) {
+            disclosure.open = false;
+            disclosure.querySelector('summary')?.focus();
+          }
+        });
+        disclosure.addEventListener('toggle', () => {
+          if (disclosure.open) {
+            disclosures.forEach((other) => {
+              if (other !== disclosure) {
+                other.open = false;
+              }
+            });
+          }
+        });
+      });
+      const closeOutside = (event) => {
+        disclosures.forEach((disclosure) => {
+          if (disclosure.open && event.target instanceof Node && !disclosure.contains(event.target)) {
+            disclosure.open = false;
+          }
+        });
+      };
+      document.addEventListener('click', closeOutside);
+      document.addEventListener('focusin', closeOutside);
+    };
+    const init = (scope) => scope.querySelectorAll('[data-site-header]').forEach(bind);
+    init(document);
+    document.addEventListener('shopify:section:load', (event) => init(event.target));
+  })();
+{% endjavascript %}
 
 {% schema %}
 {
   "name": "t:general.header",
   "settings": [
     {
+      "type": "range",
+      "id": "logo_width",
+      "label": "t:liquid_components.labels.logo_width",
+      "min": 80,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "default": 160
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "t:liquid_components.labels.show_search",
+      "default": true
+    },
+    {
       "type": "link_list",
       "id": "menu",
-      "label": "t:labels.menu"
+      "label": "t:labels.menu",
+      "info": "t:liquid_components.info.header_menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_link_images",
+      "label": "t:liquid_components.labels.show_link_images",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "sale_label",
+      "label": "t:liquid_components.labels.sale_label"
+    },
+    {
+      "type": "url",
+      "id": "sale_link",
+      "label": "t:liquid_components.labels.sale_link"
+    },
+    {
+      "type": "text",
+      "id": "action_label",
+      "label": "t:liquid_components.labels.action_label"
+    },
+    {
+      "type": "url",
+      "id": "action_link",
+      "label": "t:liquid_components.labels.action_link"
     },
     {
       "type": "link_list",

@@ -204,5 +204,22 @@
       "image_description": "Een echte Shopify-afbeelding wordt via de gedeelde afbeelding-snippet gerenderd met Shopify-filters voor afbeeldings-URL en afbeeldingstag.",
       "image_empty": "Kies een voorbeeldafbeelding in de thema-editor om de gedeelde afbeeldingcomponent te bekijken. Er wordt geen tijdelijke of externe afbeelding opgevraagd."
     }
+  },
+  "layout": {
+    "header": {
+      "home_label": "{{ shop }}, homepage",
+      "search_label": "Zoek in het assortiment",
+      "search_submit": "Zoeken",
+      "cart": {
+        "one": "Winkelwagen, {{ count }} artikel",
+        "other": "Winkelwagen, {{ count }} artikelen"
+      },
+      "main_nav": "Hoofdnavigatie",
+      "view_all": "Alles in {{ title }}"
+    },
+    "footer": {
+      "menu_missing": "Kies een menu voor deze kolom.",
+      "payment_methods": "Betaalmethoden"
+    }
   }
 }

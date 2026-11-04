@@ -204,5 +204,22 @@
       "image_description": "A real Shopify image is rendered through the shared image snippet, using Shopify's image URL and image tag filters.",
       "image_empty": "Choose an example image in this section's theme-editor settings to preview the shared image component. No placeholder or external image is requested."
     }
+  },
+  "layout": {
+    "header": {
+      "home_label": "{{ shop }}, homepage",
+      "search_label": "Search the range",
+      "search_submit": "Search",
+      "cart": {
+        "one": "Cart, {{ count }} item",
+        "other": "Cart, {{ count }} items"
+      },
+      "main_nav": "Main navigation",
+      "view_all": "All of {{ title }}"
+    },
+    "footer": {
+      "menu_missing": "Choose a menu for this column.",
+      "payment_methods": "Payment methods"
+    }
   }
 }
