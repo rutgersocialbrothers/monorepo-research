@@ -37,7 +37,8 @@ export interface ProductVariant {
   stock: StockState;
   stockLabel: string;
   /**
-   * Variant.quantity_price_breaks.
+   * Variant.quantity_price_breaks from a B2B catalog, any number of them, the variant price first. A single entry means
+   * no quantity breaks: what a guest, or a catalog without breaks for that variant, sees.
    */
   tiers: ReadonlyArray<PriceBreak>;
 }
@@ -77,6 +78,9 @@ export const productVariants: ReadonlyArray<ProductVariant> = [
       { min: 100, price: 0.4 },
       { min: 250, price: 0.36 },
       { min: 500, price: 0.33 },
+      { min: 900, price: 0.31 },
+      { min: 1800, price: 0.29 },
+      { min: 3600, price: 0.27 },
     ],
   },
   {
@@ -140,12 +144,7 @@ export const productVariants: ReadonlyArray<ProductVariant> = [
     pallet: 480,
     gewicht: 610,
     ...inStock,
-    tiers: [
-      { min: 20, price: 1.22 },
-      { min: 40, price: 1.15 },
-      { min: 100, price: 1.07 },
-      { min: 240, price: 0.99 },
-    ],
+    tiers: [{ min: 20, price: 1.22 }],
   },
   {
     sku: '1560',

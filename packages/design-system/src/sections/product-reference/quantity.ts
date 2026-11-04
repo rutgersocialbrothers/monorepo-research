@@ -1,11 +1,10 @@
 import type { PriceBreak } from './product.data';
 
-/**
+/*
  * What the buy box and the order matrix share (prototype.js 6f9c7e2, "quantities, breaks and the product page"). The
- * 21% btw factor is the source's display assumption for the incl.-btw figure, not a tax rule.
+ * source's fixed 21% incl.-btw figure is dropped: B2B company locations carry their own tax settings, so the theme
+ * follows Shopify's tax display instead of computing one.
  */
-export const displayVatFactor = 1.21;
-
 export function euro(value: number): string {
   return `€ ${value.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
