@@ -110,7 +110,16 @@
       "heading": "Heading",
       "layout": "Layout",
       "row": "Row",
-      "text": "Text"
+      "text": "Text",
+      "buy_box": "Buy box",
+      "order_matrix": "Order matrix",
+      "product_gallery": "Product gallery",
+      "product_highlights": "Selling points",
+      "product_specs": "Specifications",
+      "product_description": "Product description",
+      "product_recommendations": "Product recommendations",
+      "value_card": "Value card",
+      "value_cards": "Value cards"
     },
     "labels": {
       "alignment": "Alignment",
@@ -126,10 +135,32 @@
       "layout_direction": "Layout direction",
       "padding": "Padding",
       "text": "Text",
-      "text_style": "Text style"
+      "text_style": "Text style",
+      "eyebrow": "Eyebrow",
+      "heading": "Heading",
+      "highlights": "Selling points",
+      "intro": "Introduction",
+      "note": "Note",
+      "product": "Product",
+      "show_filter": "Show filter",
+      "show_heading": "Show heading",
+      "spec_rows": "Rows",
+      "card_style": "Style",
+      "collapsible": "Collapsible",
+      "framed_cards": "Framed product cards",
+      "icon": "Icon",
+      "open_by_default": "Open by default",
+      "product_limit": "Maximum products",
+      "recommendation_source": "Products",
+      "title": "Title"
     },
     "info": {
-      "demo_image": "Optional Shopify image for the responsive image example. Buttons are previews only and perform no action."
+      "demo_image": "Optional Shopify image for the responsive image example. Buttons are previews only and perform no action.",
+      "buy_box_note": "Shown under the buy box, for example a link to custom work.",
+      "highlights": "One selling point per line. Can be connected to a multi-line text metafield.",
+      "order_matrix_product": "Leave empty on product pages to use the current product.",
+      "show_filter": "Filters on quality and minimum inner size when the product has at least five variants with that data.",
+      "recommendation_source": "Complementary products are set per product in the Search & Discovery app. Related products are chosen by Shopify."
     },
     "options": {
       "alignment": {
@@ -153,6 +184,37 @@
         "title": "Title",
         "subtitle": "Subtitle",
         "normal": "Normal text"
+      },
+      "spec_rows": {
+        "compact": "Compact",
+        "full": "Full"
+      },
+      "background": {
+        "band": "Subtle band",
+        "page": "Page",
+        "natural": "Natural",
+        "warm": "Warm"
+      },
+      "recommendation_source": {
+        "complementary_related": "Complementary, then related",
+        "complementary": "Complementary only",
+        "related": "Related only"
+      },
+      "card_style": {
+        "card": "Card",
+        "compact": "Compact"
+      },
+      "icon": {
+        "check": "Check",
+        "clock": "Clock",
+        "send": "Send",
+        "heart_handshake": "Handshake",
+        "phone": "Phone",
+        "map_pin": "Map pin",
+        "lock": "Lock",
+        "ruler": "Ruler",
+        "sparkles": "Sparkles",
+        "star": "Star"
       }
     }
   }

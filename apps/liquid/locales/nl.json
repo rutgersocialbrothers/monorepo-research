@@ -65,6 +65,100 @@
     "no_results_html": "Geen resultaten gevonden voor {{ terms }}",
     "results_for_html": "{{ count }} resultaten gevonden voor {{ terms }}"
   },
+  "products": {
+    "product": {
+      "sku": "Art.nr. {{ sku }}",
+      "price_per_unit": "per stuk",
+      "tax_excluded": "excl. btw",
+      "tax_included": "incl. btw",
+      "your_price": "Jouw prijs bij {{ quantity }} stuks",
+      "quantity": "Aantal",
+      "decrease": "Aantal verlagen",
+      "increase": "Aantal verhogen",
+      "add_to_cart": "In winkelwagen",
+      "sold_out": "Uitverkocht",
+      "rules": "Per bundel van {{ increment }} · minimaal {{ min }} stuks",
+      "total": "Totaal",
+      "snapped": "Aantal aangepast naar {{ quantity }}: per bundel van {{ increment }}, minimaal {{ min }} stuks.",
+      "breaks_title": "Staffelprijzen",
+      "breaks_count": {
+        "one": "{{ count }} staffel",
+        "other": "{{ count }} staffels"
+      },
+      "breaks_caption": "Staffelprijzen van de gekozen variant, per stuk",
+      "breaks_quantity": "Aantal",
+      "breaks_price": "Per stuk",
+      "breaks_saving": "Besparing",
+      "pallets": {
+        "one": "{{ count }} pallet",
+        "other": "{{ count }} pallets"
+      },
+      "from_quantity": "{{ quantity }}+",
+      "gallery_thumbnail": "Toon afbeelding {{ index }}",
+      "description": "Omschrijving",
+      "regular_price": "Normale prijs",
+      "sale": "Aanbieding"
+    },
+    "stock": {
+      "in_stock": "Op voorraad",
+      "backorder": "Langere levertijd",
+      "sold_out": "Uitverkocht"
+    },
+    "specs": {
+      "title": "Specificaties",
+      "sku": "Artikelnummer",
+      "inner_size": "Binnenmaat L × B × H",
+      "size_value": "{{ length }} × {{ width }} × {{ height }} mm",
+      "quality": "Kwaliteit",
+      "bundle": "Verpakt per",
+      "pieces": "{{ quantity }} stuks",
+      "minimum": "Minimale afname",
+      "per_pallet": "Per pallet",
+      "model": "Model",
+      "color": "Kleur",
+      "material": "Materiaal",
+      "weight": "Gewicht",
+      "weight_value": "{{ quantity }} gram per stuk",
+      "recycled": "Gerecycled materiaal",
+      "recyclable": "Recyclebaar"
+    },
+    "matrix": {
+      "filter_label": "Maten filteren",
+      "min_size": "Minimale binnenmaat",
+      "length": "Lengte (mm)",
+      "width": "Breedte (mm)",
+      "height": "Hoogte (mm)",
+      "shown": "{{ shown }} van {{ total }} maten",
+      "reset": "Wis filter",
+      "caption": "Prijzen per stuk, {{ tax }}. Maten zijn binnenmaten in millimeters. De prijs volgt het aantal dat je invult.",
+      "bundle": "Bundel",
+      "pallet": "Pallet",
+      "stock": "Voorraad",
+      "prices": "Prijs per stuk, vanaf het aantal in de cel",
+      "subtotal": "Subtotaal",
+      "tier": "Staffel {{ number }}",
+      "bundle_value": "{{ increment }} st.",
+      "bundle_minimum": "min. {{ quantity }}",
+      "quantity_label": "Aantal, {{ variant }}",
+      "decrease_label": "Minder, {{ variant }}",
+      "increase_label": "Meer, {{ variant }}",
+      "none_chosen": "Nog geen maat gekozen",
+      "lines_one": "{{ number }} maat",
+      "lines_other": "{{ number }} maten",
+      "hidden_one": "· {{ number }} verborgen maat in je bestelling",
+      "hidden_other": "· {{ number }} verborgen maten in je bestelling",
+      "snapped": "{{ variant }}: aantal aangepast van {{ typed }} naar {{ quantity }}. Deze maat gaat per bundel van {{ increment }}, minimaal {{ min }}.",
+      "empty": "Geen maat past bij dit filter. Pas het filter aan of wis het.",
+      "editor_empty": "Kies een product met meerdere varianten om de bestelmatrix te tonen."
+    },
+    "recommendations": {
+      "rail_label": "{{ title }}, horizontaal scrollbaar",
+      "previous": "Vorige producten: {{ title }}",
+      "next": "Volgende producten: {{ title }}",
+      "fallback_heading": "Misschien ook interessant",
+      "editor_empty": "Nog geen aanbevelingen voor dit product. Voeg aanvullende producten toe in de app Search & Discovery, of sta gerelateerde producten toe."
+    }
+  },
   "liquid_components": {
     "design_system": {
       "title": "Designsysteem",

@@ -1,0 +1,333 @@
+{% doc %}
+  Renders the product form: variant choice, the price at the chosen quantity, stock, a bundle-aware quantity field,
+  add to cart, the purchase rules, the total and the B2B quantity price breaks. Private static block of the product
+  section, because it needs the section's product and form.
+
+  A compare-at price above the price shows struck through, with a sale badge.
+
+  Quantity rules and price breaks come from the customer's B2B catalog (`variant.quantity_rule`,
+  `variant.quantity_price_breaks`); everyone else sees the plain variant price with rule 1. The form posts natively
+  to the cart. With script, the quantity snaps to whole bundles from the minimum (and says so), the price, total
+  and active break follow the quantity, the break table folds below the two-column width, and choosing a variant
+  re-renders every `data-variant-region` of the product section.
+
+  @example
+  {% content_for 'block', type: '_buy-box', id: 'buy-box' %}
+{% enddoc %}
+
+{% liquid
+  assign buy_product = closest.product
+  assign variant = buy_product.selected_or_first_available_variant
+  assign rule_min = variant.quantity_rule.min | default: 1
+  assign rule_increment = variant.quantity_rule.increment | default: 1
+  assign rule_max = variant.quantity_rule.max
+  assign variant_id = 'variant-' | append: block.id
+  assign quantity_id = 'quantity-' | append: block.id
+
+  assign unit_price = variant.price
+  for price_break in variant.quantity_price_breaks
+    if rule_min >= price_break.minimum_quantity
+      assign unit_price = price_break.price
+    endif
+  endfor
+  assign total_price = unit_price | times: rule_min
+
+  if cart.taxes_included
+    assign tax_label = 'products.product.tax_included' | t
+  else
+    assign tax_label = 'products.product.tax_excluded' | t
+  endif
+%}
+
+{% if buy_product != blank %}
+  <div
+    class="group/stepper rounded-lg bg-surface-sunken p-4 md:p-6"
+    data-buy-box
+    data-currency="{{ cart.currency.iso_code }}"
+    data-text-yours="{{ 'products.product.your_price' | t: quantity: '[quantity]' | escape }}"
+    data-text-snapped="{{ 'products.product.snapped' | t: quantity: '[quantity]', increment: '[increment]', min: '[min]' | escape }}"
+    {{ block.shopify_attributes }}
+  >
+    {% form 'product', buy_product, class: 'grid gap-4 md:gap-5' %}
+      {% if buy_product.has_only_default_variant %}
+        <input type="hidden" name="id" value="{{ variant.id }}">
+      {% else %}
+        <div class="grid gap-2">
+          <label for="{{ variant_id }}" class="text-small font-bold">{{ buy_product.options | join: ' / ' | escape }}</label>
+          <span class="relative flex items-center">
+            <select
+              id="{{ variant_id }}"
+              name="id"
+              data-variant-select
+              class="min-h-11 w-full cursor-pointer appearance-none rounded-md border border-input bg-surface-raised py-2 pr-10 pl-3 text-body text-text"
+            >
+              {% for option_variant in buy_product.variants %}
+                <option value="{{ option_variant.id }}" {% if option_variant.id == variant.id %}selected{% endif %}>
+                  {{- option_variant.title | escape -}}
+                  {%- unless option_variant.available %} — {{ 'products.product.sold_out' | t }}{% endunless -%}
+                </option>
+              {% endfor %}
+            </select>
+            {% render 'icon', name: 'chevron-down', size: 16, class: 'pointer-events-none absolute right-3' %}
+          </span>
+        </div>
+      {% endif %}
+
+      <div class="grid gap-4 md:gap-5" data-buy-region data-variant-region="buy-{{ block.id }}">
+        <script type="application/json" data-variant-pricing>
+          {
+            "min": {{ rule_min }},
+            "max": {{ rule_max | default: 'null' }},
+            "increment": {{ rule_increment }},
+            "price": {{ variant.price }},
+            "breaks": [
+              {%- for price_break in variant.quantity_price_breaks -%}
+                { "min": {{ price_break.minimum_quantity }}, "price": {{ price_break.price }} }{% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            ]
+          }
+        </script>
+
+        <div aria-live="polite" class="grid gap-1">
+          <p class="flex flex-wrap items-baseline gap-2">
+            <b data-buy-price class="text-h2 text-heading">{{ unit_price | money }}</b>
+            {% if variant.compare_at_price > variant.price %}
+              <s class="text-body text-text-muted">
+                <span class="sr-only">{{ 'products.product.regular_price' | t }}</span>
+                {{- variant.compare_at_price | money -}}
+              </s>
+            {% endif %}
+            <span class="text-small text-text-muted">
+              {{- 'products.product.price_per_unit' | t }}, {{ tax_label -}}
+            </span>
+            {% if variant.compare_at_price > variant.price %}
+              {% assign sale_label = 'products.product.sale' | t %}
+              {% render 'badge', label: sale_label, variant: 'destructive' %}
+            {% endif %}
+          </p>
+          {% if variant.quantity_price_breaks.size > 0 %}
+            <p data-buy-yours class="text-small text-text-muted">
+              {{- 'products.product.your_price' | t: quantity: rule_min -}}
+            </p>
+          {% endif %}
+        </div>
+
+        {% render 'stock-status', variant: variant %}
+
+        <div class="flex flex-wrap items-center gap-3">
+          {% liquid
+            assign quantity_label = 'products.product.quantity' | t
+            assign decrease_label = 'products.product.decrease' | t
+            assign increase_label = 'products.product.increase' | t
+            render 'quantity-stepper', id: quantity_id, name: 'quantity', label: quantity_label, decrease_label: decrease_label, increase_label: increase_label, value: rule_min, min: rule_min, step: rule_increment, max: rule_max
+
+            if variant.available
+              assign submit_label = 'products.product.add_to_cart' | t
+              render 'button', label: submit_label, button_type: 'submit', size: 'large'
+            else
+              assign submit_label = 'products.product.sold_out' | t
+              render 'button', label: submit_label, button_type: 'submit', size: 'large', disabled: true
+            endif
+          %}
+        </div>
+
+        {% if rule_min > 1 or rule_increment > 1 %}
+          <p class="text-small text-text-muted">
+            {{- 'products.product.rules' | t: increment: rule_increment, min: rule_min -}}
+          </p>
+        {% endif %}
+
+        <p class="flex flex-wrap items-baseline justify-between gap-2 border-t border-border pt-4">
+          <span class="font-bold">
+            {{- 'products.product.total' | t }} <span class="font-regular text-text-muted">{{ tax_label }}</span>
+          </span>
+          <b data-buy-total class="text-h3 text-heading">{{ total_price | money }}</b>
+        </p>
+
+        {% if variant.quantity_price_breaks.size > 0 %}
+          {% assign break_rows = variant.quantity_price_breaks.size | plus: 1 %}
+          <details open data-buy-breaks class="group/breaks border-t border-border pt-2">
+            <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 text-small font-bold [&::-webkit-details-marker]:hidden">
+              {{- 'products.product.breaks_title' | t }}
+              <span class="font-regular text-text-muted">{{ 'products.product.breaks_count' | t: count: break_rows }}</span>
+              {% render 'icon', name: 'chevron-down', size: 16, class: 'ml-auto transition-transform group-open/breaks:rotate-180 motion-reduce:transition-none' %}
+            </summary>
+            {% render 'price-breaks-table', variant: variant %}
+          </details>
+        {% endif %}
+      </div>
+
+      <p data-buy-status aria-live="polite" class="text-small font-bold text-heading empty:hidden"></p>
+    {% endform %}
+
+    {% if block.settings.note != blank %}
+      <div class="mt-4 border-t border-border pt-4 text-small text-text-muted">{{ block.settings.note }}</div>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% javascript %}
+  (() => {
+    const wide = matchMedia('(min-width: 48rem)');
+    const fill = (template, values) => template.replace(/\[(\w+)\]/g, (match, key) => String(values[key] ?? match));
+
+    const bind = (box) => {
+      if (box.hasAttribute('data-ready')) {
+        return;
+      }
+      const page = box.closest('[data-product-page]');
+      const select = box.querySelector('[data-variant-select]');
+      const status = box.querySelector('[data-buy-status]');
+      const region = () => box.querySelector('[data-buy-region]');
+      const input = () => region()?.querySelector('[data-quantity]');
+      const rules = () => JSON.parse(region()?.querySelector('[data-variant-pricing]')?.textContent || 'null');
+      const money = (cents) =>
+        new Intl.NumberFormat(document.documentElement.lang || undefined, {
+          style: 'currency',
+          currency: box.dataset.currency,
+        }).format(cents / 100);
+      const say = (text) => {
+        if (status) {
+          status.textContent = text;
+        }
+      };
+      const limit = (quantity, rule) => (rule.max ? Math.min(quantity, rule.max) : quantity);
+      // Whole bundles, never under the minimum.
+      const snap = (quantity, rule) =>
+        limit(Math.max(rule.min, Math.round(quantity / rule.increment) * rule.increment), rule);
+      const priceAt = (quantity, rule) =>
+        rule.breaks.reduce((price, entry) => (quantity >= entry.min ? entry.price : price), rule.price);
+
+      const sync = () => {
+        const rule = rules();
+        const field = input();
+        if (!rule || !field) {
+          return;
+        }
+        const quantity = Math.max(0, Number.parseInt(field.value, 10) || 0);
+        const price = priceAt(quantity, rule);
+        const current = region();
+        current.querySelector('[data-buy-price]').textContent = money(price);
+        current.querySelector('[data-buy-total]').textContent = money(price * quantity);
+        const yours = current.querySelector('[data-buy-yours]');
+        if (yours) {
+          yours.textContent = fill(box.dataset.textYours, { quantity: Math.max(quantity, rule.min) });
+        }
+        const rows = [...current.querySelectorAll('tr[data-min]')];
+        const reached = rows.filter((row) => quantity >= Number(row.dataset.min)).pop() ?? rows[0];
+        rows.forEach((row) => row.toggleAttribute('data-active', row === reached));
+      };
+
+      const fold = () => {
+        const breaks = region()?.querySelector('[data-buy-breaks]');
+        if (breaks && !wide.matches) {
+          breaks.open = false;
+        }
+      };
+
+      let request = 0;
+      const changeVariant = async () => {
+        const kept = Number.parseInt(input()?.value ?? '', 10) || 0;
+        const url = new URL(page.dataset.url, location.origin);
+        url.searchParams.set('variant', select.value);
+        history.replaceState(history.state, '', url);
+        const sectionUrl = new URL(url);
+        sectionUrl.searchParams.set('section_id', page.dataset.sectionId);
+        const ticket = ++request;
+        try {
+          const response = await fetch(sectionUrl);
+          if (!response.ok) {
+            throw new Error(String(response.status));
+          }
+          const html = new DOMParser().parseFromString(await response.text(), 'text/html');
+          if (ticket !== request) {
+            return;
+          }
+          for (const node of page.querySelectorAll('[data-variant-region]')) {
+            const fresh = html.querySelector(`[data-variant-region="${CSS.escape(node.dataset.variantRegion)}"]`);
+            if (fresh) {
+              node.replaceWith(fresh);
+            }
+          }
+        } catch {
+          location.assign(url);
+          return;
+        }
+        const rule = rules();
+        if (rule && input() && kept) {
+          input().value = String(snap(kept, rule));
+        }
+        say('');
+        fold();
+        sync();
+      };
+
+      box.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-step]');
+        const rule = rules();
+        const field = input();
+        if (!button || !rule || !field) {
+          return;
+        }
+        const quantity = Number.parseInt(field.value, 10) || 0;
+        const next =
+          Number(button.dataset.step) > 0
+            ? quantity < rule.min
+              ? rule.min
+              : quantity + rule.increment
+            : Math.max(rule.min, quantity - rule.increment);
+        field.value = String(limit(next, rule));
+        say('');
+        sync();
+      });
+      box.addEventListener('input', (event) => {
+        if (event.target.matches('[data-quantity]')) {
+          sync();
+        }
+      });
+      // Snapped only when the field is left, so typing is not fought mid-keystroke, and said when it happens.
+      box.addEventListener('change', (event) => {
+        if (event.target === select) {
+          changeVariant();
+          return;
+        }
+        const rule = rules();
+        if (!event.target.matches('[data-quantity]') || !rule) {
+          return;
+        }
+        const typed = Math.max(0, Number.parseInt(event.target.value, 10) || 0);
+        const quantity = snap(typed, rule);
+        event.target.value = String(quantity);
+        say(
+          quantity === typed
+            ? ''
+            : fill(box.dataset.textSnapped, { quantity, increment: rule.increment, min: rule.min }),
+        );
+        sync();
+      });
+
+      box.setAttribute('data-ready', '');
+      fold();
+      sync();
+    };
+
+    const init = (scope) => scope.querySelectorAll('[data-buy-box]').forEach(bind);
+    init(document);
+    // The theme editor re-renders sections in place; bind the new markup.
+    document.addEventListener('shopify:section:load', (event) => init(event.target));
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.buy_box",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "t:liquid_components.labels.note",
+      "info": "t:liquid_components.info.buy_box_note"
+    }
+  ]
+}
+{% endschema %}

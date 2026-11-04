@@ -65,6 +65,100 @@
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
   },
+  "products": {
+    "product": {
+      "sku": "SKU {{ sku }}",
+      "price_per_unit": "per piece",
+      "tax_excluded": "excl. VAT",
+      "tax_included": "incl. VAT",
+      "your_price": "Your price at {{ quantity }} pieces",
+      "quantity": "Quantity",
+      "decrease": "Decrease quantity",
+      "increase": "Increase quantity",
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "rules": "Sold in bundles of {{ increment }} · minimum {{ min }} pieces",
+      "total": "Total",
+      "snapped": "Quantity changed to {{ quantity }}: bundles of {{ increment }}, minimum {{ min }} pieces.",
+      "breaks_title": "Volume pricing",
+      "breaks_count": {
+        "one": "{{ count }} tier",
+        "other": "{{ count }} tiers"
+      },
+      "breaks_caption": "Volume prices for the selected variant, per piece",
+      "breaks_quantity": "Quantity",
+      "breaks_price": "Per piece",
+      "breaks_saving": "Saving",
+      "pallets": {
+        "one": "{{ count }} pallet",
+        "other": "{{ count }} pallets"
+      },
+      "from_quantity": "{{ quantity }}+",
+      "gallery_thumbnail": "Show image {{ index }}",
+      "description": "Description",
+      "regular_price": "Regular price",
+      "sale": "Sale"
+    },
+    "stock": {
+      "in_stock": "In stock",
+      "backorder": "Longer delivery time",
+      "sold_out": "Sold out"
+    },
+    "specs": {
+      "title": "Specifications",
+      "sku": "Article number",
+      "inner_size": "Inner size L × W × H",
+      "size_value": "{{ length }} × {{ width }} × {{ height }} mm",
+      "quality": "Quality",
+      "bundle": "Packed per",
+      "pieces": "{{ quantity }} pieces",
+      "minimum": "Minimum order",
+      "per_pallet": "Per pallet",
+      "model": "Model",
+      "color": "Colour",
+      "material": "Material",
+      "weight": "Weight",
+      "weight_value": "{{ quantity }} g per piece",
+      "recycled": "Recycled content",
+      "recyclable": "Recyclable"
+    },
+    "matrix": {
+      "filter_label": "Filter sizes",
+      "min_size": "Minimum inner size",
+      "length": "Length (mm)",
+      "width": "Width (mm)",
+      "height": "Height (mm)",
+      "shown": "{{ shown }} of {{ total }} sizes",
+      "reset": "Clear filter",
+      "caption": "Prices per piece, {{ tax }}. Sizes are inner dimensions in millimetres. The price follows the quantity you enter.",
+      "bundle": "Bundle",
+      "pallet": "Pallet",
+      "stock": "Stock",
+      "prices": "Price per piece, from the quantity in the cell",
+      "subtotal": "Subtotal",
+      "tier": "Tier {{ number }}",
+      "bundle_value": "{{ increment }} pcs",
+      "bundle_minimum": "min. {{ quantity }}",
+      "quantity_label": "Quantity, {{ variant }}",
+      "decrease_label": "Less, {{ variant }}",
+      "increase_label": "More, {{ variant }}",
+      "none_chosen": "No size chosen yet",
+      "lines_one": "{{ number }} size",
+      "lines_other": "{{ number }} sizes",
+      "hidden_one": "· {{ number }} hidden size in your order",
+      "hidden_other": "· {{ number }} hidden sizes in your order",
+      "snapped": "{{ variant }}: quantity changed from {{ typed }} to {{ quantity }}. This size comes in bundles of {{ increment }}, minimum {{ min }}.",
+      "empty": "No size matches this filter. Change or clear the filter.",
+      "editor_empty": "Select a product with several variants to show the order matrix."
+    },
+    "recommendations": {
+      "rail_label": "{{ title }}, scrolls horizontally",
+      "previous": "Previous products: {{ title }}",
+      "next": "Next products: {{ title }}",
+      "fallback_heading": "You may also like",
+      "editor_empty": "No recommendations for this product yet. Add complementary products in the Search & Discovery app, or allow related products."
+    }
+  },
   "liquid_components": {
     "design_system": {
       "title": "Design system",

@@ -1,0 +1,37 @@
+{%- doc -%}
+  Renders a variant's stock as a small dot beside its text. The dot is decorative; the text carries the state.
+  Sold out when the variant is unavailable; a longer delivery time when Shopify keeps selling at zero or less
+  stock (inventory policy continue); otherwise in stock, including untracked inventory.
+
+  @param {variant} variant - Shopify variant to describe
+
+  @example
+  {% render 'stock-status', variant: product.selected_or_first_available_variant %}
+{%- enddoc -%}
+
+{%- unless variant == blank -%}
+  {%- liquid
+    assign stock_state = 'in'
+    if variant.available == false
+      assign stock_state = 'out'
+    elsif variant.inventory_management != blank and variant.inventory_quantity <= 0 and variant.inventory_policy == 'continue'
+      assign stock_state = 'lead'
+    endif
+
+    case stock_state
+      when 'out'
+        assign stock_dot_class = 'bg-border-strong'
+        assign stock_label = 'products.stock.sold_out' | t
+      when 'lead'
+        assign stock_dot_class = 'bg-warning'
+        assign stock_label = 'products.stock.backorder' | t
+      else
+        assign stock_dot_class = 'bg-success'
+        assign stock_label = 'products.stock.in_stock' | t
+    endcase
+  -%}
+  <span class="inline-flex items-center gap-2 text-small text-text-muted" data-stock="{{ stock_state }}">
+    <span aria-hidden="true" class="size-2 shrink-0 rounded-full {{ stock_dot_class }}"></span>
+    {{- stock_label -}}
+  </span>
+{%- endunless -%}

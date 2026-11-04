@@ -1,0 +1,103 @@
+{% doc %}
+  Renders the product's images: one large square frame and a row of thumbnail buttons that change which image the
+  frame shows (`aria-current` marks it). Product cut-outs are shown whole. Without script every image is listed
+  in order and the thumbnails stay hidden. Private static block of the product section.
+
+  @example
+  {% content_for 'block', type: '_product-gallery', id: 'product-gallery' %}
+{% enddoc %}
+
+{% liquid
+  assign gallery_product = closest.product
+  assign gallery_images = gallery_product.media | where: 'media_type', 'image'
+%}
+
+{% if gallery_images.size > 0 %}
+  <div class="group/gallery grid gap-3" data-product-gallery {{ block.shopify_attributes }}>
+    <div class="grid gap-3">
+      {% for media in gallery_images %}
+        {% liquid
+          if forloop.first
+            assign image_loading = 'eager'
+          else
+            assign image_loading = 'lazy'
+          endif
+          assign image_alt = media.alt | default: gallery_product.title
+        %}
+        <figure class="m-0 grid aspect-square place-items-center overflow-hidden rounded-lg bg-surface-raised [&[hidden]]:hidden" data-gallery-item>
+          {{
+            media.preview_image
+            | image_url: width: 1400
+            | image_tag:
+              widths: '400,600,800,1100,1400',
+              sizes: '(min-width: 768px) 50vw, 100vw',
+              loading: image_loading,
+              alt: image_alt,
+              class: 'size-full object-contain'
+          }}
+        </figure>
+      {% endfor %}
+    </div>
+
+    {% if gallery_images.size > 1 %}
+      <ul class="m-0 hidden list-none flex-wrap gap-2 p-0 group-data-ready/gallery:flex">
+        {% for media in gallery_images %}
+          <li>
+            <button
+              type="button"
+              data-gallery-thumb
+              aria-label="{{ 'products.product.gallery_thumbnail' | t: index: forloop.index }}"
+              {% if forloop.first %}aria-current="true"{% endif %}
+              class="block size-18 cursor-pointer overflow-hidden rounded-md border-2 border-border bg-surface-raised p-0 hover:border-border-strong aria-[current=true]:border-nav"
+            >
+              {{
+                media.preview_image
+                | image_url: width: 144
+                | image_tag: loading: 'lazy', alt: '', width: 72, height: 72, class: 'size-full object-contain'
+              }}
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% javascript %}
+  (() => {
+    const init = (scope) => {
+      for (const gallery of scope.querySelectorAll('[data-product-gallery]')) {
+        const items = [...gallery.querySelectorAll('[data-gallery-item]')];
+        const thumbs = [...gallery.querySelectorAll('[data-gallery-thumb]')];
+        if (thumbs.length < 2 || gallery.hasAttribute('data-ready')) {
+          continue;
+        }
+        const show = (index) => {
+          items.forEach((item, position) => {
+            item.hidden = position !== index;
+          });
+          thumbs.forEach((thumb, position) => {
+            if (position === index) {
+              thumb.setAttribute('aria-current', 'true');
+            } else {
+              thumb.removeAttribute('aria-current');
+            }
+          });
+        };
+        thumbs.forEach((thumb, index) => thumb.addEventListener('click', () => show(index)));
+        show(0);
+        gallery.setAttribute('data-ready', '');
+      }
+    };
+    init(document);
+    // The theme editor re-renders sections in place; bind the new markup.
+    document.addEventListener('shopify:section:load', (event) => init(event.target));
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.product_gallery",
+  "settings": []
+}
+{% endschema %}

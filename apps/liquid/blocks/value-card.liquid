@@ -1,0 +1,94 @@
+{% doc %}
+  Renders one value card (canonical ValueCards): an icon, a short title and a supporting text. The card style is a
+  tinted panel for a row of cards; the compact style puts the icon beside the text for narrow columns such as the
+  product introduction, where the title is bold text rather than a heading so the page outline stays intact.
+  Claims are merchant copy; nothing is invented by the theme. Renders nothing without a title.
+
+  @example
+  {% content_for 'block', type: 'value-card', id: 'value-card' %}
+{% enddoc %}
+
+{% liquid
+  assign card_heading = block.settings.heading_level | default: 'h3'
+  if block.settings.style == 'compact'
+    assign card_heading = 'p'
+    assign card_classes = 'flex items-start gap-3'
+    assign icon_size = 20
+  else
+    assign card_classes = 'grid content-start gap-4 rounded-lg bg-surface-accent p-6 md:p-7'
+    assign icon_size = 32
+  endif
+%}
+
+{% if block.settings.title != blank %}
+  <article class="{{ card_classes }}" {{ block.shopify_attributes }}>
+    <span class="shrink-0 text-action">{% render 'icon', name: block.settings.icon, size: icon_size %}</span>
+    <div class="grid gap-1">
+      <{{ card_heading }} class="{% if block.settings.style == 'compact' %}text-body font-bold{% else %}text-h3{% endif %} text-heading">
+        {{- block.settings.title | escape -}}
+      </{{ card_heading }}>
+      {% if block.settings.text != blank %}
+        <p class="max-w-prose text-small text-text-muted">{{ block.settings.text | escape }}</p>
+      {% endif %}
+    </div>
+  </article>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:liquid_components.general.value_card",
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "t:liquid_components.labels.icon",
+      "options": [
+        { "value": "check", "label": "t:liquid_components.options.icon.check" },
+        { "value": "clock", "label": "t:liquid_components.options.icon.clock" },
+        { "value": "send", "label": "t:liquid_components.options.icon.send" },
+        { "value": "heart-handshake", "label": "t:liquid_components.options.icon.heart_handshake" },
+        { "value": "phone", "label": "t:liquid_components.options.icon.phone" },
+        { "value": "map-pin", "label": "t:liquid_components.options.icon.map_pin" },
+        { "value": "lock", "label": "t:liquid_components.options.icon.lock" },
+        { "value": "ruler", "label": "t:liquid_components.options.icon.ruler" },
+        { "value": "sparkles", "label": "t:liquid_components.options.icon.sparkles" },
+        { "value": "star", "label": "t:liquid_components.options.icon.star" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:liquid_components.labels.title"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:liquid_components.labels.text"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "t:liquid_components.labels.card_style",
+      "options": [
+        { "value": "card", "label": "t:liquid_components.options.card_style.card" },
+        { "value": "compact", "label": "t:liquid_components.options.card_style.compact" }
+      ],
+      "default": "card"
+    },
+    {
+      "type": "select",
+      "id": "heading_level",
+      "label": "t:liquid_components.labels.heading_level",
+      "options": [
+        { "value": "h2", "label": "t:liquid_components.options.heading_level.h2" },
+        { "value": "h3", "label": "t:liquid_components.options.heading_level.h3" },
+        { "value": "h4", "label": "t:liquid_components.options.heading_level.h4" }
+      ],
+      "default": "h3",
+      "visible_if": "{{ block.settings.style == 'card' }}"
+    }
+  ],
+  "presets": [{ "name": "t:liquid_components.general.value_card" }]
+}
+{% endschema %}

@@ -1,0 +1,54 @@
+{%- doc -%}
+  Renders a native number field with minus and plus buttons. The field works on its own; the buttons stay hidden
+  until the caller's script marks an ancestor `group/stepper` element ready with `data-ready`, because only
+  that script knows the bundle and minimum rules.
+
+  @param {string} id - Stable control id
+  @param {string} name - Native form field name
+  @param {string} label - Accessible name of the field
+  @param {string} decrease_label - Accessible name of the minus button
+  @param {string} increase_label - Accessible name of the plus button
+  @param {number} value - Current quantity
+  @param {number} min - Lowest allowed quantity
+  @param {number} step - Bundle size
+  @param {number} [max] - Optional highest allowed quantity
+
+  @example
+  {% render 'quantity-stepper', id: 'quantity', name: 'quantity', label: quantity_label, decrease_label: less_label, increase_label: more_label, value: 25, min: 25, step: 25 %}
+{%- enddoc -%}
+
+{%- unless id == blank or name == blank or label == blank -%}
+  <span class="inline-flex items-center overflow-hidden rounded-md border border-input bg-surface-raised">
+    <button
+      type="button"
+      data-step="-1"
+      aria-label="{{ decrease_label | escape }}"
+      aria-controls="{{ id | escape }}"
+      class="hidden size-11 cursor-pointer place-items-center border-0 bg-transparent text-text hover:bg-surface-sunken group-data-ready/stepper:grid"
+    >
+      {%- render 'icon', name: 'minus', size: 16 -%}
+    </button>
+    <input
+      type="number"
+      id="{{ id | escape }}"
+      name="{{ name | escape }}"
+      value="{{ value }}"
+      min="{{ min }}"
+      step="{{ step }}"
+      {% if max != blank %}max="{{ max }}"{% endif %}
+      inputmode="numeric"
+      aria-label="{{ label | escape }}"
+      data-quantity
+      class="h-11 w-20 [appearance:textfield] border-0 bg-transparent text-center text-body text-text tabular-nums [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+    >
+    <button
+      type="button"
+      data-step="1"
+      aria-label="{{ increase_label | escape }}"
+      aria-controls="{{ id | escape }}"
+      class="hidden size-11 cursor-pointer place-items-center border-0 bg-transparent text-text hover:bg-surface-sunken group-data-ready/stepper:grid"
+    >
+      {%- render 'icon', name: 'plus', size: 16 -%}
+    </button>
+  </span>
+{%- endunless -%}
